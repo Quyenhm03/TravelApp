@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -16,54 +16,59 @@
         android:theme="@style/Theme.Travel_App"
         tools:targetApi="31">
         <activity
+            android:name=".UI.Register.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UI.Activity.home.HomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".UI.Activity.CreateItineraryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UI.Login.LoginActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>>
+        </activity>
         <activity
             android:name=".UI.Activity.SearchAirportActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.SearchFlightResultActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.AddPassengerInfoActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.PassengerInfoActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.SelectSeatActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.PaymentFlightActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.SearchFlightActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.ItineraryDetailActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.SetUpInfoActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.SaveItineraryActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.SearchItemActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".UI.Activity.MainActivity"
-            android:exported="true">
-
-
-        </activity>
+            android:exported="true" />
     </application>
 
 </manifest>

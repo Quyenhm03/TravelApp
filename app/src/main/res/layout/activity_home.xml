@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UI.Activity.home.HomeActivity">
+
+    <FrameLayout
+        android:id="@+id/frameLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/automatic_icons_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <RelativeLayout
+                android:id="@+id/navHome"
+                android:layout_width="@dimen/_84sdp"
+                android:layout_height="@dimen/_52sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iconHome"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_32sdp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_home"
+                    app:tint="@color/black"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/tabTxt0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iconHome"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/nav_home"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    tools:ignore="SpUsage,TextSizeCheck" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/navSave"
+                android:layout_width="@dimen/_84sdp"
+                android:layout_height="@dimen/_52sdp"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iconSave"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_32sdp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_save" />
+
+                <TextView
+                    android:id="@+id/tabTxt1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iconSave"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/nav_save"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    tools:ignore="TextSizeCheck" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/navCreateItinerary"
+                android:layout_width="@dimen/_84sdp"
+                android:layout_height="@dimen/_52sdp"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iconCreateItinerary"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_32sdp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_travel" />
+
+                <TextView
+                    android:id="@+id/tabTxt3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iconCreateItinerary"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/nav_create_itinerary"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    tools:ignore="SpUsage,TextSizeCheck" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/navPersonInfomation"
+                android:layout_width="@dimen/_84sdp"
+                android:layout_height="@dimen/_52sdp"
+                android:layout_marginLeft="@dimen/_8sdp"
+                android:layout_marginRight="@dimen/_8sdp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ivHeight"
+                    android:layout_width="@dimen/_84sdp"
+                    android:layout_height="@dimen/_32sdp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/black" />
+
+                <TextView
+                    android:id="@+id/tabhtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="56dp"
+                    android:layout_below="@+id/ivHeight"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/nav_personal"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14sdp"
+                    tools:ignore="SpUsage,TextSizeCheck" />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView2"
+        android:name="com.example.travel_app.UI.Fragment.HomeFragment.HomeFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
