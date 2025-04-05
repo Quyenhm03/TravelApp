@@ -1,8 +1,10 @@
 package com.example.travel_app.UI.Fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +19,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.travel_app.Data.Model.Flight;
 import com.example.travel_app.Data.Model.SearchFlightInfo;
+import com.example.travel_app.Data.Model.SelectedFlight;
 import com.example.travel_app.R;
+import com.example.travel_app.UI.Activity.AddPassengerInfoActivity;
+import com.example.travel_app.UI.Activity.SearchFlightResultActivity;
 import com.squareup.picasso.Picasso;
-
-import java.time.Duration;
-import java.time.LocalTime;
 
 public class FlightDetailFragment extends Fragment {
 
@@ -30,6 +32,9 @@ public class FlightDetailFragment extends Fragment {
     private TextView txtDepartureDate, txtFlightTime, txtTicketPrice;
     private ImageView imgAirline;
     private Button btnBookFlight, btnCancelFlight;
+    private SearchFlightInfo searchFlightInfo;
+    private Flight flight;
+    private boolean isReturnFlight;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -52,8 +57,9 @@ public class FlightDetailFragment extends Fragment {
         btnCancelFlight = view.findViewById(R.id.btn_cancel_flight);
 
         if (getArguments() != null) {
-            Flight flight = (Flight) getArguments().getSerializable("flight");
-            SearchFlightInfo searchFlightInfo = (SearchFlightInfo) getArguments().getSerializable("searchFlightInfo");
+            flight = (Flight) getArguments().getSerializable("flight");
+            searchFlightInfo = (SearchFlightInfo) getArguments().getSerializable("searchFlightInfo");
+            isReturnFlight = getArguments().getBoolean("isReturnFlight", false);
             if (flight != null && searchFlightInfo != null) {
                 txtDepartureTime.setText(flight.getDepartureTime());
                 txtDepartureAirportCode.setText(flight.getDepartureAirportCode());
@@ -63,25 +69,47 @@ public class FlightDetailFragment extends Fragment {
                 txtArrivalAirportAddress.setText(searchFlightInfo.getArrivalAirportName());
                 txtDepartureDate.setText(flight.getDepartureDate());
                 txtTicketPrice.setText((int)flight.getPrice() + " VND");
+                txtFlightTime.setText(flight.getFlightTime());
                 Picasso.get().load(flight.getAirlineImgUrl()).into(imgAirline);
-
-                LocalTime departureTime = LocalTime.parse(flight.getDepartureTime());
-                LocalTime arrivalTime = LocalTime.parse(flight.getArrivalTime());
-                Duration duration = Duration.between(departureTime, arrivalTime);
-                long hours = duration.toHours();
-                long minutes = duration.toMinutes() % 60;
-                txtFlightTime.setText(String.format("%02dh %02dm", hours, minutes));
             }
         }
 
 
         btnBookFlight.setOnClickListener(v -> {
-            // Xử lý logic đặt vé
+            SelectedFlight selectedFlight;
+            if(getActivity().getIntent().hasExtra("selectedFlight")) {
+                selectedFlight = (SelectedFlight) getActivity().getIntent().getSerializableExtra("selectedFlight");
+            } else {
+                selectedFlight = new SelectedFlight();
+            }
+
+            if(!isReturnFlight) {
+                selectedFlight.setDepartureFlight(flight);
+
+                if (searchFlightInfo.getReturnDate() != null) {
+                    // quay về SearchFlightActivity để chọn chuyến bay về
+                    Intent intent = new Intent(requireActivity(), SearchFlightResultActivity.class);
+                    intent.putExtra("searchFlightInfo", searchFlightInfo);
+                    intent.putExtra("selectedFlight", selectedFlight);
+                    intent.putExtra("isReturnFlight", true);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(requireActivity(), AddPassengerInfoActivity.class);
+                    intent.putExtra("searchFlightInfo", searchFlightInfo);
+                    intent.putExtra("selectedFlight", selectedFlight);
+                    startActivity(intent);
+                }
+            } else {
+                selectedFlight.setReturnFlight(flight);
+                Intent intent = new Intent(requireActivity(), AddPassengerInfoActivity.class);
+                intent.putExtra("searchFlightInfo", searchFlightInfo);
+                intent.putExtra("selectedFlight", selectedFlight);
+                startActivity(intent);
+            }
+
         });
 
-        btnCancelFlight.setOnClickListener(v -> {
-            // Xử lý logic hủy vé
-        });
+        btnCancelFlight.setOnClickListener(v -> requireActivity().onBackPressed());
 
         return view;
     }

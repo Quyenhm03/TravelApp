@@ -59,17 +59,9 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightView
         holder.txtDepartureTime.setText(flight.getDepartureTime());
         holder.txtArrivalTime.setText(flight.getArrivalTime());
         holder.txtPrice.setText((int)flight.getPrice() + " VND");
+        holder.txtFlightTime.setText(flight.getFlightTime());
 
         Picasso.get().load(flight.getAirlineImgUrl()).into(holder.imgAirline);
-
-        LocalTime departureTime = LocalTime.parse(flight.getDepartureTime());
-        LocalTime arrivalTime = LocalTime.parse(flight.getArrivalTime());
-        Duration duration = Duration.between(departureTime, arrivalTime);
-
-        long hours = duration.toHours();
-        long minutes = duration.toMinutes() % 60;
-
-        holder.txtFlightTime.setText(String.format("%02dh %02dm", hours, minutes));
 
         holder.itemView.setOnClickListener(v -> {
             if (onItemClickListener != null) {

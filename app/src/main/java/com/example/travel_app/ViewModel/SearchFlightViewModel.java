@@ -15,7 +15,7 @@ public class SearchFlightViewModel extends ViewModel {
         flightRepository = new FlightRepository();
     }
 
-    public LiveData<List<Flight>> searchFlights(String departureAirportCode, String arrivalAirportCode, String departureDate) {
-        return flightRepository.searchFlights(departureAirportCode, arrivalAirportCode, departureDate);
+    public LiveData<List<Flight>> searchFlights(String departureAirportCode, String arrivalAirportCode, String departureDate, String seatType) {
+        return flightRepository.searchFlights(departureAirportCode, arrivalAirportCode, departureDate, seatType);
     }
 }

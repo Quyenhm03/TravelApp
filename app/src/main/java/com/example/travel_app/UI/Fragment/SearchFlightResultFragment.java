@@ -18,6 +18,7 @@ import com.example.travel_app.Adapter.FlightAdapter;
 import com.example.travel_app.Data.Model.Flight;
 import com.example.travel_app.Data.Model.SearchFlightInfo;
 import com.example.travel_app.R;
+import com.example.travel_app.UI.Activity.SearchFlightResultActivity;
 import com.example.travel_app.ViewModel.SearchFlightViewModel;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class SearchFlightResultFragment extends Fragment {
     private SearchFlightViewModel viewModel;
     private List<Flight> flightList = new ArrayList<>();
     private SearchFlightInfo searchFlightInfo;
+    private boolean isReturnFlight;
 
     @Nullable
     @Override
@@ -37,6 +39,7 @@ public class SearchFlightResultFragment extends Fragment {
 
         if (getArguments() != null) {
             searchFlightInfo = (SearchFlightInfo) getArguments().getSerializable("searchFlightInfo");
+            isReturnFlight = getArguments().getBoolean("isReturnFlight", false);
         }
 
         rcvSearchFlightResult = view.findViewById(R.id.rcv_flight_result);
@@ -45,16 +48,29 @@ public class SearchFlightResultFragment extends Fragment {
         rcvSearchFlightResult.setAdapter(flightAdapter);
 
         viewModel = new ViewModelProvider(this).get(SearchFlightViewModel.class);
-        viewModel.searchFlights(searchFlightInfo.getDepartureAirportCode(), searchFlightInfo.getArrivalAirportCode(),
-                searchFlightInfo.getDepartureDate()).observe(getViewLifecycleOwner(), flights -> {
-            if (flights != null && !flights.isEmpty()) {
-                flightList.clear();
-                flightList.addAll(flights);
-                flightAdapter.setFlightList(flightList);
-            } else {
-                Toast.makeText(getContext(), "Không tìm thấy chuyến bay", Toast.LENGTH_SHORT).show();
-            }
-        });
+        if(!isReturnFlight) {
+            viewModel.searchFlights(searchFlightInfo.getDepartureAirportCode(), searchFlightInfo.getArrivalAirportCode(),
+                    searchFlightInfo.getDepartureDate(), searchFlightInfo.getSeatType()).observe(getViewLifecycleOwner(), flights -> {
+                if (flights != null && !flights.isEmpty()) {
+                    flightList.clear();
+                    flightList.addAll(flights);
+                    flightAdapter.setFlightList(flightList);
+                } else {
+                    Toast.makeText(getContext(), "Không tìm thấy chuyến bay", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            viewModel.searchFlights(searchFlightInfo.getArrivalAirportCode(), searchFlightInfo.getDepartureAirportCode(),
+                    searchFlightInfo.getReturnDate(), searchFlightInfo.getSeatType()).observe(getViewLifecycleOwner(), flights -> {
+                if (flights != null && !flights.isEmpty()) {
+                    flightList.clear();
+                    flightList.addAll(flights);
+                    flightAdapter.setFlightList(flightList);
+                } else {
+                    Toast.makeText(getContext(), "Không tìm thấy chuyến bay", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         flightAdapter.setOnItemClickListener(new FlightAdapter.OnItemClickListener(){
             @Override
@@ -63,6 +79,7 @@ public class SearchFlightResultFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("flight", flight);
                 bundle.putSerializable("searchFlightInfo", searchFlightInfo);
+                bundle.putBoolean("isReturnFlight", ((SearchFlightResultActivity) requireActivity()).isReturnFlight);
                 flightDetailFragment.setArguments(bundle);
                 requireActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_flight_result, flightDetailFragment)
@@ -76,6 +93,7 @@ public class SearchFlightResultFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("flight", flight);
                 bundle.putSerializable("searchFlightInfo", searchFlightInfo);
+                bundle.putBoolean("isReturnFlight", ((SearchFlightResultActivity) requireActivity()).isReturnFlight);
                 flightDetailFragment.setArguments(bundle);
                 requireActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_flight_result, flightDetailFragment)

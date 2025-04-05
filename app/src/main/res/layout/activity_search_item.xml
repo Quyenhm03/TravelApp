@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="150dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@color/orange">
@@ -33,6 +33,7 @@
                 android:textSize="18sp"/>
 
             <TextView
+                android:id="@+id/txt_time_itinerary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -45,8 +46,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="125dp"
         android:background="@drawable/corner_top">
 
         <LinearLayout
@@ -63,6 +64,7 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="2.5dp"
                     app:cardCornerRadius="6dp">
 
                     <LinearLayout
@@ -71,13 +73,16 @@
                         android:layout_margin="10dp"
                         android:orientation="horizontal">
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/btn_search_item"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/search"/>
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/search" />
 
                         <EditText
-                            android:layout_width="wrap_content"
+                            android:id="@+id/edt_search_item"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
                             android:layout_marginLeft="10dp"
@@ -98,6 +103,7 @@
                 android:textStyle="bold"/>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcv_search_item_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -118,7 +124,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tiếp tuc"
+            android:text="Tiếp tục"
             android:textSize="14sp"
             android:textColor="@color/white"
             android:textAllCaps="false"

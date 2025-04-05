@@ -60,14 +60,14 @@
                             android:gravity="center_vertical">
 
                             <TextView
-                                android:id="@+id/departure_airport"
+                                android:id="@+id/txt_departure_airport_city"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Hà Nội"
                                 android:textSize="15sp"/>
 
                             <TextView
-                                android:id="@+id/departure_airport_code"
+                                android:id="@+id/txt_departure_airport_code"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="HAN"
@@ -76,7 +76,7 @@
                                 android:textSize="12sp" />
                         </LinearLayout>
                         <TextView
-                            android:id="@+id/departure_airport_address"
+                            android:id="@+id/txt_departure_airport_name_country"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Sân bay Nội Bài, Việt Nam"
@@ -138,14 +138,14 @@
                             android:gravity="center_vertical">
 
                             <TextView
-                                android:id="@+id/arrival_airport"
+                                android:id="@+id/txt_arrival_airport_city"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="TP Hồ Chí Minh"
                                 android:textSize="15sp"/>
 
                             <TextView
-                                android:id="@+id/arrival_airport_code"
+                                android:id="@+id/txt_arrival_airport_code"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="SGN"
@@ -154,7 +154,7 @@
                                 android:textSize="12sp" />
                         </LinearLayout>
                         <TextView
-                            android:id="@+id/arrival_airport_address"
+                            android:id="@+id/txt_arrival_airport_name_country"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Sân bay Tân Sơn Nhất, Việt Nam"
@@ -210,7 +210,7 @@
                             android:src="@drawable/calendar"/>
 
                         <TextView
-                            android:id="@+id/tv_departure_date"
+                            android:id="@+id/txt_departure_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
@@ -260,7 +260,7 @@
                             android:src="@drawable/calendar"/>
 
                         <TextView
-                            android:id="@+id/tv_return_date"
+                            android:id="@+id/txt_return_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"

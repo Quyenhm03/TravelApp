@@ -1,6 +1,5 @@
 package com.example.travel_app.UI.Activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,10 +17,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 
-import com.example.travel_app.Data.Model.Airport;
 import com.example.travel_app.Data.Model.SearchFlightInfo;
 import com.example.travel_app.R;
-import com.example.travel_app.UI.Fragment.MultiCityFlightFragment;
 import com.example.travel_app.UI.Fragment.OneWayFlightFragment;
 import com.example.travel_app.UI.Fragment.RoundTripFlightFragment;
 
@@ -29,7 +26,7 @@ public class SearchFlightActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SELECT_AIRPORT = 1;
 
     private FragmentManager fragmentManager;
-    private Button btnOneWay, btnRoundTrip, btnMultiCity, btnSearchFlight;
+    private Button btnOneWay, btnRoundTrip, btnSearchFlight;
     private Fragment oneWayFragment, roundTripFragment, multiCityFragment;
     private Fragment currentFragment;
     private String currentSelectionType;  // Lưu loại sân bay đang chọn (departure/arrival)
@@ -48,16 +45,13 @@ public class SearchFlightActivity extends AppCompatActivity {
 
         oneWayFragment = new OneWayFlightFragment();
         roundTripFragment = new RoundTripFlightFragment();
-        multiCityFragment = new MultiCityFlightFragment();
 
         btnOneWay = findViewById(R.id.btn_one_way);
         btnRoundTrip = findViewById(R.id.btn_round_trip);
-        btnMultiCity = findViewById(R.id.btn_multi_city);
         btnSearchFlight = findViewById(R.id.btn_search_flight);
 
         btnOneWay.setOnClickListener(v -> switchFragment(oneWayFragment, btnOneWay));
         btnRoundTrip.setOnClickListener(v -> switchFragment(roundTripFragment, btnRoundTrip));
-        btnMultiCity.setOnClickListener(v -> switchFragment(multiCityFragment, btnMultiCity));
         btnSearchFlight.setOnClickListener(v -> openSearchFlightResultActivity());
 
         // Mặc định hiển thị OneWayFlightFragment
@@ -65,7 +59,7 @@ public class SearchFlightActivity extends AppCompatActivity {
 
         txtCustomerNumber = findViewById(R.id.txt_customer_number);
         cvChooseCustomer = findViewById(R.id.cv_choose_customer_number);
-        cvChooseCustomer.setOnClickListener(v -> showCustomerDialog());
+        cvChooseCustomer.setOnClickListener(v -> showPassengerDialog());
 
         btnSeatType = findViewById(R.id.btn_seat_type);
         txtSeatType = findViewById(R.id.txt_seat_type);
@@ -109,32 +103,29 @@ public class SearchFlightActivity extends AppCompatActivity {
 
         btnRoundTrip.setTextColor(Color.parseColor("#B8B8B8"));
         btnRoundTrip.setBackgroundColor(getResources().getColor(android.R.color.white));
-
-        btnMultiCity.setTextColor(Color.parseColor("#B8B8B8"));
-        btnMultiCity.setBackgroundColor(getResources().getColor(android.R.color.white));
     }
 
     // Nhận dữ liệu sân bay từ SearchAirportActivity
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_SELECT_AIRPORT && resultCode == RESULT_OK) {
-            Airport airport = (Airport) data.getSerializableExtra("selected_airport");
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_CODE_SELECT_AIRPORT && resultCode == RESULT_OK) {
+//            Airport airport = (Airport) data.getSerializableExtra("selected_airport");
+//
+//            if (currentFragment instanceof OnAirportSelectedListener) {
+//                ((OnAirportSelectedListener) currentFragment).onAirportSelected(airport, currentSelectionType);
+//            }
+//        }
+//    }
+//
+//    public interface OnAirportSelectedListener {
+//        void onAirportSelected(Airport airport, String selectionType);
+//    }
 
-            if (currentFragment instanceof OnAirportSelectedListener) {
-                ((OnAirportSelectedListener) currentFragment).onAirportSelected(airport, currentSelectionType);
-            }
-        }
-    }
-
-    public interface OnAirportSelectedListener {
-        void onAirportSelected(Airport airport, String selectionType);
-    }
-
-    private void showCustomerDialog() {
+    private void showPassengerDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_choose_customer, null);
+        View dialogView = inflater.inflate(R.layout.dialog_choose_passenger, null);
         builder.setView(dialogView);
 
         // Lấy các view trong dialog
@@ -217,6 +208,20 @@ public class SearchFlightActivity extends AppCompatActivity {
                     oneWayFragment.getArrivalCity(),
                     oneWayFragment.getDepartureAirportName(),
                     oneWayFragment.getArrivalAirportName(),
+                    txtSeatType.getText().toString(),
+                    adultCount, childCount, infantCount
+            );
+        } else {
+            RoundTripFlightFragment roundTripFragment = (RoundTripFlightFragment) currentFragment;
+            searchFlightInfo = new SearchFlightInfo(
+                    roundTripFragment.getDepartureAirportCode(),
+                    roundTripFragment.getArrivalAirportCode(),
+                    roundTripFragment.getDepartureDate(),
+                    roundTripFragment.getReturnDate(),
+                    roundTripFragment.getDepartureCity(),
+                    roundTripFragment.getArrivalCity(),
+                    roundTripFragment.getDepartureAirportName(),
+                    roundTripFragment.getArrivalAirportName(),
                     txtSeatType.getText().toString(),
                     adultCount, childCount, infantCount
             );
