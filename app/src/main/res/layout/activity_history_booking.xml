@@ -37,6 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -51,7 +52,7 @@
                     android:layout_marginLeft="10dp"
                     android:textColor="#8F8F8F"
                     android:textSize="15sp"
-                    android:text="ha noi"/>
+                    android:hint="Tìm kiếm"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
