@@ -16,7 +16,7 @@
         android:src="@drawable/login_illustration"
         android:contentDescription="Login Illustration"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintTop_margin="32dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -31,7 +31,6 @@
         android:textStyle="bold"
         android:textColor="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/imageTop"
-        app:layout_constraintTop_margin="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -44,7 +43,6 @@
         android:hint="Nhập email"
         app:endIconDrawable="@drawable/ic_email"
         app:layout_constraintTop_toBottomOf="@id/tvLoginTitle"
-        app:layout_constraintTop_margin="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:boxBackgroundMode="filled"
@@ -68,7 +66,6 @@
         android:layout_marginTop="12dp"
         app:endIconDrawable="@drawable/ic_lock"
         app:layout_constraintTop_toBottomOf="@id/emailLayout"
-        app:layout_constraintTop_margin="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:boxBackgroundMode="filled"

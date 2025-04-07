@@ -7,4 +7,5 @@
     <string name="nav_create_itinerary">Tạo lộ trình</string>
     <string name="nav_personal">Tài khoản</string>"
     <string name="register_hint">Bạn chưa có tài khoản? <font color="@color/holo_orange_dark">Đăng ký</font></string>
+    <string name="userReview">Người dùng: </string>
 </resources>

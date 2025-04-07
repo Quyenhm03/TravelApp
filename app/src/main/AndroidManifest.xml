@@ -16,6 +16,18 @@
         android:theme="@style/Theme.Travel_App"
         tools:targetApi="31">
         <activity
+            android:name=".UI.Activity.Location.ReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UI.Activity.Location.LocationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UI.Fragment.PersonFragment.UpdateInfoUserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UI.Fragment.PersonFragment.UserDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".UI.Register.RegisterActivity"
             android:exported="false" />
         <activity

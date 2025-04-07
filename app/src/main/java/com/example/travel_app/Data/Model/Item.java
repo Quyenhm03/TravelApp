@@ -7,7 +7,7 @@ public class Item implements Serializable {
     private String address;
     private int bed;
     private String dateTour;
-    private String  description;
+    private String description;
     private String distance;
     private String duration;
     private String pic;

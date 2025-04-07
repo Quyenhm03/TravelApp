@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- Phần 1: ViewPager2 cho ảnh và video -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPagerMedia"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- TabLayout để hiển thị chấm tròn (dots) cho ViewPager -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayoutDots"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            app:tabBackground="@android:color/transparent"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="scrollable" />
+
+        <!-- Phần 2: Mô tả chi tiết -->
+        <TextView
+            android:id="@+id/tvDescriptionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mô tả chi tiết"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thông tin về lịch sử, văn hóa và các điểm nổi bật của địa điểm sẽ được hiển thị ở đây."
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Phần 3: Đánh giá và bình luận -->
+        <TextView
+            android:id="@+id/tvReviewsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đánh giá và bình luận"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- RecyclerView cho danh sách đánh giá -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvReviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Nút "Xem thêm toàn bộ đánh giá" (hiển thị nếu có nhiều hơn 3 đánh giá) -->
+        <Button
+            android:id="@+id/btnViewMoreReviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xem thêm toàn bộ đánh giá"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Nút "Đánh giá của bạn" -->
+        <Button
+            android:id="@+id/btnAddReview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đánh giá của bạn"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Phần 4: Thời tiết và điều kiện đi lại -->
+        <TextView
+            android:id="@+id/tvWeatherTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thời tiết và điều kiện đi lại"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- ViewPager2 cho thời tiết 7 ngày -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPagerWeather"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Phần 5: Vị trí -->
+        <TextView
+            android:id="@+id/tvLocationTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vị trí"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnOpenMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Xem vị trí trên Google Maps"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

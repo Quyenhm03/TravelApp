@@ -1,5 +1,6 @@
 package com.example.travel_app.UI.Activity.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
 
@@ -11,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.travel_app.R;
+import com.example.travel_app.UI.Activity.CreateItineraryActivity;
 import com.example.travel_app.UI.Fragment.CreateNewItinerary.CreateItineraryFragment;
 import com.example.travel_app.UI.Fragment.HomeFragment.HomeFragment;
 import com.example.travel_app.UI.Fragment.PersonFragment.PersonInfomationFragment;
@@ -38,8 +40,14 @@ public class HomeActivity extends AppCompatActivity {
     private void setupListenerSwitchFragment() {
         navHome.setOnClickListener(v -> replaceFragment(new HomeFragment()));
         navSave.setOnClickListener(v -> replaceFragment(new SavedTravelFragment()));
-        navCreateItinerary.setOnClickListener(v -> replaceFragment(new CreateItineraryFragment()));
+       // navCreateItinerary.setOnClickListener(v -> replaceFragment(new CreateItineraryFragment()));
+        navCreateItinerary.setOnClickListener(v -> createItinerary());
         navPersonInformation.setOnClickListener(v -> replaceFragment(new PersonInfomationFragment()));
+    }
+
+    private void createItinerary() {
+        Intent intent = new Intent(HomeActivity.this, CreateItineraryActivity.class);
+        startActivity(intent);
     }
 
     private void initView(){

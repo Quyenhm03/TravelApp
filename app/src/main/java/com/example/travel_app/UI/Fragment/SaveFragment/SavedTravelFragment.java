@@ -1,7 +1,10 @@
 package com.example.travel_app.UI.Fragment.SaveFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -9,52 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.travel_app.R;
+import com.example.travel_app.UI.Activity.Location.LocationActivity;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SavedTravelFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class SavedTravelFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public SavedTravelFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SavedTravelFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SavedTravelFragment newInstance(String param1, String param2) {
-        SavedTravelFragment fragment = new SavedTravelFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -62,5 +27,16 @@ public class SavedTravelFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_saved_travel, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.findViewById(R.id.btnLocation).setOnClickListener(v -> {
+            // Xử lý khi người dùng nhấn nút "Đi tới Location"
+            Intent intent = new Intent(getActivity(), LocationActivity.class);
+            startActivity(intent);
+        });
+
     }
 }

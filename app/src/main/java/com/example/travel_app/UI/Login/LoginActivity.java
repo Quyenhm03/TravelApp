@@ -1,8 +1,14 @@
 package com.example.travel_app.UI.Login;
 
+import static com.example.travel_app.UI.Register.RegisterActivity.EXTRA_EMAIL;
+import static com.example.travel_app.UI.Register.RegisterActivity.EXTRA_PASSWORD;
+import static com.example.travel_app.UI.Register.RegisterActivity.isClickRegister;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -12,20 +18,22 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.travel_app.R;
+import com.example.travel_app.UI.Activity.home.HomeActivity;
+import com.example.travel_app.UI.Register.RegisterActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText edtEmail, edtPassword;;
+    private FirebaseAuth mAuth;
+    private EditText edtEmail, edtPassword;
+    private TextView tvRegister;
     private Button btnLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        mAuth = FirebaseAuth.getInstance();
         initView();
     }
 
@@ -33,17 +41,54 @@ public class LoginActivity extends AppCompatActivity {
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        btnLogin.setOnClickListener(v-> ActionLogin());
+        tvRegister = findViewById(R.id.tvRegister);
+        tvRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        });
+        btnLogin.setOnClickListener(v -> ActionLogin());
     }
 
 
-    private void ActionLogin(){
-        if(edtEmail.getText().toString().isEmpty() ||  edtPassword.getText().toString().isEmpty()) {
+    private void ActionLogin() {
+        if (edtEmail.getText().toString().isEmpty() || edtPassword.getText().toString().isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
         String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
+        Intent intentGetUser = getIntent();
+
+        if (isClickRegister == 0) {
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(this, HomeActivity.class);
+                            startActivity(intent);
+                            finishAffinity();
+                        } else {
+
+                            Toast.makeText(this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            return;
+        }
+        String emailGetUser = intentGetUser.getStringExtra(EXTRA_EMAIL);
+        String passwordGetUser = intentGetUser.getStringExtra(EXTRA_PASSWORD);
+        assert emailGetUser != null;
+        assert passwordGetUser != null;
+        mAuth.signInWithEmailAndPassword(emailGetUser, passwordGetUser)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, HomeActivity.class);
+                        startActivity(intent);
+                    } else {
+
+                        Toast.makeText(this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
 
     }
