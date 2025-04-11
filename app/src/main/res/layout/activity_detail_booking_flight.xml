@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
         android:background="@color/orange">
 
         <androidx.appcompat.widget.AppCompatButton
@@ -20,7 +19,8 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingTop="25dp"
             android:gravity="center_horizontal"
             android:text="Chi tiết"
             android:textColor="@color/white"
@@ -30,7 +30,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="110dp">
+        android:layout_marginTop="75dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,6 +77,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="end"
+                                android:textColor="@color/black"
                                 android:text="01/03/2025"/>
                         </LinearLayout>
 
@@ -98,6 +99,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="20:00"
+                                    android:textColor="@color/black"
                                     android:textSize="30sp"
                                     android:textStyle="bold"/>
 
@@ -107,6 +109,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="5dp"
                                     android:text="Hà Nội"
+                                    android:textColor="@color/black"
                                     android:textStyle="bold"
                                     android:textSize="14sp" />
 
@@ -116,6 +119,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="5dp"
                                     android:text="HAN"
+                                    android:textColor="@color/black"
                                     android:textSize="14sp" />
                             </LinearLayout>
 
@@ -173,6 +177,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="21:40"
+                                    android:textColor="@color/black"
                                     android:textSize="30sp"
                                     android:textStyle="bold"/>
 
@@ -183,6 +188,7 @@
                                     android:layout_marginTop="5dp"
                                     android:gravity="end"
                                     android:text="TP Hồ Chí Minh"
+                                    android:textColor="@color/black"
                                     android:textSize="14sp"
                                     android:textStyle="bold"/>
 
@@ -193,6 +199,7 @@
                                     android:layout_marginTop="5dp"
                                     android:gravity="end"
                                     android:text="SGN"
+                                    android:textColor="@color/black"
                                     android:textSize="14sp" />
                             </LinearLayout>
                         </LinearLayout>
@@ -221,6 +228,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="PK230"
+                                    android:textColor="@color/black"
                                     android:textStyle="bold"
                                     android:layout_marginTop="5dp"
                                     android:textSize="18sp"/>
@@ -245,6 +253,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="2B"
                                     android:textStyle="bold"
+                                    android:textColor="@color/black"
                                     android:layout_marginTop="5dp"
                                     android:textSize="18sp"/>
                             </LinearLayout>
@@ -268,6 +277,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Economy"
                                     android:textStyle="bold"
+                                    android:textColor="@color/black"
                                     android:layout_marginTop="5dp"
                                     android:textSize="18sp"/>
                             </LinearLayout>
@@ -305,6 +315,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="end"
+                                android:textColor="@color/black"
                                 android:text="01/03/2025"/>
                         </LinearLayout>
 
@@ -327,6 +338,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="20:00"
                                     android:textSize="30sp"
+                                    android:textColor="@color/black"
                                     android:textStyle="bold"/>
 
                                 <TextView
@@ -335,6 +347,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="5dp"
                                     android:text="Hà Nội"
+                                    android:textColor="@color/black"
                                     android:textStyle="bold"
                                     android:textSize="14sp" />
 
@@ -344,6 +357,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="5dp"
                                     android:text="HAN"
+                                    android:textColor="@color/black"
                                     android:textSize="14sp" />
                             </LinearLayout>
 
@@ -401,6 +415,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="21:40"
+                                    android:textColor="@color/black"
                                     android:textSize="30sp"
                                     android:textStyle="bold"/>
 
@@ -412,6 +427,7 @@
                                     android:gravity="end"
                                     android:text="TP Hồ Chí Minh"
                                     android:textSize="14sp"
+                                    android:textColor="@color/black"
                                     android:textStyle="bold"/>
 
                                 <TextView
@@ -421,6 +437,7 @@
                                     android:layout_marginTop="5dp"
                                     android:gravity="end"
                                     android:text="SGN"
+                                    android:textColor="@color/black"
                                     android:textSize="14sp" />
                             </LinearLayout>
                         </LinearLayout>
@@ -449,6 +466,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="PK230"
+                                    android:textColor="@color/black"
                                     android:textStyle="bold"
                                     android:layout_marginTop="5dp"
                                     android:textSize="18sp"/>
@@ -473,6 +491,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="2B"
                                     android:textStyle="bold"
+                                    android:textColor="@color/black"
                                     android:layout_marginTop="5dp"
                                     android:textSize="18sp"/>
                             </LinearLayout>
@@ -495,6 +514,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Economy"
+                                    android:textColor="@color/black"
                                     android:textStyle="bold"
                                     android:layout_marginTop="5dp"
                                     android:textSize="18sp"/>
@@ -534,7 +554,6 @@
                             android:textSize="20sp"/>
                     </LinearLayout>
                 </LinearLayout>
-
             </LinearLayout>
 
             <LinearLayout
@@ -549,10 +568,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Tên khách hàng"
+                    android:textColor="@color/black"
                     android:textStyle="bold"
                     android:textSize="16sp"/>
 
                 <TextView
+                    android:id="@+id/txt_customer_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -583,6 +604,7 @@
                     android:textSize="16sp"/>
 
                 <TextView
+                    android:id="@+id/txt_booking_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -613,6 +635,7 @@
                     android:textSize="16sp"/>
 
                 <TextView
+                    android:id="@+id/txt_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -627,11 +650,27 @@
                     android:background="@drawable/line_shape"/>
             </LinearLayout>
 
-            <androidx.cardview.widget.CardView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <LinearLayout
+                android:id="@+id/passenger_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="25dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="Danh sách hành khách"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="20dp"
                 android:layout_marginLeft="30dp"

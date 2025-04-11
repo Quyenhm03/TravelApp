@@ -7,12 +7,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -42,7 +44,6 @@ public class AddPassengerInfoActivity extends AppCompatActivity {
     private BookingFlight bookingFlight = new BookingFlight();
 
     @SuppressLint("MissingInflatedId")
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +53,8 @@ public class AddPassengerInfoActivity extends AppCompatActivity {
         selectedFlight = (SelectedFlight) getIntent().getSerializableExtra("selectedFlight");
 
         bookingFlight.setDepartureFlight(selectedFlight.getDepartureFlight());
+        bookingFlight.setDepartureCity(searchFlightInfo.getDepartureCity());
+        bookingFlight.setArrivalCity(searchFlightInfo.getArrivalCity());
 
         txtDepartureIntinerary = findViewById(R.id.txt_departure_itinerary);
         txtDepartureFlightInfo1 = findViewById(R.id.txt_departure_flight_info1);
@@ -62,16 +65,16 @@ public class AddPassengerInfoActivity extends AppCompatActivity {
                 + " | " + searchFlightInfo.getDepartureDate();
         txtDepartureFlightInfo1.setText(departureFlightInfo1);
 
-        String departureFlightInfo2 =  selectedFlight.getDepartureFlight().getDepartureTime() + " - " + selectedFlight.getDepartureFlight().getArrivalTime()
+        String departureFlightInfo2 = selectedFlight.getDepartureFlight().getDepartureTime() + " - " + selectedFlight.getDepartureFlight().getArrivalTime()
                 + " | " + selectedFlight.getDepartureFlight().getFlightTime();
         txtDepartureFlightInfo2.setText(departureFlightInfo2);
 
         imgDepartureAirline = findViewById(R.id.img_departure_airline_logo);
         Picasso.get().load(selectedFlight.getDepartureFlight().getAirlineImgUrl()).into(imgDepartureAirline);
 
-        if(selectedFlight.getReturnFlight() != null) {
+        if (selectedFlight.getReturnFlight() != null) {
             LinearLayout lnReturnFlight = findViewById(R.id.ln_return_flight);
-            lnReturnFlight.setVisibility(TextView.VISIBLE);
+            lnReturnFlight.setVisibility(View.VISIBLE);
 
             bookingFlight.setReturnFlight(selectedFlight.getReturnFlight());
 
@@ -92,7 +95,7 @@ public class AddPassengerInfoActivity extends AppCompatActivity {
                     + " | " + searchFlightInfo.getReturnDate();
             txtReturnFlightInfo1.setText(returnFlightInfo1);
 
-            String returnFlightInfo2 =  selectedFlight.getReturnFlight().getDepartureTime() + " - " + selectedFlight.getReturnFlight().getArrivalTime()
+            String returnFlightInfo2 = selectedFlight.getReturnFlight().getDepartureTime() + " - " + selectedFlight.getReturnFlight().getArrivalTime()
                     + " | " + selectedFlight.getReturnFlight().getFlightTime();
             txtReturnFlightInfo2.setText(returnFlightInfo2);
 
@@ -111,13 +114,13 @@ public class AddPassengerInfoActivity extends AppCompatActivity {
 
         btnConfirm = findViewById(R.id.btn_confirm_add_customer_info);
         btnConfirm.setOnClickListener(v -> {
-            Intent intent = new Intent(AddPassengerInfoActivity.this, SelectSeatActivity.class);
-            bookingFlight.setPassengerList(passengerList);
-//            intent.putExtra("passengerList", (Serializable) passengerList);
-//            intent.putExtra("selectedFlight", selectedFlight);
-            intent.putExtra("bookingFlight",bookingFlight);
-            intent.putExtra("searchFlightInfo", searchFlightInfo);
-            startActivity(intent);
+            if (validateAllPassengers()) {
+                Intent intent = new Intent(AddPassengerInfoActivity.this, SelectSeatActivity.class);
+                bookingFlight.setPassengerList(passengerList);
+                intent.putExtra("bookingFlight", bookingFlight);
+                intent.putExtra("searchFlightInfo", searchFlightInfo);
+                startActivity(intent);
+            }
         });
     }
 
@@ -177,13 +180,33 @@ public class AddPassengerInfoActivity extends AppCompatActivity {
         return startIndex + count;
     }
 
+    private boolean validateAllPassengers() {
+        for (int i = 0; i < passengerList.size(); i++) {
+            Passenger passenger = passengerList.get(i);
+            if (!isPassengerInfoComplete(passenger)) {
+                Toast.makeText(this, "Vui lòng điền đầy đủ thông tin cho hành khách " + (i + 1), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isPassengerInfoComplete(Passenger passenger) {
+        return passenger.getFullName() != null && !passenger.getFullName().isEmpty() &&
+                passenger.getPhone() != null && !passenger.getPhone().isEmpty() &&
+                passenger.getDateOfBirth() != null && !passenger.getDateOfBirth().isEmpty() &&
+                passenger.getNationality() != null && !passenger.getNationality().isEmpty() &&
+                passenger.getGender() != null && !passenger.getGender().isEmpty() &&
+                passenger.getAddress() != null && !passenger.getAddress().isEmpty();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1 && resultCode == RESULT_OK && data != null) {
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
             Passenger updatedPassenger = (Passenger) data.getSerializableExtra("updatedPassenger");
             int customerIndex = data.getIntExtra("passengerIndex", -1);
-            if(updatedPassenger != null && customerIndex != -1) {
+            if (updatedPassenger != null && customerIndex != -1) {
                 passengerList.set(customerIndex, updatedPassenger);
             }
         }

@@ -2,7 +2,6 @@ package com.example.travel_app.UI.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,14 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.travel_app.Adapter.SeatAdapter;
 import com.example.travel_app.Data.Model.BookingFlight;
-import com.example.travel_app.Data.Model.Passenger;
 import com.example.travel_app.Data.Model.SearchFlightInfo;
-import com.example.travel_app.Data.Model.Seat;
-import com.example.travel_app.Data.Model.SelectedFlight;
 import com.example.travel_app.R;
 import com.example.travel_app.ViewModel.SeatViewModel;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +39,7 @@ public class SelectSeatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select_seat);
+        setContentView(R.layout.activity_select_seat_flight);
 
         searchFlightInfo = (SearchFlightInfo) getIntent().getSerializableExtra("searchFlightInfo");
         bookingFlight = (BookingFlight) getIntent().getSerializableExtra("bookingFlight");

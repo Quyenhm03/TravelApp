@@ -36,21 +36,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/btn_search_bus_station"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/search"/>
 
                 <EditText
+                    android:id="@+id/edt_search_bus_station"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:layout_marginLeft="10dp"
                     android:textColor="#8F8F8F"
                     android:textSize="15sp"
-                    android:text="ha noi"/>
+                    android:hint="Tìm kiếm bến xe"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -63,8 +66,8 @@
             android:textStyle="bold"
             android:textSize="15sp"
             android:textAllCaps="false"
-            android:layout_weight="0.8"/>
-
+            android:layout_weight="0.8"
+            android:onClick="onCancelClick"/>
     </LinearLayout>
 
     <LinearLayout
@@ -91,5 +94,4 @@
             android:layout_marginTop="30dp"
             android:scrollbars="vertical"/>
     </LinearLayout>
-
 </RelativeLayout>
