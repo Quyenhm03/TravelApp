@@ -14,10 +14,12 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.travel_app.Adapter.MediaAdapter;
 import com.example.travel_app.Adapter.ReviewAdapter;
 import com.example.travel_app.Adapter.listener.OnViewMoreClickListener;
 import com.example.travel_app.Data.Model.Review;
 import com.example.travel_app.R;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,10 @@ public class LocationActivity extends AppCompatActivity {
     private ReviewAdapter reviewAdapter;
     private List<Review> reviews;
     private static final int REQUEST_CODE_REVIEW = 100;
+    private MediaAdapter mediaAdapter;
+    private TabLayout tabLayout;
+    RecyclerView rvReviews;
+    Button btnViewMoreReviews, btnAddReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +44,9 @@ public class LocationActivity extends AppCompatActivity {
         reviews.add(new Review("Người dùng 2", 3, "Cảnh đẹp nhưng đường đi hơi khó."));
         reviews.add(new Review("Người dùng 3", 5.0f, "Tuyệt vời, đáng để ghé thăm!"));
         reviews.add(new Review("Người dùng 4", 4.0f, "Khá ổn, nhưng cần cải thiện dịch vụ."));
-
+        initViews();
         // Thiết lập RecyclerView
-        RecyclerView rvReviews = findViewById(R.id.rvReviews);
-        Button btnViewMoreReviews = findViewById(R.id.btnViewMoreReviews);
-        Button btnAddReview = findViewById(R.id.btnAddReview);
+
 
         reviewAdapter = new ReviewAdapter(reviews, () -> btnViewMoreReviews.setVisibility(View.GONE));
         rvReviews.setLayoutManager(new LinearLayoutManager(this));
@@ -64,6 +68,12 @@ public class LocationActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_REVIEW);
             }
         });
+    }
+
+    private void initViews() {
+        rvReviews = findViewById(R.id.rvReviews);
+        btnViewMoreReviews = findViewById(R.id.btnViewMoreReviews);
+        btnAddReview = findViewById(R.id.btnAddReview);
     }
 
     @SuppressLint("NotifyDataSetChanged")
