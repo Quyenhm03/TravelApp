@@ -39,7 +39,7 @@
                     android:layout_marginLeft="10dp"
                     android:textColor="#8F8F8F"
                     android:textSize="15sp"
-                    android:hint="Tìm kiếm"/>
+                    android:hint="T�m ki?m"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
@@ -93,7 +93,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="Tìm chuyến bay"
+                                android:text="T�m chuy?n bay"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"
                                 android:textSize="15sp"/>
@@ -127,7 +127,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="Tìm khách sạn"
+                                android:text="T�m kh�ch s?n"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"
                                 android:textSize="15sp"/>
@@ -158,7 +158,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="Tìm xe khách"
+                                android:text="T�m xe kh�ch"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"
                                 android:textSize="15sp"/>
@@ -180,7 +180,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Địa điểm "
+                            android:text="�?a di?m "
                             android:textColor="@color/black"
                             android:textSize="17sp"
                             android:textStyle="bold"/>
@@ -188,7 +188,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="nổi bật"
+                            android:text="n?i b?t"
                             android:textSize="17sp"
                             android:textColor="@color/orange"
                             android:textStyle="bold"/>
@@ -215,7 +215,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Khách sạn "
+                            android:text="Kh�ch s?n "
                             android:textColor="@color/black"
                             android:textSize="17sp"
                             android:textStyle="bold"/>
@@ -223,7 +223,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="được yêu thích"
+                            android:text="du?c y�u th�ch"
                             android:textSize="17sp"
                             android:textColor="@color/orange"
                             android:textStyle="bold"/>
@@ -250,7 +250,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Vé máy bay "
+                            android:text="V� m�y bay "
                             android:textColor="@color/black"
                             android:textSize="17sp"
                             android:textStyle="bold"/>
@@ -258,7 +258,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ưu đãi"
+                            android:text="uu d�i"
                             android:textSize="17sp"
                             android:textColor="@color/orange"
                             android:textStyle="bold"/>
@@ -286,7 +286,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tuyến xe khách "
+                            android:text="Tuy?n xe kh�ch "
                             android:textColor="@color/black"
                             android:textSize="17sp"
                             android:textStyle="bold"/>
@@ -294,7 +294,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="đa dạng"
+                            android:text="da d?ng"
                             android:textSize="17sp"
                             android:textColor="@color/orange"
                             android:textStyle="bold"/>

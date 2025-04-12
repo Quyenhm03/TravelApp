@@ -2,12 +2,12 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="app">
+      <SelectionState runConfigName="Travel_App.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-03-22T02:55:27.353260300Z">
+        <DropdownSelection timestamp="2025-04-06T03:49:41.606392800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=07201FDD4000FY" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=auzhlf597dcin75l" />
             </handle>
           </Target>
         </DropdownSelection>

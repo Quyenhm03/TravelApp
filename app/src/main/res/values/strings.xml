@@ -2,4 +2,10 @@
     <string name="app_name">Travel_App</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_save">Đã lưu</string>
+    <string name="nav_create_itinerary">Tạo lộ trình</string>
+    <string name="nav_personal">Tài khoản</string>"
+    <string name="register_hint">Bạn chưa có tài khoản? <font color="@color/holo_orange_dark">Đăng ký</font></string>
+    <string name="userReview">Người dùng: </string>
 </resources>

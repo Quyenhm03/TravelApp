@@ -25,6 +25,8 @@ public class PassengerInfoActivity extends AppCompatActivity {
     private Passenger passenger;
     private int customerIndex;
     private ImageButton btnNationality, btnGender;
+    private Button btnSave, btnBack;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -43,6 +45,9 @@ public class PassengerInfoActivity extends AppCompatActivity {
         txtGender = findViewById(R.id.txt_gender);
         btnNationality = findViewById(R.id.btn_nationality);
         btnGender = findViewById(R.id.btn_gender);
+        btnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(v -> onBackPressed());
+        btnSave = findViewById(R.id.btn_save_customer_info);
 
         if (passenger != null) {
             edtFullName.setText(passenger.getFullName());
