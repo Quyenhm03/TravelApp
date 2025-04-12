@@ -3,7 +3,6 @@ package com.example.travel_app.UI.Activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -17,10 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.travel_app.Data.Model.BookingFlight;
 import com.example.travel_app.Data.Model.Passenger;
@@ -29,11 +27,10 @@ import com.example.travel_app.Data.Model.SelectedFlight;
 import com.example.travel_app.R;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddPassengerInfoActivity extends AppCompatActivity {
+public class AddPassengerInfoFlightActivity extends AppCompatActivity {
     private SearchFlightInfo searchFlightInfo;
     private SelectedFlight selectedFlight;
     private List<Passenger> passengerList = new ArrayList<>();
@@ -47,7 +44,7 @@ public class AddPassengerInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_passenger_info);
+        setContentView(R.layout.activity_add_passenger_info_flight);
 
         searchFlightInfo = (SearchFlightInfo) getIntent().getSerializableExtra("searchFlightInfo");
         selectedFlight = (SelectedFlight) getIntent().getSerializableExtra("selectedFlight");
@@ -115,13 +112,16 @@ public class AddPassengerInfoActivity extends AppCompatActivity {
         btnConfirm = findViewById(R.id.btn_confirm_add_customer_info);
         btnConfirm.setOnClickListener(v -> {
             if (validateAllPassengers()) {
-                Intent intent = new Intent(AddPassengerInfoActivity.this, SelectSeatActivity.class);
+                Intent intent = new Intent(AddPassengerInfoFlightActivity.this, SelectSeatFlightActivity.class);
                 bookingFlight.setPassengerList(passengerList);
                 intent.putExtra("bookingFlight", bookingFlight);
                 intent.putExtra("searchFlightInfo", searchFlightInfo);
                 startActivity(intent);
             }
         });
+
+        AppCompatButton btnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void initializeCustomerList() {
@@ -171,7 +171,7 @@ public class AddPassengerInfoActivity extends AppCompatActivity {
 
             cardView.setOnClickListener(v -> {
                 Passenger currentPassenger = passengerList.get(currentIndex);
-                Intent intent = new Intent(AddPassengerInfoActivity.this, PassengerInfoActivity.class);
+                Intent intent = new Intent(AddPassengerInfoFlightActivity.this, PassengerInfoActivity.class);
                 intent.putExtra("passenger", currentPassenger);
                 intent.putExtra("passengerIndex", currentIndex);
                 startActivityForResult(intent, 1);

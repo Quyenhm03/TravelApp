@@ -54,6 +54,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="20:00"
+                            android:textColor="@color/black"
                             android:textSize="22sp"
                             android:textStyle="bold"/>
 
@@ -131,6 +132,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="21:40"
+                            android:textColor="@color/black"
                             android:textSize="22sp"
                             android:textStyle="bold"/>
 
@@ -209,6 +211,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="15dp"
                                     android:text="01/03/2025"
+                                    android:textColor="@color/black"
                                     android:textStyle="bold"
                                     android:textSize="16sp"/>
                             </LinearLayout>
@@ -257,6 +260,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="15dp"
                                     android:text="01h 40m"
+                                    android:textColor="@color/black"
                                     android:textStyle="bold"
                                     android:textSize="16sp"/>
                             </LinearLayout>
@@ -292,6 +296,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
                         android:text="1.475.000 VND"
+                        android:textColor="@color/black"
                         android:textStyle="bold"
                         android:textSize="27sp"
                         android:gravity="end"/>

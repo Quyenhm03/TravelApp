@@ -1,5 +1,7 @@
 package com.example.travel_app.Data.Repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -22,7 +24,7 @@ public class FlightRepository {
     private DatabaseReference databaseReference;
 
     public FlightRepository() {
-        databaseReference = FirebaseDatabase.getInstance().getReference("flight");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Flight");
     }
 
     public LiveData<List<Flight>> searchFlights(String departureAirportCode, String arrivalAirportCode, String departureDate, String seatType) {
@@ -74,6 +76,31 @@ public class FlightRepository {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+        return flightLiveData;
+    }
+
+    public LiveData<List<Flight>> getFirstTenFlights() {
+        MutableLiveData<List<Flight>> flightLiveData = new MutableLiveData<>();
+
+        databaseReference.limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Flight> flightList = new ArrayList<>();
+                for (DataSnapshot flightSnapshot : snapshot.getChildren()) {
+                    Flight flight = flightSnapshot.getValue(Flight.class);
+                    if (flight != null) {
+                        flightList.add(flight);
+                    }
+                }
+                flightLiveData.setValue(flightList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FlightRepository", "Failed to load flights: " + error.getMessage());
+                flightLiveData.setValue(null);
             }
         });
         return flightLiveData;

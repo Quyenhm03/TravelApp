@@ -1,5 +1,7 @@
 package com.example.travel_app.Data.Repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -18,16 +20,16 @@ public class AirportRepository {
     private DatabaseReference databaseReference;
 
     public AirportRepository() {
-        databaseReference = FirebaseDatabase.getInstance().getReference("airport");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Airport");
     }
 
     public LiveData<List<Airport>> getAirport() {
         MutableLiveData<List<Airport>> airportLiveData = new MutableLiveData<>();
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Airport> airportList = new ArrayList<>();
-                for(DataSnapshot airportSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot airportSnapshot : snapshot.getChildren()) {
                     Airport airport = airportSnapshot.getValue(Airport.class);
                     if (airport != null) {
                         airportList.add(airport);
@@ -37,7 +39,11 @@ public class AirportRepository {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi: Đặt giá trị null hoặc thông báo lỗi
+                airportLiveData.setValue(null);
+                Log.e("AirportRepository", "Failed to load airports: " + error.getMessage());
+            }
         });
         return airportLiveData;
     }

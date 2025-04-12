@@ -7,15 +7,13 @@ import androidx.lifecycle.ViewModel;
 import com.example.travel_app.Data.Model.Flight;
 import com.example.travel_app.Data.Repository.FlightRepository;
 
-import java.util.List;
-
-public class SeatViewModel extends ViewModel {
+public class SeatFlightViewModel extends ViewModel {
     private FlightRepository repository;
     private LiveData<Flight> flightLiveData;
     private MutableLiveData<Boolean> updateSuccess = new MutableLiveData<>();
     private MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
-    public SeatViewModel() {
+    public SeatFlightViewModel() {
         repository = new FlightRepository();
     }
 

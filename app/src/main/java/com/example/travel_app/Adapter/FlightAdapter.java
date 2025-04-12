@@ -45,11 +45,10 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightView
     @NonNull
     @Override
     public FlightViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view  = LayoutInflater.from(parent.getContext()).inflate(R.layout.ticket_flight, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ticket_flight, parent, false);
         return new FlightViewHolder(view);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull FlightViewHolder holder, int position) {
         Flight flight = flightList.get(position);
@@ -58,8 +57,11 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightView
         holder.txtArrivalAirportCode.setText(flight.getArrivalAirportCode());
         holder.txtDepartureTime.setText(flight.getDepartureTime());
         holder.txtArrivalTime.setText(flight.getArrivalTime());
-        holder.txtPrice.setText((int)flight.getPrice() + " VND");
         holder.txtFlightTime.setText(flight.getFlightTime());
+
+        // Định dạng giá với dấu phẩy phân cách hàng nghìn
+        String formattedPrice = String.format("%,.0f VNĐ", flight.getPrice());
+        holder.txtPrice.setText(formattedPrice);
 
         Picasso.get().load(flight.getAirlineImgUrl()).into(holder.imgAirline);
 
@@ -88,7 +90,6 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightView
 
         public FlightViewHolder(@NonNull View itemView) {
             super(itemView);
-
             txtFlightNumber = itemView.findViewById(R.id.txt_flight_number);
             txtFlightTime = itemView.findViewById(R.id.txt_flight_time);
             txtDepartureTime = itemView.findViewById(R.id.txt_departure_time);
@@ -98,7 +99,6 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightView
             txtPrice = itemView.findViewById(R.id.txt_ticket_flight_price);
             imgAirline = itemView.findViewById(R.id.img_airline);
             btnViewDetail = itemView.findViewById(R.id.btn_view_detail_ticket);
-
         }
     }
 }

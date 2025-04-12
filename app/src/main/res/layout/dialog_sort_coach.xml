@@ -1,6 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sắp xếp chuyến xe"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="16dp" />
+
+    <RadioGroup
+        android:id="@+id/rg_sort_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rb_price_asc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giá: Thấp đến cao"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/rb_price_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giá: Cao đến thấp"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/rb_departure_early"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giờ khởi hành: Sớm nhất"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/rb_departure_late"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giờ khởi hành: Muộn nhất"
+            android:textColor="@color/black" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btn_apply_sort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Áp dụng"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/orange"
+        android:textColor="@color/white" />
+</LinearLayout>

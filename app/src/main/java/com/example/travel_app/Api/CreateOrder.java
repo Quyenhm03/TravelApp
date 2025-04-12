@@ -1,7 +1,7 @@
-package com.zlpdemo.merchantDemo.Api;
+package com.example.travel_app.Api;
 
-import com.zlpdemo.merchantDemo.Constant.AppInfo;
-import com.zlpdemo.merchantDemo.Helper.Helpers;
+import com.example.travel_app.Constant.AppInfo;
+import com.example.travel_app.Helper.Helpers;
 
 import org.json.JSONObject;
 

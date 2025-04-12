@@ -10,9 +10,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.travel_app.Data.Model.Passenger;
 import com.example.travel_app.R;
@@ -53,15 +55,13 @@ public class PassengerInfoActivity extends AppCompatActivity {
             txtNationality.setText("Vietnam");
         }
 
-
         btnNationality.setOnClickListener(v -> showNationalityMenu(v));
         btnGender.setOnClickListener(v -> showGenderMenu(v));
 
         Button btnSave = findViewById(R.id.btn_save_customer_info);
         btnSave.setOnClickListener(v -> {
-            saveCustomerInfo();
-
-            if(passenger != null){
+            if (validatePassengerInfo()) {
+                saveCustomerInfo();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("updatedPassenger", passenger);
                 resultIntent.putExtra("passengerIndex", customerIndex);
@@ -70,15 +70,65 @@ public class PassengerInfoActivity extends AppCompatActivity {
             }
         });
 
+        AppCompatButton btnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(v -> finish());
+    }
+
+    private boolean validatePassengerInfo() {
+        String fullName = edtFullName.getText().toString().trim();
+        if (fullName.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập Họ và Tên", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        String phone = edtPhone.getText().toString().trim();
+        if (phone.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập Số điện thoại", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!phone.matches("\\d{10}")) { // Kiểm tra số điện thoại phải là 10 chữ số
+            Toast.makeText(this, "Số điện thoại phải có 10 chữ số", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        String dateOfBirth = edtBirthday.getText().toString().trim();
+        if (dateOfBirth.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập Ngày sinh", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!dateOfBirth.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            Toast.makeText(this, "Ngày sinh phải có định dạng dd/MM/yyyy", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        String nationality = txtNationality.getText().toString().trim();
+        if (nationality.isEmpty()) {
+            Toast.makeText(this, "Vui lòng chọn Quốc tịch", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        String gender = txtGender.getText().toString().trim();
+        if (gender.isEmpty()) {
+            Toast.makeText(this, "Vui lòng chọn Giới tính", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        String address = edtAddress.getText().toString().trim();
+        if (address.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập Địa chỉ", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 
     private void saveCustomerInfo() {
-        passenger.setFullName(edtFullName.getText().toString());
-        passenger.setAddress(edtAddress.getText().toString());
-        passenger.setPhone(edtPhone.getText().toString());
-        passenger.setDateOfBirth(edtBirthday.getText().toString());
-        passenger.setNationality(txtNationality.getText().toString());
-        passenger.setGender(txtGender.getText().toString());
+        passenger.setFullName(edtFullName.getText().toString().trim());
+        passenger.setAddress(edtAddress.getText().toString().trim());
+        passenger.setPhone(edtPhone.getText().toString().trim());
+        passenger.setDateOfBirth(edtBirthday.getText().toString().trim());
+        passenger.setNationality(txtNationality.getText().toString().trim());
+        passenger.setGender(txtGender.getText().toString().trim());
     }
 
     private void showNationalityMenu(View view) {

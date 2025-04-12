@@ -27,9 +27,8 @@ public class SearchFlightActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
     private Button btnOneWay, btnRoundTrip, btnSearchFlight;
-    private Fragment oneWayFragment, roundTripFragment, multiCityFragment;
+    private Fragment oneWayFragment, roundTripFragment;
     private Fragment currentFragment;
-    private String currentSelectionType;  // Lưu loại sân bay đang chọn (departure/arrival)
     private TextView txtSeatType, txtCustomerNumber;
     private ImageButton btnSeatType;
     private CardView cvChooseCustomer;

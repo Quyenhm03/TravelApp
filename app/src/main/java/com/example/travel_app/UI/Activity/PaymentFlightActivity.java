@@ -1,6 +1,13 @@
 package com.example.travel_app.UI.Activity;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,23 +20,28 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.travel_app.Api.CreateOrder;
 import com.example.travel_app.Data.Model.BookingFlight;
 import com.example.travel_app.Data.Model.Flight;
-import com.example.travel_app.Data.Model.Passenger;
 import com.example.travel_app.Data.Model.Payment;
 import com.example.travel_app.Data.Model.SearchFlightInfo;
-import com.example.travel_app.Data.Model.Seat;
-import com.example.travel_app.Data.Model.SelectedFlight;
 import com.example.travel_app.R;
+import com.example.travel_app.Receiver.ReminderBroadcastReceiver;
 import com.example.travel_app.ViewModel.BookingFlightViewModel;
-import com.example.travel_app.ViewModel.SeatViewModel;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import vn.zalopay.sdk.Environment;
+import vn.zalopay.sdk.ZaloPayError;
+import vn.zalopay.sdk.ZaloPaySDK;
+import vn.zalopay.sdk.listeners.PayOrderListener;
 
 public class PaymentFlightActivity extends AppCompatActivity {
     private SearchFlightInfo searchFlightInfo;
@@ -39,12 +51,18 @@ public class PaymentFlightActivity extends AppCompatActivity {
     private TextView txtAmount;
     private Button btnPayment;
     private BookingFlightViewModel bookingFlightViewModel;
-//    private SeatViewModel seatViewModel;
+    private double total;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_flight);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        // ZaloPay SDK Init
+        ZaloPaySDK.init(2553, Environment.SANDBOX);
 
         searchFlightInfo = (SearchFlightInfo) getIntent().getSerializableExtra("searchFlightInfo");
         bookingFlight = (BookingFlight) getIntent().getSerializableExtra("bookingFlight");
@@ -52,15 +70,11 @@ public class PaymentFlightActivity extends AppCompatActivity {
         txtAmount = findViewById(R.id.txt_amount);
         btnPayment = findViewById(R.id.btn_payment);
 
-        // Khởi tạo ViewModel
         bookingFlightViewModel = new ViewModelProvider(this).get(BookingFlightViewModel.class);
-//        seatViewModel = new ViewModelProvider(this).get(SeatViewModel.class);
 
-        // Quan sát kết quả lưu BookingFlight
         bookingFlightViewModel.getSaveSuccess().observe(this, success -> {
             if (success) {
                 Toast.makeText(this, "Đặt vé thành công!", Toast.LENGTH_SHORT).show();
-                finish();
             }
         });
 
@@ -77,38 +91,156 @@ public class PaymentFlightActivity extends AppCompatActivity {
             setUpReturnPaymentInfo();
         }
 
-        double total = bookingFlight.getDepartureFlight().getPrice() * searchFlightInfo.getCustomerCount();
+        total = bookingFlight.getDepartureFlight().getPrice() * searchFlightInfo.getCustomerCount();
         if (bookingFlight.getReturnFlight() != null) {
             total += bookingFlight.getReturnFlight().getPrice() * searchFlightInfo.getCustomerCount();
         }
         bookingFlight.setTotalAmount(total);
-        txtAmount.setText(String.valueOf(total));
 
-        // Xử lý sự kiện nhấn nút Payment
+        String formattedPrice = String.format("%,.0f VNĐ", total);
+        txtAmount.setText(formattedPrice);
+
         btnPayment.setOnClickListener(v -> saveBooking());
     }
 
     private void saveBooking() {
+        CreateOrder orderApi = new CreateOrder();
+
+        try {
+            JSONObject data = orderApi.createOrder(String.valueOf((int) total));
+            Log.d("PaymentDebug", "CreateOrder Response: " + data.toString());
+            String code = data.getString("return_code");
+            Log.d("PaymentDebug", "Return Code: " + code);
+
+            if (code.equals("1")) {
+                String token = data.getString("zp_trans_token");
+                Log.d("PaymentDebug", "Token: " + token);
+                ZaloPaySDK.getInstance().payOrder(PaymentFlightActivity.this, token, "demozpdk://flight", new PayOrderListener() {
+                    @Override
+                    public void onPaymentSucceeded(String s, String s1, String s2) {
+                        Log.d("PaymentDebug", "Payment Succeeded");
+                        bookingFlight.setStatus("Đã thanh toán");
+                        String transactionDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+                        String paymentId = "pay_" + System.currentTimeMillis();
+                        String paymentMethod = "ZaloPay";
+                        Payment payment = new Payment(paymentId, bookingFlight.getId(), bookingFlight.getTotalAmount(), "success", paymentMethod, transactionDate);
+                        bookingFlight.setPayment(payment);
+                        bookingFlight.setUserId("user123");
+
+                        // Tính departureTimestamp và returnTimestamp (nếu có)
+                        try {
+                            // Chuyến đi
+                            String departureDate = bookingFlight.getDepartureFlight().getDepartureDate();
+                            String departureTime = bookingFlight.getDepartureFlight().getDepartureTime();
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                            Date departureDateTime = sdf.parse(departureDate + " " + departureTime);
+                            long departureTimestamp = departureDateTime.getTime();
+                            bookingFlight.setDepartureTimestamp(departureTimestamp);
+
+                            // Đặt lịch thông báo cho chuyến đi
+                            long departureReminderTime = departureTimestamp - 30 * 60 * 1000;
+                            scheduleReminder(
+                                    PaymentFlightActivity.this,
+                                    "Chuyến bay đi từ " + bookingFlight.getDepartureCity() + " đến " +
+                                            bookingFlight.getArrivalCity() + " sẽ khởi hành lúc " + departureTime,
+                                    departureReminderTime
+                            );
+
+                            if (bookingFlight.getReturnFlight() != null) {
+                                String returnDate = bookingFlight.getReturnFlight().getDepartureDate();
+                                String returnTime = bookingFlight.getReturnFlight().getDepartureTime();
+                                Date returnDateTime = sdf.parse(returnDate + " " + returnTime);
+                                long returnTimestamp = returnDateTime.getTime();
+                                bookingFlight.setReturnTimestamp(returnTimestamp);
+
+                                // Đặt lịch thông báo cho chuyến về
+                                long returnReminderTime = returnTimestamp - 30 * 60 * 1000; // 30 phút trước
+                                scheduleReminder(
+                                        PaymentFlightActivity.this,
+                                        "Chuyến bay về từ " + bookingFlight.getArrivalCity() + " đến " +
+                                                bookingFlight.getDepartureCity() + " sẽ khởi hành lúc " + returnTime,
+                                        returnReminderTime
+                                );
+                            }
+                        } catch (Exception e) {
+                            Log.e("PaymentFlightActivity", "Error parsing departure/return date/time: " + e.getMessage());
+                        }
+
+                        bookingFlightViewModel.saveBooking(bookingFlight);
+                        Toast.makeText(PaymentFlightActivity.this, "Thanh toán thành công!", Toast.LENGTH_LONG).show();
+                        btnPayment.setEnabled(false);
+                        btnPayment.setText("Đã thanh toán");
+
+                        // Chuyển về HomeActivity và xóa stack điều hướng
+                        Intent intent = new Intent(PaymentFlightActivity.this, HomeActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onPaymentCanceled(String s, String s1) {
+                        Log.d("PaymentDebug", "Payment Canceled");
+                        Toast.makeText(PaymentFlightActivity.this, "Hủy thanh toán!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onPaymentError(ZaloPayError zaloPayError, String s, String s1) {
+                        Log.d("PaymentDebug", "Payment Error: " + zaloPayError.toString());
+                        Toast.makeText(PaymentFlightActivity.this, "Lỗi: " + zaloPayError.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Log.d("PaymentDebug", "CreateOrder failed with code: " + code);
+                Toast.makeText(this, "Tạo đơn hàng thất bại, mã lỗi: " + code, Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (Exception e) {
+            Log.e("PaymentDebug", "Exception: " + e.getMessage());
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
         bookingFlight.setId(generateBookingId());
-//        bookingFlight.setUserId(getCurrentUserId());
-        bookingFlight.setStatus("Đã thanh toán");
+    }
 
-        String transactionDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-        String paymentId = "pay_" + System.currentTimeMillis();
-        String paymentMethod = "credit card";
-        Payment payment = new Payment(paymentId, bookingFlight.getId(), bookingFlight.getTotalAmount(), "success", paymentMethod, transactionDate);
-        bookingFlight.setPayment(payment);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        ZaloPaySDK.getInstance().onResult(intent);
+    }
 
-        // Lưu BookingFlight (đã bao gồm cập nhật ghế trong BookingFlightRepository)
-        bookingFlightViewModel.saveBooking(bookingFlight);
+    @SuppressLint("ScheduleExactAlarm")
+    private void scheduleReminder(Context context, String message, long triggerTime) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Log.e("ReminderDebug", "Cannot schedule exact alarm due to missing permission");
+                return;
+            }
+        }
+
+        Intent intent = new Intent(context, ReminderBroadcastReceiver.class);
+        intent.putExtra("message", message);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                message.hashCode(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        // Đặt lịch thông báo
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+        }
     }
 
     private String generateBookingId() {
         return "booking_" + System.currentTimeMillis();
-    }
-
-    private String getCurrentUserId() {
-        return "user123"; // Thay bằng logic thực tế
     }
 
     private void setUpDeparturePaymentInfo() {

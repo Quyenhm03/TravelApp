@@ -1,4 +1,4 @@
-package com.example.travel_app.Receier;
+package com.example.travel_app.Receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

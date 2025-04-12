@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,7 +34,8 @@ public class SearchAirportActivity extends AppCompatActivity {
     private List<Airport> airportList = new ArrayList<>();
     private EditText edtSearchAirport;
     private ImageButton btnSearchAirport;
-    private String searchType; // Lưu loại sân bay (departure/arrival)
+    private ProgressBar progressBar;
+    private String searchType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class SearchAirportActivity extends AppCompatActivity {
         edtSearchAirport = findViewById(R.id.edt_search_airport);
         btnSearchAirport = findViewById(R.id.btn_search_airport);
         rcvAirportResult = findViewById(R.id.rcv_airport_result);
+        progressBar = findViewById(R.id.progress_bar);
 
         searchType = getIntent().getStringExtra("search_type");
 
@@ -52,6 +55,7 @@ public class SearchAirportActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(SearchAirportViewModel.class);
         viewModel.getAirports().observe(this, airports -> {
+            progressBar.setVisibility(View.GONE);
             if (airports != null && !airports.isEmpty()) {
                 airportList.clear();
                 airportList.addAll(airports);
@@ -80,7 +84,7 @@ public class SearchAirportActivity extends AppCompatActivity {
     private void searchAirport() {
         String query = removeDiacritics(edtSearchAirport.getText().toString().trim().toLowerCase());
         List<Airport> filteredList = new ArrayList<>();
-        for(Airport airport : airportList) {
+        for (Airport airport : airportList) {
             String airportName = removeDiacritics(airport.getName());
             String airportCity = removeDiacritics(airport.getCity());
 

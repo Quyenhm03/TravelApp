@@ -64,6 +64,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Hà Nội"
+                                android:textColor="@color/black"
                                 android:textSize="15sp"/>
 
                             <TextView
@@ -142,6 +143,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="TP Hồ Chí Minh"
+                                android:textColor="@color/black"
                                 android:textSize="15sp"/>
 
                             <TextView
@@ -215,6 +217,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
                             android:text="01/03/2025"
+                            android:textColor="@color/black"
                             android:textSize="15sp"/>
                     </LinearLayout>
                 </LinearLayout>

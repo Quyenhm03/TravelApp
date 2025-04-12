@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,7 +39,7 @@ public class SearchFlightResultActivity extends AppCompatActivity {
 
         isReturnFlight = getIntent().getBooleanExtra("isReturnFlight", false);
 
-        if(!isReturnFlight) {
+        if (!isReturnFlight) {
             String searchFlightInfo1 = searchFlightInfo.getDepartureCity() + " (" + searchFlightInfo.getDepartureAirportCode() + ") -> "
                     + searchFlightInfo.getArrivalCity() + " (" + searchFlightInfo.getArrivalAirportCode() + ")";
             txtSearchFlightInfo1.setText(searchFlightInfo1);
@@ -69,5 +70,9 @@ public class SearchFlightResultActivity extends AppCompatActivity {
                     .replace(R.id.fragment_flight_result, fragment)
                     .commit();
         }
+
+        // Xử lý nút Back
+        AppCompatButton btnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(v -> finish());
     }
 }

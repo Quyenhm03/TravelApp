@@ -1,5 +1,6 @@
 package com.example.travel_app.UI.Activity;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.travel_app.Data.Model.BookingFlight;
@@ -25,7 +27,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class BookingDetailActivity extends AppCompatActivity {
+public class BookingFlightDetailActivity extends AppCompatActivity {
     private TextView txtDepartureDate, txtDepartureTime, txtDepartureCity, txtDepartureCode,
             txtArrivalTime, txtArrivalCity, txtArrivalCode, txtDepartureFlight, txtDepartureSeat,
             txtDepartureSeatType, txtReturnDate, txtReturnTime, txtReturnCity, txtReturnCode,
@@ -40,9 +42,8 @@ public class BookingDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_booking);
+        setContentView(R.layout.activity_detail_booking_flight);
 
-        // Ánh xạ các view
         txtDepartureDate = findViewById(R.id.txt_departure_date_payment);
         txtDepartureTime = findViewById(R.id.txt_departure_time_payment);
         txtDepartureCity = findViewById(R.id.txt_departure_city_payment);
@@ -73,10 +74,8 @@ public class BookingDetailActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btn_back);
         passengerContainer = findViewById(R.id.passenger_container);
 
-        // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(BookingDetailViewModel.class);
 
-        // Lấy dữ liệu từ Intent
         BookingFlight booking = (BookingFlight) getIntent().getSerializableExtra("bookingFlight");
         if (booking == null) {
             Toast.makeText(this, "Không tìm thấy thông tin đặt vé", Toast.LENGTH_SHORT).show();
@@ -84,19 +83,15 @@ public class BookingDetailActivity extends AppCompatActivity {
             return;
         }
 
-        // Cập nhật ViewModel
         viewModel.setBooking(booking);
 
-        // Quan sát dữ liệu từ ViewModel
         viewModel.getBooking().observe(this, this::updateBookingDetails);
         viewModel.getPassengerList().observe(this, this::displayPassengerList);
 
-        // Xử lý nút Quay lại
         btnBack.setOnClickListener(v -> finish());
     }
 
     private void updateBookingDetails(BookingFlight booking) {
-        // Hiển thị thông tin chuyến đi
         Flight departureFlight = booking.getDepartureFlight();
         txtDepartureDate.setText(departureFlight.getDepartureDate());
         txtDepartureTime.setText(departureFlight.getDepartureTime());
@@ -110,7 +105,6 @@ public class BookingDetailActivity extends AppCompatActivity {
         txtDepartureSeatType.setText(departureFlight.getSeatType());
         Picasso.get().load(departureFlight.getAirlineImgUrl()).into(imgDepartureAirline);
 
-        // Hiển thị thông tin chuyến về (nếu có)
         if (booking.getReturnFlight() != null) {
             lnPaymentReturn.setVisibility(View.VISIBLE);
             Flight returnFlight = booking.getReturnFlight();
@@ -129,7 +123,6 @@ public class BookingDetailActivity extends AppCompatActivity {
             lnPaymentReturn.setVisibility(View.GONE);
         }
 
-        // Hiển thị thông tin tổng quan
         txtAmount.setText(String.format("%,.0f VND", booking.getTotalAmount()));
         txtCustomerName.setText(booking.getPassengerList().get(0).getFullName());
         txtBookingDate.setText(booking.getPayment().getTransactionDate());
@@ -139,13 +132,15 @@ public class BookingDetailActivity extends AppCompatActivity {
     private void displayPassengerList(List<Passenger> passengerList) {
         if (passengerList == null || passengerList.isEmpty()) {
             TextView noPassengerText = new TextView(this);
-            noPassengerText.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(0, 20, 0, 20);
+            noPassengerText.setLayoutParams(params);
             noPassengerText.setText("Không có thông tin hành khách");
             noPassengerText.setTextSize(16);
-            noPassengerText.setTextColor(getResources().getColor(android.R.color.darker_gray));
-            noPassengerText.setPadding(0, 20, 0, 20);
+            noPassengerText.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+            noPassengerText.setGravity(Gravity.CENTER);
             passengerContainer.addView(noPassengerText);
             return;
         }
@@ -153,23 +148,25 @@ public class BookingDetailActivity extends AppCompatActivity {
         for (int i = 0; i < passengerList.size(); i++) {
             Passenger passenger = passengerList.get(i);
 
-            // Tạo CardView cho mỗi hành khách
+            // Tạo CardView
             CardView cardView = new CardView(this);
-            cardView.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            cardParams.setMargins(2, 25, 2, 25);
+            cardView.setLayoutParams(cardParams);
             cardView.setCardElevation(4);
-            cardView.setRadius(8);
-            cardView.setUseCompatPadding(true);
-            cardView.setContentPadding(16, 16, 16, 16);
+            cardView.setRadius(12);
+            cardView.setUseCompatPadding(false);
+            cardView.setContentPadding(20, 25, 20, 25);
 
+            // Tạo LinearLayout chính trong CardView
             LinearLayout cardLayout = new LinearLayout(this);
             cardLayout.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             cardLayout.setOrientation(LinearLayout.VERTICAL);
 
-            // Header của CardView (Tên hành khách và nút mở rộng)
             LinearLayout headerLayout = new LinearLayout(this);
             headerLayout.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -178,85 +175,47 @@ public class BookingDetailActivity extends AppCompatActivity {
             headerLayout.setGravity(Gravity.CENTER_VERTICAL);
 
             TextView txtPassengerName = new TextView(this);
-            txtPassengerName.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(
                     0,
                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                    1));
+                    1);
+            txtPassengerName.setLayoutParams(nameParams);
             txtPassengerName.setText("Hành khách " + (i + 1) + ": " + (passenger.getFullName() != null ? passenger.getFullName() : "N/A"));
             txtPassengerName.setTextSize(16);
-//            txtPassengerName.setTextStyle(Typeface.BOLD);
+            txtPassengerName.setTextColor(Color.parseColor("#676767"));
 
             ImageView imgExpand = new ImageView(this);
-            imgExpand.setLayoutParams(new LinearLayout.LayoutParams(24, 24));
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(40, 40);
+            iconParams.setMargins(8, 0, 0, 0); // Khoảng cách giữa tên và icon
+            imgExpand.setLayoutParams(iconParams);
             imgExpand.setImageResource(R.drawable.ic_expand_more);
 
             headerLayout.addView(txtPassengerName);
             headerLayout.addView(imgExpand);
 
-            // Layout chứa thông tin chi tiết (ban đầu ẩn)
             LinearLayout detailsLayout = new LinearLayout(this);
-            detailsLayout.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams detailsParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            detailsParams.setMargins(0, 12, 0, 0);
+            detailsLayout.setLayoutParams(detailsParams);
             detailsLayout.setOrientation(LinearLayout.VERTICAL);
             detailsLayout.setVisibility(View.GONE);
 
-            TextView txtGender = new TextView(this);
-            txtGender.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-            txtGender.setText("Giới tính: " + (passenger.getGender() != null ? passenger.getGender() : "N/A"));
-            txtGender.setTextSize(14);
-            txtGender.setTextColor(getResources().getColor(android.R.color.black));
-            txtGender.setPadding(0, 5, 0, 0);
+            // Tạo các TextView cho thông tin chi tiết
+            addDetailText(detailsLayout, "Giới tính", passenger.getGender());
+            addDetailText(detailsLayout, "Ngày sinh", passenger.getDateOfBirth());
+            addDetailText(detailsLayout, "Quốc tịch", passenger.getNationality());
+            addDetailText(detailsLayout, "Số điện thoại", passenger.getPhone());
+            addDetailText(detailsLayout, "Địa chỉ", passenger.getAddress());
 
-            TextView txtDateOfBirth = new TextView(this);
-            txtDateOfBirth.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-            txtDateOfBirth.setText("Ngày sinh: " + (passenger.getDateOfBirth() != null ? passenger.getDateOfBirth() : "N/A"));
-            txtDateOfBirth.setTextSize(14);
-            txtDateOfBirth.setTextColor(getResources().getColor(android.R.color.black));
-            txtDateOfBirth.setPadding(0, 5, 0, 0);
-
-            TextView txtNationality = new TextView(this);
-            txtNationality.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-            txtNationality.setText("Quốc tịch: " + (passenger.getNationality() != null ? passenger.getNationality() : "N/A"));
-            txtNationality.setTextSize(14);
-            txtNationality.setTextColor(getResources().getColor(android.R.color.black));
-            txtNationality.setPadding(0, 5, 0, 0);
-
-            TextView txtPhone = new TextView(this);
-            txtPhone.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-            txtPhone.setText("Số điện thoại: " + (passenger.getPhone() != null ? passenger.getPhone() : "N/A"));
-            txtPhone.setTextSize(14);
-            txtPhone.setTextColor(getResources().getColor(android.R.color.black));
-            txtPhone.setPadding(0, 5, 0, 0);
-
-            TextView txtAddress = new TextView(this);
-            txtAddress.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-            txtAddress.setText("Địa chỉ: " + (passenger.getAddress() != null ? passenger.getAddress() : "N/A"));
-            txtAddress.setTextSize(14);
-            txtAddress.setTextColor(getResources().getColor(android.R.color.black));
-            txtAddress.setPadding(0, 5, 0, 0);
-
-            detailsLayout.addView(txtGender);
-            detailsLayout.addView(txtDateOfBirth);
-            detailsLayout.addView(txtNationality);
-            detailsLayout.addView(txtPhone);
-            detailsLayout.addView(txtAddress);
-
+            // Thêm các thành phần vào CardView
             cardLayout.addView(headerLayout);
             cardLayout.addView(detailsLayout);
             cardView.addView(cardLayout);
             passengerContainer.addView(cardView);
 
+            // Xử lý sự kiện mở rộng/thu gọn
             headerLayout.setOnClickListener(v -> {
                 if (detailsLayout.getVisibility() == View.VISIBLE) {
                     detailsLayout.setVisibility(View.GONE);
@@ -267,5 +226,19 @@ public class BookingDetailActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    // Phương thức hỗ trợ để thêm TextView cho thông tin chi tiết
+    private void addDetailText(LinearLayout container, String label, String value) {
+        TextView textView = new TextView(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 8, 0, 0);
+        textView.setLayoutParams(params);
+        textView.setText(label + ": " + (value != null ? value : "N/A"));
+        textView.setTextSize(14);
+        textView.setTextColor(ContextCompat.getColor(this, android.R.color.black));
+        container.addView(textView);
     }
 }

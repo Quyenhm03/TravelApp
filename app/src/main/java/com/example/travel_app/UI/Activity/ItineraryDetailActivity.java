@@ -50,7 +50,7 @@ public class ItineraryDetailActivity extends AppCompatActivity {
         rcvItems = findViewById(R.id.rcv_);
         lnDaysContainer = findViewById(R.id.ln_days_container);
         txtTitle = findViewById(R.id.txt_title_itinerary);
-        txtDetail= findViewById(R.id.txt_detail_itinerary);
+        txtDetail = findViewById(R.id.txt_detail_itinerary);
         txtUserName = findViewById(R.id.txt_user_name);
         txtCreateDate = findViewById(R.id.txt_create_date);
         btnBack = findViewById(R.id.btn_back);
@@ -68,6 +68,7 @@ public class ItineraryDetailActivity extends AppCompatActivity {
         // Thiết lập RecyclerView
         rcvItems.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ItemAdapter(new ArrayList<>());
+        adapter.setDeleteButtonVisible(false); // Ẩn nút Delete
         rcvItems.setAdapter(adapter);
 
         // Thiết lập các nút ngày trong HorizontalScrollView

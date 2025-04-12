@@ -63,6 +63,7 @@
                                 android:id="@+id/txt_departure_airport_city"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textColor="@color/black"
                                 android:text="Hà Nội"
                                 android:textSize="15sp"/>
 
@@ -142,6 +143,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="TP Hồ Chí Minh"
+                                android:textColor="@color/black"
                                 android:textSize="15sp"/>
 
                             <TextView
@@ -214,6 +216,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
+                            android:textColor="@color/black"
                             android:text="01/03/2025"
                             android:textSize="15sp"/>
                     </LinearLayout>
@@ -265,6 +268,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
                             android:text="03/03/2025"
+                            android:textColor="@color/black"
                             android:textSize="15sp"/>
                     </LinearLayout>
                 </LinearLayout>

@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
         app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="@color/white"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
@@ -24,6 +25,7 @@
                 android:id="@+id/img_itinerary"
                 android:layout_width="145dp"
                 android:layout_height="100dp"
+                android:scaleType="fitXY"
                 android:background="@drawable/corner_left"
                 android:src="@drawable/ho_hoan_kiem" />
 
@@ -40,6 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Khám phá Hà Nội"
+                    android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -63,6 +66,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textColor="@color/black"
                         android:text="Chia sẻ" />
 
                     <androidx.appcompat.widget.AppCompatImageButton

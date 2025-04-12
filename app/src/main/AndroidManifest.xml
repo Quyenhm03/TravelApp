@@ -4,6 +4,11 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Travel_App"
         tools:targetApi="31">
+
         <activity
             android:name=".UI.Activity.SearchAirportActivity"
             android:exported="false"/>
@@ -22,19 +28,66 @@
             android:name=".UI.Activity.SearchFlightResultActivity"
             android:exported="false"/>
         <activity
-            android:name=".UI.Activity.AddPassengerInfoActivity"
+            android:name=".UI.Activity.AddPassengerInfoFlightActivity"
             android:exported="false"/>
         <activity
             android:name=".UI.Activity.PassengerInfoActivity"
             android:exported="false"/>
         <activity
-            android:name=".UI.Activity.SelectSeatActivity"
+            android:name=".UI.Activity.SelectSeatFlightActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".UI.Activity.HomeActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".UI.Activity.BookingFlightDetailActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".UI.Activity.BookingCoachDetailActivity"
             android:exported="false"/>
         <activity
             android:name=".UI.Activity.PaymentFlightActivity"
-            android:exported="false"/>
+            android:exported="true"
+            android:label="Merchant Demo"
+            android:launchMode="singleTask">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="demozpdk" android:host="flight" />
+            </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".UI.Activity.PaymentCoachActivity"
+            android:exported="true"
+            android:label="Merchant Demo"
+            android:launchMode="singleTask">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="demozpdk" android:host="coach" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name=".UI.Activity.SearchFlightActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".UI.Activity.SearchBusStationActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".UI.Activity.SearchCoachActivity"
             android:exported="false"/>
         <activity
             android:name=".UI.Activity.ItineraryDetailActivity"
@@ -49,15 +102,29 @@
             android:name=".UI.Activity.SearchItemActivity"
             android:exported="false"/>
         <activity
-            android:name=".UI.Activity.HomeActivity"
+            android:name=".UI.Activity.SearchCoachResultActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".UI.Activity.AddPassengerInfoCoachActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".UI.Activity.SelectSeatCoachActivity"
+            android:exported="false"/>
+
+        <receiver
+            android:name=".Receiver.ReminderBroadcastReceiver"
+            android:exported="false">
+        </receiver>
+        <receiver
+            android:name=".Receiver.BootReceiver"
             android:exported="true">
-
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </activity>
-    </application>
+        </receiver>
 
+        <service
+            android:name=".Service.ReminderService"
+            android:exported="false" />
+    </application>
 </manifest>

@@ -1,8 +1,9 @@
-package com.example.travel_app.ViewModel;
+package com.example.travel_app.UI.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,28 +22,26 @@ public class RoundTripCoachFragment extends Fragment {
     private static final int REQUEST_CODE_BUS_STATION = 1000;
 
     private CardView cvDepartureStation, cvArrivalStation, cvDepartureDate, cvReturnDate;
-    private TextView txtDepartureDate, txtReturnDate, txtDepartureStationCity, txtDepartureStationCode, txtDepartureStationName,
-            txtArrivalStationCity, txtArrivalStationCode, txtArrivalStationName;
+    private TextView txtDepartureDate, txtReturnDate, txtDepartureStationCity, txtDepartureStationName,
+            txtArrivalStationCity, txtArrivalStationName;
 
-    private String currentSelectionType; // Lưu loại bến xe đang chọn
+    private String currentSelectionType;
 
     @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_round_trip_coach, container, false);
 
-        cvDepartureStation = view.findViewById(R.id.cv_departure_station); // Cần thêm ID trong layout
-        cvArrivalStation = view.findViewById(R.id.cv_arrival_station); // Cần thêm ID trong layout
-        cvDepartureDate = view.findViewById(R.id.cv_departure_date); // Cần thêm ID trong layout
+        cvDepartureStation = view.findViewById(R.id.cv_departure_station);
+        cvArrivalStation = view.findViewById(R.id.cv_arrival_station);
+        cvDepartureDate = view.findViewById(R.id.cv_departure_date);
         cvReturnDate = view.findViewById(R.id.cv_return_date);
         txtDepartureDate = view.findViewById(R.id.departure_date);
         txtReturnDate = view.findViewById(R.id.return_date);
         txtDepartureStationCity = view.findViewById(R.id.departure_destination);
-        txtDepartureStationCode = view.findViewById(R.id.departure_station_code); // Cần thêm TextView trong layout
-        txtDepartureStationName = view.findViewById(R.id.departure_station_name); // Cần thêm TextView trong layout
-        txtArrivalStationCity = view.findViewById(R.id.arrival_destination); // Cần thêm ID trong layout
-        txtArrivalStationCode = view.findViewById(R.id.arrival_station_code); // Cần thêm TextView trong layout
-        txtArrivalStationName = view.findViewById(R.id.arrival_station_name); // Cần thêm TextView trong layout
+        txtDepartureStationName = view.findViewById(R.id.departure_station_name);
+        txtArrivalStationCity = view.findViewById(R.id.arrival_destination);
+        txtArrivalStationName = view.findViewById(R.id.arrival_station_name);
 
         cvDepartureStation.setOnClickListener(v -> openSearchActivity("departure"));
         cvArrivalStation.setOnClickListener(v -> openSearchActivity("arrival"));
@@ -55,6 +54,7 @@ public class RoundTripCoachFragment extends Fragment {
     private void openSearchActivity(String type) {
         currentSelectionType = type;
         Intent intent = new Intent(getActivity(), SearchBusStationActivity.class);
+        intent.putExtra("search_type", type);
         startActivityForResult(intent, REQUEST_CODE_BUS_STATION);
     }
 
@@ -72,11 +72,9 @@ public class RoundTripCoachFragment extends Fragment {
     private void updateBusStationInfo(BusStation busStation) {
         if ("departure".equals(currentSelectionType)) {
             txtDepartureStationCity.setText(busStation.getCity());
-            txtDepartureStationCode.setText(busStation.getStationCode());
             txtDepartureStationName.setText(busStation.getName());
         } else if ("arrival".equals(currentSelectionType)) {
             txtArrivalStationCity.setText(busStation.getCity());
-            txtArrivalStationCode.setText(busStation.getStationCode());
             txtArrivalStationName.setText(busStation.getName());
         }
     }
@@ -105,14 +103,6 @@ public class RoundTripCoachFragment extends Fragment {
 
     public String getReturnDate() {
         return txtReturnDate.getText().toString();
-    }
-
-    public String getArrivalStationCode() {
-        return txtArrivalStationCode.getText().toString();
-    }
-
-    public String getDepartureStationCode() {
-        return txtDepartureStationCode.getText().toString();
     }
 
     public String getArrivalCity() {

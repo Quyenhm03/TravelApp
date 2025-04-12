@@ -29,6 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="5"
+            app:cardBackgroundColor="@color/white"
             android:layout_marginLeft="20dp"
             app:cardCornerRadius="6dp">
 
@@ -39,10 +40,11 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/btn_search_bus_station"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
                     android:src="@drawable/search"/>
 
                 <EditText
@@ -72,7 +74,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="150dp"
         android:background="@drawable/corner_top"
         android:orientation="vertical">
@@ -88,7 +90,7 @@
             android:textStyle="bold"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcv_flight_result"
+            android:id="@+id/rcv_bus_station_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"

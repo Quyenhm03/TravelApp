@@ -41,7 +41,14 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.annotations)
     implementation(libs.picasso)
+    implementation(fileTree(mapOf(
+        "dir" to "C:\\Users\\DELL\\Desktop\\ZaloPayLib",
+        "include" to listOf("*.aar", "*.jar"),
+        "exclude" to listOf("")
+    )))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.squareup.okhttp3:okhttp:4.6.0")
+    implementation("commons-codec:commons-codec:1.14")
 }

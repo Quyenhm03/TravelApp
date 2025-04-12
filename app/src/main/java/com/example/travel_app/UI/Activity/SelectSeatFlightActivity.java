@@ -18,17 +18,17 @@ import com.example.travel_app.Adapter.SeatAdapter;
 import com.example.travel_app.Data.Model.BookingFlight;
 import com.example.travel_app.Data.Model.SearchFlightInfo;
 import com.example.travel_app.R;
-import com.example.travel_app.ViewModel.SeatViewModel;
+import com.example.travel_app.ViewModel.SeatFlightViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectSeatActivity extends AppCompatActivity {
+public class SelectSeatFlightActivity extends AppCompatActivity {
     private SearchFlightInfo searchFlightInfo;
     private BookingFlight bookingFlight;
     private List<String> selectedSeatsDeparture = new ArrayList<>();
     private List<String> selectedSeatsReturn = new ArrayList<>();
-    private SeatViewModel seatViewModelDeparture, seatViewModelReturn;
+    private SeatFlightViewModel seatViewModelDeparture, seatViewModelReturn;
     private SeatAdapter seatDepartureAdapter, seatReturnAdapter;
     private RecyclerView rcvSeatDeparture, rcvSeatReturn;
     private LinearLayout lnSeatReturn;
@@ -59,7 +59,7 @@ public class SelectSeatActivity extends AppCompatActivity {
         rcvSeatDeparture.setAdapter(seatDepartureAdapter);
 
         // Load ghế chuyến đi từ ViewModel
-        seatViewModelDeparture = new ViewModelProvider(this).get(SeatViewModel.class);
+        seatViewModelDeparture = new ViewModelProvider(this).get(SeatFlightViewModel.class);
         seatViewModelDeparture.loadFlightSeats(bookingFlight.getDepartureFlight().getId());
         seatViewModelDeparture.getFlightLiveData().observe(this, flight -> {
             if (flight != null && flight.getSeats() != null) {
@@ -81,7 +81,7 @@ public class SelectSeatActivity extends AppCompatActivity {
             rcvSeatReturn.setAdapter(seatReturnAdapter);
 
             // Load ghế chuyến về từ ViewModel
-            seatViewModelReturn = new ViewModelProvider(this).get(SeatViewModel.class);
+            seatViewModelReturn = new ViewModelProvider(this).get(SeatFlightViewModel.class);
             seatViewModelReturn.loadFlightSeats(bookingFlight.getReturnFlight().getId());
             seatViewModelReturn.getFlightLiveData().observe(this, flight -> {
                 if (flight != null && flight.getSeats() != null) {
@@ -106,7 +106,7 @@ public class SelectSeatActivity extends AppCompatActivity {
             return;
         }
 
-        Intent intent = new Intent(SelectSeatActivity.this, PaymentFlightActivity.class);
+        Intent intent = new Intent(SelectSeatFlightActivity.this, PaymentFlightActivity.class);
         intent.putExtra("searchFlightInfo", searchFlightInfo);
         bookingFlight.setSelectedSeatsDeparture(selectedSeatsDeparture);
         if(bookingFlight.getReturnFlight() != null) {

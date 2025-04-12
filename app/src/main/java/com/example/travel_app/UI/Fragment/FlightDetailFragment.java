@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ import com.example.travel_app.Data.Model.Flight;
 import com.example.travel_app.Data.Model.SearchFlightInfo;
 import com.example.travel_app.Data.Model.SelectedFlight;
 import com.example.travel_app.R;
-import com.example.travel_app.UI.Activity.AddPassengerInfoActivity;
+import com.example.travel_app.UI.Activity.AddPassengerInfoFlightActivity;
 import com.example.travel_app.UI.Activity.SearchFlightResultActivity;
 import com.squareup.picasso.Picasso;
 
@@ -68,7 +67,8 @@ public class FlightDetailFragment extends Fragment {
                 txtArrivalAirportCode.setText(flight.getArrivalAirportCode());
                 txtArrivalAirportAddress.setText(searchFlightInfo.getArrivalAirportName());
                 txtDepartureDate.setText(flight.getDepartureDate());
-                txtTicketPrice.setText((int)flight.getPrice() + " VND");
+                String formattedPrice = String.format("%,.0f VNĐ", flight.getPrice());
+                txtTicketPrice.setText(formattedPrice);
                 txtFlightTime.setText(flight.getFlightTime());
                 Picasso.get().load(flight.getAirlineImgUrl()).into(imgAirline);
             }
@@ -94,14 +94,14 @@ public class FlightDetailFragment extends Fragment {
                     intent.putExtra("isReturnFlight", true);
                     startActivity(intent);
                 } else {
-                    Intent intent = new Intent(requireActivity(), AddPassengerInfoActivity.class);
+                    Intent intent = new Intent(requireActivity(), AddPassengerInfoFlightActivity.class);
                     intent.putExtra("searchFlightInfo", searchFlightInfo);
                     intent.putExtra("selectedFlight", selectedFlight);
                     startActivity(intent);
                 }
             } else {
                 selectedFlight.setReturnFlight(flight);
-                Intent intent = new Intent(requireActivity(), AddPassengerInfoActivity.class);
+                Intent intent = new Intent(requireActivity(), AddPassengerInfoFlightActivity.class);
                 intent.putExtra("searchFlightInfo", searchFlightInfo);
                 intent.putExtra("selectedFlight", selectedFlight);
                 startActivity(intent);

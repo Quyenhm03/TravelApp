@@ -2,13 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="114dp"
+    android:layout_marginBottom="25dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="8dp"
+        android:layout_margin="2dp"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
@@ -19,8 +21,10 @@
             app:cardPreventCornerOverlap="true">
 
             <ImageView
+                android:id="@+id/img_booking"
                 android:layout_width="140dp"
                 android:layout_height="110dp"
+                android:scaleType="fitXY"
                 android:background="@drawable/corner_left"
                 android:src="@drawable/booking_image" />
 
@@ -33,13 +37,16 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/txt_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nam Quỳnh Anh"
+                    android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/txt_route"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -47,6 +54,7 @@
                     android:textColor="#676767" />
 
                 <TextView
+                    android:id="@+id/txt_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -54,6 +62,7 @@
                     android:text="01/03/2025" />
 
                 <TextView
+                    android:id="@+id/txt_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"

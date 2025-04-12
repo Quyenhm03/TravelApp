@@ -12,7 +12,7 @@ public class Seat implements Serializable {
     @PropertyName("isBooked")
     private boolean isBooked;
 
-    public Seat() {}  // Firebase cần constructor rỗng
+    public Seat() {}
 
     public Seat(String seatNumber, boolean isBooked) {
         this.seatNumber = seatNumber;

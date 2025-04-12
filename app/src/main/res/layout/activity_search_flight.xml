@@ -26,6 +26,7 @@
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginBottom="1dp"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="24dp"
             app:cardMaxElevation="12dp"
             app:cardPreventCornerOverlap="true">
@@ -109,6 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1 hành khách"
+                    android:textColor="@color/black"
                     android:textSize="15sp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -153,6 +155,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Economy"
+                        android:textColor="@color/black"
                         android:textSize="15sp"/>
 
                     <androidx.appcompat.widget.AppCompatImageButton
