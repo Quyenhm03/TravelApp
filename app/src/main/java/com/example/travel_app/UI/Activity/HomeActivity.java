@@ -16,14 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.travel_app.R;
-import com.example.travel_app.Service.ReminderService;
 import com.example.travel_app.UI.Fragment.CreateItineraryFragment;
 import com.example.travel_app.UI.Fragment.HistoryBookingFragment;
-import com.example.travel_app.UI.Fragment.HomeFragment;
+import com.example.travel_app.UI.Fragment.HomeFragmentQ;
 import com.example.travel_app.UI.Fragment.PersonFragment.PersonInfomationFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -40,7 +38,7 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.navigation);
 
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment());
+            loadFragment(new HomeFragmentQ());
             bottomNavigationView.setSelectedItemId(R.id.nav_home);
         }
 
@@ -49,7 +47,7 @@ public class HomeActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.nav_home) {
-                selectedFragment = new HomeFragment();
+                selectedFragment = new HomeFragmentQ();
             } else if (itemId == R.id.nav_list_saved) {
                 selectedFragment = new HistoryBookingFragment();
             } else if (itemId == R.id.nav_create_itinerary) {

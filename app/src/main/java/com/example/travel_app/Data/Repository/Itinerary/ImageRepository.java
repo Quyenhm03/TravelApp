@@ -36,7 +36,7 @@ public class ImageRepository {
         String cachedUrl = imageCache.get(locationId);
         if (cachedUrl != null) {
             Log.d("ImageRepository", "Using cached image for location ID: " + locationId + ", URL: " + cachedUrl);
-            callback.onImageLoaded(cachedUrl);
+            callback.onImageLoaded(cachedUrl.equals("") ? null : cachedUrl); // Trả về null nếu cachedUrl là ""
             return;
         }
 
@@ -46,7 +46,7 @@ public class ImageRepository {
         if (activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
             Log.e("ImageRepository", "No internet connection for location ID: " + locationId);
             imageCache.put(locationId, "");
-            callback.onImageLoaded("");
+            callback.onImageLoaded(null); // Trả về null thay vì chuỗi rỗng
             return;
         }
 
@@ -74,14 +74,14 @@ public class ImageRepository {
                                 }
                                 Log.w("ImageRepository", "No image found for location ID: " + locationId);
                                 imageCache.put(locationId, "");
-                                callback.onImageLoaded("");
+                                callback.onImageLoaded(null); // Trả về null thay vì chuỗi rỗng
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
                                 Log.e("ImageRepository", "Failed to fetch image for location ID: " + locationId + ": " + error.getMessage());
                                 imageCache.put(locationId, "");
-                                callback.onImageLoaded("");
+                                callback.onImageLoaded(null); // Trả về null thay vì chuỗi rỗng
                             }
                         });
                         return;
@@ -89,14 +89,14 @@ public class ImageRepository {
                 }
                 Log.w("ImageRepository", "No media found for location ID: " + locationId);
                 imageCache.put(locationId, "");
-                callback.onImageLoaded("");
+                callback.onImageLoaded(null); // Trả về null thay vì chuỗi rỗng
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("ImageRepository", "Failed to fetch media for location ID: " + locationId + ": " + error.getMessage());
                 imageCache.put(locationId, "");
-                callback.onImageLoaded("");
+                callback.onImageLoaded(null); // Trả về null thay vì chuỗi rỗng
             }
         });
     }

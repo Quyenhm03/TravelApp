@@ -35,7 +35,7 @@ public class ImageViewModel extends AndroidViewModel {
                 if (currentMap == null) {
                     currentMap = new HashMap<>();
                 }
-                currentMap.put(locationId, imageUrl != null ? imageUrl : "");
+                currentMap.put(locationId, imageUrl); // imageUrl có thể là null
                 imageUrlMapLiveData.setValue(currentMap);
             }
 
@@ -45,7 +45,7 @@ public class ImageViewModel extends AndroidViewModel {
                 if (currentMap == null) {
                     currentMap = new HashMap<>();
                 }
-                currentMap.put(locationId, "");
+                currentMap.put(locationId, null); // Gán null khi có lỗi
                 imageUrlMapLiveData.setValue(currentMap);
             }
         });

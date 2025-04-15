@@ -262,7 +262,7 @@
 
 <!--    <androidx.fragment.app.FragmentContainerView-->
 <!--        android:id="@+id/fragmentContainerView2"-->
-<!--        android:name="com.example.travel_app.UI.Fragment.HomeFragment.HomeFragment"-->
+<!--        android:name="com.example.travel_app.UI.Fragment.HomeFragmentQ.HomeFragment"-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="0dp"-->
 <!--        android:layout_marginBottom="@dimen/_8sdp"-->

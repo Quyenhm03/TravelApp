@@ -15,21 +15,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.travel_app.Adapter.CoachHomeAdapter;
 import com.example.travel_app.Adapter.FlightHomeAdapter;
+import com.example.travel_app.Adapter.LocationHomeAdapter;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Activity.SearchCoachActivity;
 import com.example.travel_app.UI.Activity.SearchFlightActivity;
 import com.example.travel_app.ViewModel.CoachViewModel;
 import com.example.travel_app.ViewModel.FlightViewModel;
+import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
+import com.example.travel_app.ViewModel.LocationViewModel;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment {
+public class HomeFragmentQ extends Fragment {
     private CardView cvFlight, cvCoach;
-    private RecyclerView rcvFlight, rcvCoach;
+    private RecyclerView rcvFlight, rcvCoach, rcvLocation;
     private FlightHomeAdapter flightAdapter;
     private CoachHomeAdapter coachAdapter;
+    private LocationHomeAdapter locationAdapter;
     private FlightViewModel flightViewModel;
     private CoachViewModel coachViewModel;
+    private LocationViewModel locationViewModel;
+    private ImageViewModel imageViewModel;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -49,19 +55,33 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
+        // Khởi tạo RecyclerView cho Flight
         rcvFlight = view.findViewById(R.id.rcv_flight);
         rcvFlight.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         flightAdapter = new FlightHomeAdapter(requireContext(), new ArrayList<>());
         rcvFlight.setAdapter(flightAdapter);
 
+        // Khởi tạo RecyclerView cho Coach
         rcvCoach = view.findViewById(R.id.rcv_coach);
         rcvCoach.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         coachAdapter = new CoachHomeAdapter(requireContext(), new ArrayList<>());
         rcvCoach.setAdapter(coachAdapter);
 
+        // Khởi tạo RecyclerView cho Location
+        rcvLocation = view.findViewById(R.id.rcv_location);
+        rcvLocation.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        // Khởi tạo ViewModel
         flightViewModel = new ViewModelProvider(this).get(FlightViewModel.class);
         coachViewModel = new ViewModelProvider(this).get(CoachViewModel.class);
+        locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
+        imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
 
+        // Khởi tạo LocationHomeAdapter với ImageViewModel
+        locationAdapter = new LocationHomeAdapter(requireContext(), getViewLifecycleOwner(), new ArrayList<>(), imageViewModel);
+        rcvLocation.setAdapter(locationAdapter);
+
+        // Quan sát dữ liệu từ ViewModel
         flightViewModel.getFlightsHome().observe(getViewLifecycleOwner(), flights -> {
             if (flights != null) {
                 flightAdapter.setFlightList(flights);
@@ -71,6 +91,12 @@ public class HomeFragment extends Fragment {
         coachViewModel.getCoachesHome().observe(getViewLifecycleOwner(), coaches -> {
             if (coaches != null) {
                 coachAdapter.setCoachList(coaches);
+            }
+        });
+
+        locationViewModel.getLocationsHome().observe(getViewLifecycleOwner(), locations -> {
+            if (locations != null) {
+                locationAdapter.setLocationList(locations);
             }
         });
 
