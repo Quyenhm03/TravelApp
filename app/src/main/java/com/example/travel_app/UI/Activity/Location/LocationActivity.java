@@ -3,94 +3,210 @@ package com.example.travel_app.UI.Activity.Location;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.travel_app.Adapter.MediaAdapter;
 import com.example.travel_app.Adapter.ReviewAdapter;
-import com.example.travel_app.Adapter.listener.OnViewMoreClickListener;
+import com.example.travel_app.Data.Model.Image;
 import com.example.travel_app.Data.Model.Review;
+import com.example.travel_app.Data.Model.ReviewWithUser;
 import com.example.travel_app.R;
+import com.example.travel_app.ViewModel.LocationViewModel;
+import com.example.travel_app.ViewModel.MediaViewModel;
+import com.example.travel_app.ViewModel.ReviewViewModel;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class LocationActivity extends AppCompatActivity {
+
     private ReviewAdapter reviewAdapter;
-    private List<Review> reviews;
+    private List<ReviewWithUser> reviews;
+    private ReviewViewModel reviewViewModel;
+    private LocationViewModel locationViewModel;
+    private MediaViewModel mediaViewModel;
     private static final int REQUEST_CODE_REVIEW = 100;
-    private MediaAdapter mediaAdapter;
-    private TabLayout tabLayout;
-    RecyclerView rvReviews;
-    Button btnViewMoreReviews, btnAddReview;
+
+    private ViewPager2 viewPagerMedia;
+    private TabLayout tabLayoutDots;
+    private TextView tvDescription;
+    private RecyclerView rvReviews;
+    private Button btnViewMoreReviews;
+    private Button btnAddReview;
+    private ViewPager2 viewPagerWeather;
+    private Button btnOpenMap;
+
+    private int locationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
 
-        // Khởi tạo danh sách đánh giá (ví dụ)
-        reviews = new ArrayList<>();
-        reviews.add(new Review("Người dùng 1", 4, "Rất đẹp, không khí trong lành!"));
-        reviews.add(new Review("Người dùng 2", 3, "Cảnh đẹp nhưng đường đi hơi khó."));
-        reviews.add(new Review("Người dùng 3", 5.0f, "Tuyệt vời, đáng để ghé thăm!"));
-        reviews.add(new Review("Người dùng 4", 4.0f, "Khá ổn, nhưng cần cải thiện dịch vụ."));
-        initViews();
-        // Thiết lập RecyclerView
-
-
-        reviewAdapter = new ReviewAdapter(reviews, () -> btnViewMoreReviews.setVisibility(View.GONE));
-        rvReviews.setLayoutManager(new LinearLayoutManager(this));
-        rvReviews.setAdapter(reviewAdapter);
-
-        // Hiển thị nút "Xem thêm" nếu có nhiều hơn 3 đánh giá
-        if (reviews.size() > 3) {
-            btnViewMoreReviews.setVisibility(View.VISIBLE);
+        locationId = getIntent().getIntExtra("location_id", -1);
+        if (locationId == -1) {
+            locationId = 1; // Giá trị mặc định
+            Toast.makeText(this, "Không tìm thấy địa điểm", Toast.LENGTH_SHORT).show();
         }
 
-        // Xử lý nút "Xem thêm"
-        btnViewMoreReviews.setOnClickListener(v -> reviewAdapter.showAllReviews());
+        reviews = new ArrayList<>();
 
-        // Xử lý nút "Đánh giá của bạn"
-        btnAddReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LocationActivity.this, ReviewActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_REVIEW);
+        initViews();
+        reviewViewModel = new ViewModelProvider(this).get(ReviewViewModel.class);
+        locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
+        mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
+
+        setupMediaViewPager();
+        setupReviewsRecyclerView();
+        setupWeatherViewPager();
+
+        // Quan sát thông tin địa điểm
+        locationViewModel.getLocation(locationId).observe(this, location -> {
+            if (location != null) {
+                Log.d("LocationActivity", "Dữ liệu địa điểm: " + location.getTenDiaDiem());
+                tvDescription.setText(location.getMoTa() != null ? location.getMoTa() : "Không có mô tả.");
+                setupMapButton();
+            } else {
+                Log.e("LocationActivity", "Không tìm thấy dữ liệu địa điểm cho locationId: " + locationId);
+                Toast.makeText(this, "Không tìm thấy thông tin địa điểm!", Toast.LENGTH_SHORT).show();
+                tvDescription.setText("Không có mô tả.");
+            }
+        });
+
+        // Quan sát đánh giá
+        reviewViewModel.getReviews(locationId).observe(this, newReviews -> {
+            if (newReviews != null && !newReviews.isEmpty()) {
+                Log.d("LocationActivity", "Số đánh giá: " + newReviews.size());
+                reviews.clear();
+                reviews.addAll(newReviews);
+                reviewAdapter.updateReviews(reviews);
+                btnViewMoreReviews.setVisibility(reviews.size() > 3 ? View.VISIBLE : View.GONE);
+            } else {
+                Log.w("LocationActivity", "Không tìm thấy đánh giá cho locationId: " + locationId);
+                Toast.makeText(this, "Chưa có đánh giá nào cho địa điểm này!", Toast.LENGTH_SHORT).show();
+                reviews.clear();
+                reviewAdapter.updateReviews(reviews);
+                btnViewMoreReviews.setVisibility(View.GONE);
             }
         });
     }
 
     private void initViews() {
+        viewPagerMedia = findViewById(R.id.viewPagerMedia);
+        tabLayoutDots = findViewById(R.id.tabLayoutDots);
+        tvDescription = findViewById(R.id.tvDescription);
         rvReviews = findViewById(R.id.rvReviews);
         btnViewMoreReviews = findViewById(R.id.btnViewMoreReviews);
         btnAddReview = findViewById(R.id.btnAddReview);
+        viewPagerWeather = findViewById(R.id.viewPagerWeather);
+        btnOpenMap = findViewById(R.id.btnOpenMap);
+
+        btnViewMoreReviews.setOnClickListener(v -> reviewAdapter.showAllReviews());
+        btnAddReview.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                Intent intent = new Intent(LocationActivity.this, ReviewActivity.class);
+                intent.putExtra("user_id", user.getUid());
+                intent.putExtra("location_id", locationId);
+                startActivityForResult(intent, REQUEST_CODE_REVIEW);
+            } else {
+                Toast.makeText(this, "Vui lòng đăng nhập để đánh giá!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupMediaViewPager() {
+        mediaViewModel.getImages(String.valueOf(locationId)).observe(this, images -> {
+            List<String> mediaUrls = new ArrayList<>();
+            if (images != null && !images.isEmpty()) {
+                Log.d("LocationActivity", "Số ảnh: " + images.size());
+                for (Image image : images) {
+                    mediaUrls.add(image.getUrl());
+                }
+            } else {
+                Log.w("LocationActivity", "Không tìm thấy ảnh cho locationId: " + locationId);
+                mediaUrls.add("https://example.com/placeholder_image.jpg");
+                Toast.makeText(this, "Không tìm thấy ảnh cho địa điểm!", Toast.LENGTH_SHORT).show();
+            }
+            MediaAdapter mediaAdapter = new MediaAdapter(mediaUrls);
+            viewPagerMedia.setAdapter(mediaAdapter);
+            new TabLayoutMediator(tabLayoutDots, viewPagerMedia, (tab, position) -> {
+            }).attach();
+        });
+    }
+
+    private void setupReviewsRecyclerView() {
+        reviewAdapter = new ReviewAdapter(reviews, () -> btnViewMoreReviews.setVisibility(View.GONE));
+        rvReviews.setLayoutManager(new LinearLayoutManager(this));
+        rvReviews.setAdapter(reviewAdapter);
+    }
+
+    private void setupWeatherViewPager() {
+        List<String> weatherList = new ArrayList<>();
+        weatherList.add("Ngày 1: 25°C, Nắng");
+        weatherList.add("Ngày 2: 24°C, Mưa nhẹ");
+        weatherList.add("Ngày 3: 26°C, Nhiều mây");
+        MediaAdapter weatherAdapter = new MediaAdapter(weatherList);
+        viewPagerWeather.setAdapter(weatherAdapter);
+    }
+
+    private void setupMapButton() {
+        btnOpenMap.setOnClickListener(v -> {
+
+            Toast.makeText(this, "Chức năng bản đồ chưa được triển khai!", Toast.LENGTH_SHORT).show();
+        });
     }
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_REVIEW && resultCode == RESULT_OK) {
-            float rating = data != null ? data.getFloatExtra("rating", 0f) : 0f;
-            String comment = data != null ? data.getStringExtra("comment") : "";
-            if (comment != null && !comment.isEmpty()) {
-                reviews.add(new Review("Bạn", rating, comment));
-                reviewAdapter.notifyDataSetChanged();
-                Button btnViewMoreReviews = findViewById(R.id.btnViewMoreReviews);
-                if (reviews.size() > 3) {
-                    btnViewMoreReviews.setVisibility(View.VISIBLE);
+        if (requestCode == REQUEST_CODE_REVIEW && resultCode == RESULT_OK && data != null) {
+            float rating = data.getFloatExtra("rating", 0f);
+            String comment = data.getStringExtra("comment");
+            Log.d("LocationActivity", "Nhận đánh giá: rating=" + rating + ", comment=" + comment);
+
+            if (comment != null && !comment.trim().isEmpty() && rating >= 0 && rating <= 5) {
+                String createAt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                        .format(new Date());
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    Review newReview = new Review();
+                    newReview.setComment(comment);
+                    newReview.setCreateAt(createAt);
+                    newReview.setLocationId(locationId);
+                    newReview.setUserId(Long.valueOf(user.getUid()));
+                    newReview.setRating(rating);
+
+                    reviewViewModel.addReview(newReview);
+                    Toast.makeText(this, "Đã gửi đánh giá, đang xử lý!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.w("LocationActivity", "Người dùng chưa đăng nhập khi thêm đánh giá");
+                    Toast.makeText(this, "Vui lòng đăng nhập để đánh giá!", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Log.w("LocationActivity", "Dữ liệu đánh giá không hợp lệ: rating=" + rating + ", comment=" + comment);
+                Toast.makeText(this, "Vui lòng nhập đầy đủ và đúng thông tin đánh giá!", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Log.w("LocationActivity", "Nhận kết quả không hợp lệ: requestCode=" + requestCode + ", resultCode=" + resultCode);
         }
     }
 }
