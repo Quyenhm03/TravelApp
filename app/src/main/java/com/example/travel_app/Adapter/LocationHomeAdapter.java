@@ -29,12 +29,19 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
     private Context context;
     private ImageViewModel imageViewModel;
     private LifecycleOwner lifecycleOwner;
+    private OnLocationClickListener onLocationClickListener; // Callback cho sự kiện click
 
-    public LocationHomeAdapter(Context context, LifecycleOwner lifecycleOwner, List<Location> locationList, ImageViewModel imageViewModel) {
+    // Interface để xử lý sự kiện click
+    public interface OnLocationClickListener {
+        void onLocationClick(int locationId);
+    }
+
+    public LocationHomeAdapter(Context context, LifecycleOwner lifecycleOwner, List<Location> locationList, ImageViewModel imageViewModel, OnLocationClickListener listener) {
         this.context = context;
         this.lifecycleOwner = lifecycleOwner;
         this.locationList = locationList != null ? new ArrayList<>(locationList) : new ArrayList<>();
         this.imageViewModel = imageViewModel;
+        this.onLocationClickListener = listener; // Nhận callback từ Fragment
 
         // Quan sát LiveData từ ImageViewModel để cập nhật ảnh
         imageViewModel.getImageUrlMapLiveData().observe(lifecycleOwner, urlMap -> {
@@ -81,6 +88,13 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
         } else {
             holder.imgLocation.setImageResource(R.drawable.ho_hoan_kiem);
         }
+
+        // Thiết lập sự kiện click cho item
+        holder.itemView.setOnClickListener(v -> {
+            if (onLocationClickListener != null) {
+                onLocationClickListener.onLocationClick(location.getLocation_id());
+            }
+        });
     }
 
     @Override

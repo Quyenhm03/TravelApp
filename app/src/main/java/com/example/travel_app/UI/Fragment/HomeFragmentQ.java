@@ -17,12 +17,13 @@ import com.example.travel_app.Adapter.CoachHomeAdapter;
 import com.example.travel_app.Adapter.FlightHomeAdapter;
 import com.example.travel_app.Adapter.LocationHomeAdapter;
 import com.example.travel_app.R;
+import com.example.travel_app.UI.Activity.Location.LocationActivity;
 import com.example.travel_app.UI.Activity.SearchCoachActivity;
 import com.example.travel_app.UI.Activity.SearchFlightActivity;
 import com.example.travel_app.ViewModel.CoachViewModel;
 import com.example.travel_app.ViewModel.FlightViewModel;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
-import com.example.travel_app.ViewModel.LocationViewModel;
+import com.example.travel_app.ViewModel.Itinerary.LocationViewModel;
 
 import java.util.ArrayList;
 
@@ -77,8 +78,13 @@ public class HomeFragmentQ extends Fragment {
         locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
         imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
 
-        // Khởi tạo LocationHomeAdapter với ImageViewModel
-        locationAdapter = new LocationHomeAdapter(requireContext(), getViewLifecycleOwner(), new ArrayList<>(), imageViewModel);
+        // Khởi tạo LocationHomeAdapter với ImageViewModel và callback cho sự kiện click
+        locationAdapter = new LocationHomeAdapter(requireContext(), getViewLifecycleOwner(), new ArrayList<>(), imageViewModel, locationId -> {
+            // Khi một item được click, chuyển sang LocationActivity
+            Intent intent = new Intent(requireContext(), LocationActivity.class);
+            intent.putExtra("location_id", locationId);
+            startActivity(intent);
+        });
         rcvLocation.setAdapter(locationAdapter);
 
         // Quan sát dữ liệu từ ViewModel

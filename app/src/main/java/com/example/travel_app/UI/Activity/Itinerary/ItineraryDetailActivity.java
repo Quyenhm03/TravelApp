@@ -1,6 +1,7 @@
 package com.example.travel_app.UI.Activity.Itinerary;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -19,6 +20,7 @@ import com.example.travel_app.Data.Model.Itinerary.Itinerary;
 import com.example.travel_app.Data.Model.Itinerary.Day;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Activity.BaseActivity;
+import com.example.travel_app.UI.Activity.Location.LocationActivity;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
 import com.example.travel_app.ViewModel.Itinerary.ItineraryDetailViewModel;
 import com.squareup.picasso.Picasso;
@@ -42,15 +44,12 @@ public class ItineraryDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_itinerary);
 
-        // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(ItineraryDetailViewModel.class);
         imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
 
-        // Lấy dữ liệu từ Intent
         Itinerary itinerary = (Itinerary) getIntent().getSerializableExtra("itinerary");
         viewModel.setItinerary(itinerary);
 
-        // Khởi tạo các view
         rcvItems = findViewById(R.id.rcv_location);
         lnDaysContainer = findViewById(R.id.ln_days_container);
         txtTitle = findViewById(R.id.txt_title_itinerary);
@@ -60,7 +59,6 @@ public class ItineraryDetailActivity extends BaseActivity {
         btnBack = findViewById(R.id.btn_back);
         imgUser = findViewById(R.id.img_user);
 
-        // Thiết lập thông tin cơ bản
         txtTitle.setText(itinerary.getTitle() != null ? itinerary.getTitle() : "Không có tiêu đề");
         int totalLocations = itinerary.getDays() != null ?
                 itinerary.getDays().stream().mapToInt(day -> day.getLocations() != null ? day.getLocations().size() : 0).sum() : 0;
@@ -68,29 +66,30 @@ public class ItineraryDetailActivity extends BaseActivity {
         txtDetail.setText(totalLocations + " địa điểm - " + totalDays + "N" + (totalDays > 0 ? totalDays - 1 : 0) + "D");
         txtUserName.setText(itinerary.getUserName() != null ? itinerary.getUserName() : "Không xác định");
         txtCreateDate.setText("Ngày tạo: " + (itinerary.getCreateDate() != null ? itinerary.getCreateDate() : "Không xác định"));
-        if(itinerary.getUserImg() != null) {
+        if (itinerary.getUserImg() != null) {
             Picasso.get().load(itinerary.getUserImg()).into(imgUser);
         } else {
             Picasso.get().load(R.drawable.ic_acc).into(imgUser);
         }
 
-        // Thiết lập RecyclerView
         rcvItems.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new LocationAdapter(new ArrayList<>(), imageViewModel);
+        adapter = new LocationAdapter(new ArrayList<>(), imageViewModel, location -> {
+            // Khi click vào item, mở LocationActivity
+            Intent intent = new Intent(ItineraryDetailActivity.this, LocationActivity.class);
+            intent.putExtra("location_id", location.getLocation_id());
+            startActivity(intent);
+        });
         adapter.setDeleteButtonVisible(false);
         rcvItems.setAdapter(adapter);
 
-        // Thiết lập các nút ngày trong HorizontalScrollView
         setupDayButtons(itinerary.getDays());
 
-        // Quan sát dữ liệu từ ViewModel
         viewModel.getLocationsLiveData().observe(this, locations -> {
             if (locations != null) {
                 adapter.updateList(locations);
             }
         });
 
-        // Xử lý sự kiện click nút Back
         btnBack.setOnClickListener(v -> finish());
     }
 

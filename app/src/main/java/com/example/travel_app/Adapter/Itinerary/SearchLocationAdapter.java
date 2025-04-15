@@ -1,5 +1,6 @@
 package com.example.travel_app.Adapter.Itinerary;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.travel_app.Data.Model.Itinerary.Location;
 import com.example.travel_app.R;
+import com.example.travel_app.UI.Activity.Location.LocationActivity;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -48,14 +51,26 @@ public class SearchLocationAdapter extends RecyclerView.Adapter<SearchLocationAd
         imageViewModel.getImageUrlMapLiveData().observe((LifecycleOwner) holder.itemView.getContext(), imageUrlMap -> {
             String imageUrl = imageUrlMap.get(location.getLocation_id());
             Log.d("SearchLocationAdapter", "Location ID: " + location.getLocation_id() + ", Image URL: " + imageUrl);
-            Picasso.get().load(imageUrl).into(holder.imgLocation);
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                Picasso.get().load(imageUrl).into(holder.imgLocation);
+            }
         });
 
         holder.btnDelete.setVisibility(View.GONE);
-        holder.itemView.setOnClickListener(v -> {
+        holder.btnSelect.setVisibility(View.VISIBLE); // Hiển thị nút Chọn
+
+        // Xử lý click vào nút Chọn (trả về kết quả)
+        holder.btnSelect.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(location);
             }
+        });
+
+        // Xử lý click vào item (chuyển sang LocationActivity)
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(holder.itemView.getContext(), LocationActivity.class);
+            intent.putExtra("location_id", location.getLocation_id());
+            holder.itemView.getContext().startActivity(intent);
         });
     }
 
@@ -74,6 +89,7 @@ public class SearchLocationAdapter extends RecyclerView.Adapter<SearchLocationAd
         ImageView imgLocation;
         TextView txtName, txtAddress;
         ImageButton btnDelete;
+        AppCompatButton btnSelect;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -81,6 +97,7 @@ public class SearchLocationAdapter extends RecyclerView.Adapter<SearchLocationAd
             txtName = itemView.findViewById(R.id.txt_name_location);
             txtAddress = itemView.findViewById(R.id.txt_address_location);
             btnDelete = itemView.findViewById(R.id.btn_delete_item);
+            btnSelect = itemView.findViewById(R.id.btn_select); // Khởi tạo nút Chọn
         }
     }
 

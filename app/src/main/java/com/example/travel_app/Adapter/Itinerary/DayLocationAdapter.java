@@ -23,12 +23,19 @@ import java.util.List;
 public class DayLocationAdapter extends RecyclerView.Adapter<DayLocationAdapter.ViewHolder> {
     private List<Location> locations;
     private final ImageViewModel imageViewModel;
-    private final OnDeleteListener listener;
+    private final OnDeleteListener deleteListener;
+    private final OnItemClickListener itemClickListener; // Callback mới cho sự kiện click
 
-    public DayLocationAdapter(List<Location> locations, ImageViewModel imageViewModel, OnDeleteListener listener) {
+    // Interface cho sự kiện click vào item
+    public interface OnItemClickListener {
+        void onItemClick(Location location);
+    }
+
+    public DayLocationAdapter(List<Location> locations, ImageViewModel imageViewModel, OnDeleteListener deleteListener, OnItemClickListener itemClickListener) {
         this.locations = (locations != null) ? new ArrayList<>(locations) : new ArrayList<>();
         this.imageViewModel = imageViewModel;
-        this.listener = listener;
+        this.deleteListener = deleteListener;
+        this.itemClickListener = itemClickListener; // Nhận callback từ Activity
     }
 
     @NonNull
@@ -49,14 +56,21 @@ public class DayLocationAdapter extends RecyclerView.Adapter<DayLocationAdapter.
             imageViewModel.loadImageForLocation(location.getLocation_id());
             imageViewModel.getImageUrlMapLiveData().observe((LifecycleOwner) holder.itemView.getContext(), imageUrlMap -> {
                 String imageUrl = imageUrlMap.get(location.getLocation_id());
-//                Log.d("DayLocationAdapter", "Location ID: " + location.getLocation_id() + ", Image URL: " + imageUrl);
                 Picasso.get().load(imageUrl).into(holder.imgLocation);
             });
 
+            // Xử lý sự kiện xóa (logic hiện tại)
             holder.btnDelete.setVisibility(View.VISIBLE);
             holder.btnDelete.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onDeleteClick(location);
+                if (deleteListener != null) {
+                    deleteListener.onDeleteClick(location);
+                }
+            });
+
+            // Xử lý sự kiện click vào item (logic mới)
+            holder.itemView.setOnClickListener(v -> {
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(location);
                 }
             });
         }

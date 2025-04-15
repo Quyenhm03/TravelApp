@@ -25,10 +25,17 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
     private List<Location> locationList;
     private final ImageViewModel imageViewModel;
     private boolean isDeleteButtonVisible = true;
+    private final OnItemClickListener itemClickListener; // Callback mới cho sự kiện click
 
-    public LocationAdapter(List<Location> locationList, ImageViewModel imageViewModel) {
+    // Interface cho sự kiện click vào item
+    public interface OnItemClickListener {
+        void onItemClick(Location location);
+    }
+
+    public LocationAdapter(List<Location> locationList, ImageViewModel imageViewModel, OnItemClickListener itemClickListener) {
         this.locationList = locationList != null ? new ArrayList<>(locationList) : new ArrayList<>();
         this.imageViewModel = imageViewModel;
+        this.itemClickListener = itemClickListener; // Nhận callback từ Activity
     }
 
     public void setDeleteButtonVisible(boolean visible) {
@@ -59,6 +66,13 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
         });
 
         holder.btnDelete.setVisibility(isDeleteButtonVisible ? View.VISIBLE : View.GONE);
+
+        // Xử lý sự kiện click vào item (logic mới)
+        holder.itemView.setOnClickListener(v -> {
+            if (itemClickListener != null) {
+                itemClickListener.onItemClick(location);
+            }
+        });
     }
 
     @Override

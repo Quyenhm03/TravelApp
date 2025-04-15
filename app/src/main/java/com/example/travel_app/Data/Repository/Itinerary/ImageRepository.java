@@ -50,51 +50,29 @@ public class ImageRepository {
             return;
         }
 
-        DatabaseReference mediaRef = FirebaseDatabase.getInstance().getReference("Media");
-        mediaRef.orderByChild("location_id").equalTo(locationId).addListenerForSingleValueEvent(new ValueEventListener() {
+        // Truy vấn trực tiếp node Image với location_id
+        DatabaseReference imageRef = FirebaseDatabase.getInstance().getReference("Image");
+        imageRef.orderByChild("location_id").equalTo(locationId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot mediaSnapshot : snapshot.getChildren()) {
-                    Media media = mediaSnapshot.getValue(Media.class);
-                    if (media != null) {
-                        Log.d("ImageRepository", "Media found: location_id=" + media.getLocation_id() + ", media_id=" + media.getMedia_id());
-                        DatabaseReference imageRef = FirebaseDatabase.getInstance().getReference("Image");
-                        imageRef.orderByChild("media_id").equalTo(media.getMedia_id()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot imageSnapshot) {
-                                for (DataSnapshot imgSnapshot : imageSnapshot.getChildren()) {
-                                    Image image = imgSnapshot.getValue(Image.class);
-                                    if (image != null && image.getUrl() != null && !image.getUrl().isEmpty()) {
-                                        String url = image.getUrl();
-                                        Log.d("ImageRepository", "Image found for location ID: " + locationId + ", URL: " + url);
-                                        imageCache.put(locationId, url);
-                                        callback.onImageLoaded(url);
-                                        return;
-                                    }
-                                }
-                                Log.w("ImageRepository", "No image found for location ID: " + locationId);
-                                imageCache.put(locationId, "");
-                                callback.onImageLoaded(null); // Trả về null thay vì chuỗi rỗng
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e("ImageRepository", "Failed to fetch image for location ID: " + locationId + ": " + error.getMessage());
-                                imageCache.put(locationId, "");
-                                callback.onImageLoaded(null); // Trả về null thay vì chuỗi rỗng
-                            }
-                        });
+                for (DataSnapshot imgSnapshot : snapshot.getChildren()) {
+                    Image image = imgSnapshot.getValue(Image.class);
+                    if (image != null && image.getUrl() != null && !image.getUrl().isEmpty()) {
+                        String url = image.getUrl();
+                        Log.d("ImageRepository", "Image found for location ID: " + locationId + ", URL: " + url);
+                        imageCache.put(locationId, url);
+                        callback.onImageLoaded(url);
                         return;
                     }
                 }
-                Log.w("ImageRepository", "No media found for location ID: " + locationId);
+                Log.w("ImageRepository", "No image found for location ID: " + locationId);
                 imageCache.put(locationId, "");
                 callback.onImageLoaded(null); // Trả về null thay vì chuỗi rỗng
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("ImageRepository", "Failed to fetch media for location ID: " + locationId + ": " + error.getMessage());
+                Log.e("ImageRepository", "Failed to fetch image for location ID: " + locationId + ": " + error.getMessage());
                 imageCache.put(locationId, "");
                 callback.onImageLoaded(null); // Trả về null thay vì chuỗi rỗng
             }

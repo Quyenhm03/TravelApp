@@ -20,6 +20,7 @@ import com.example.travel_app.Data.Model.Itinerary.Itinerary;
 import com.example.travel_app.Data.Model.Itinerary.Location;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Activity.BaseActivity;
+import com.example.travel_app.UI.Activity.Location.LocationActivity;
 import com.example.travel_app.UI.Login.LoginActivity;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
 import com.example.travel_app.ViewModel.Itinerary.ItineraryViewModel;
@@ -72,6 +73,11 @@ public class SaveItineraryActivity extends BaseActivity {
                     }
                 }
             }
+        }, location -> {
+            // Khi click vào item, mở LocationActivity
+            Intent intent = new Intent(SaveItineraryActivity.this, LocationActivity.class);
+            intent.putExtra("location_id", location.getLocation_id());
+            startActivity(intent);
         });
         rcvDayLocation.setAdapter(adapter);
 
@@ -146,13 +152,11 @@ public class SaveItineraryActivity extends BaseActivity {
         btnBack.setOnClickListener(v -> finish());
     }
 
-    private String getUserId(){
-        // Lấy userId từ FirebaseAuth
+    private String getUserId() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser == null) {
-            // Người dùng chưa đăng nhập
             Toast.makeText(this, "Bạn cần đăng nhập để thực hiện thanh toán", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
