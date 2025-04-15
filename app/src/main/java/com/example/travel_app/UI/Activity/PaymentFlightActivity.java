@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,7 +28,10 @@ import com.example.travel_app.Data.Model.Payment;
 import com.example.travel_app.Data.Model.SearchFlightInfo;
 import com.example.travel_app.R;
 import com.example.travel_app.Receiver.ReminderBroadcastReceiver;
+import com.example.travel_app.UI.Login.LoginActivity;
 import com.example.travel_app.ViewModel.BookingFlightViewModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -43,7 +47,7 @@ import vn.zalopay.sdk.ZaloPayError;
 import vn.zalopay.sdk.ZaloPaySDK;
 import vn.zalopay.sdk.listeners.PayOrderListener;
 
-public class PaymentFlightActivity extends AppCompatActivity {
+public class PaymentFlightActivity extends BaseActivity {
     private SearchFlightInfo searchFlightInfo;
     private BookingFlight bookingFlight;
     private List<String> selectedSeatsDeparture = new ArrayList<>();
@@ -125,7 +129,7 @@ public class PaymentFlightActivity extends AppCompatActivity {
                         String paymentMethod = "ZaloPay";
                         Payment payment = new Payment(paymentId, bookingFlight.getId(), bookingFlight.getTotalAmount(), "success", paymentMethod, transactionDate);
                         bookingFlight.setPayment(payment);
-                        bookingFlight.setUserId("user123");
+                        bookingFlight.setUserId(getUserId());
 
                         // Tính departureTimestamp và returnTimestamp (nếu có)
                         try {
@@ -202,6 +206,22 @@ public class PaymentFlightActivity extends AppCompatActivity {
         }
 
         bookingFlight.setId(generateBookingId());
+    }
+
+    private String getUserId(){
+        // Lấy userId từ FirebaseAuth
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser == null) {
+            // Người dùng chưa đăng nhập
+            Toast.makeText(this, "Bạn cần đăng nhập để thực hiện thanh toán", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        return currentUser.getUid();
     }
 
     @Override

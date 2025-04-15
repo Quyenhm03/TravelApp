@@ -15,7 +15,7 @@ public class CoachViewModel extends ViewModel {
         coachRepository = new CoachRepository();
     }
 
-    public LiveData<List<Coach>> getFirstTenCoaches() {
-        return coachRepository.getFirstTenCoaches();
+    public LiveData<List<Coach>> getCoachesHome() {
+        return coachRepository.getCoachesHome();
     }
 }

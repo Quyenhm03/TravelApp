@@ -3,6 +3,7 @@ package com.example.travel_app.UI.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -12,7 +13,7 @@ import com.example.travel_app.Data.Model.SearchCoachInfo;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Fragment.SearchCoachResultFragment;
 
-public class SearchCoachResultActivity extends AppCompatActivity {
+public class SearchCoachResultActivity extends BaseActivity {
     private TextView txtSearchCoachInfo1, txtSearchCoachInfo2;
     private SearchCoachInfo searchCoachInfo;
     public boolean isReturnCoach = false;

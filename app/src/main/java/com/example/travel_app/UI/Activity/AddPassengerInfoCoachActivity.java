@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -28,7 +29,7 @@ import com.example.travel_app.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddPassengerInfoCoachActivity extends AppCompatActivity {
+public class AddPassengerInfoCoachActivity extends BaseActivity {
     private SearchCoachInfo searchCoachInfo;
     private SelectedCoach selectedCoach;
     private List<Passenger> passengerList = new ArrayList<>();

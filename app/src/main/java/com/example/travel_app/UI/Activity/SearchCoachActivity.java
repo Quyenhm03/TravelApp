@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -20,7 +21,7 @@ import com.example.travel_app.R;
 import com.example.travel_app.UI.Fragment.OneWayCoachFragment;
 import com.example.travel_app.UI.Fragment.RoundTripCoachFragment;
 
-public class SearchCoachActivity extends AppCompatActivity {
+public class SearchCoachActivity extends BaseActivity {
     private static final int REQUEST_CODE_SELECT_BUS_STATION = 1;
 
     private FragmentManager fragmentManager;

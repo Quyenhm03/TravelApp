@@ -11,6 +11,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import com.example.travel_app.Service.ReminderService;
 import com.example.travel_app.UI.Fragment.CreateItineraryFragment;
 import com.example.travel_app.UI.Fragment.HistoryBookingFragment;
 import com.example.travel_app.UI.Fragment.HomeFragment;
+import com.example.travel_app.UI.Fragment.PersonFragment.PersonInfomationFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
@@ -33,6 +35,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
+        EdgeToEdge.enable(this);
 
         bottomNavigationView = findViewById(R.id.navigation);
 
@@ -51,10 +54,9 @@ public class HomeActivity extends AppCompatActivity {
                 selectedFragment = new HistoryBookingFragment();
             } else if (itemId == R.id.nav_create_itinerary) {
                 selectedFragment = new CreateItineraryFragment();
+            } else if (itemId == R.id.nav_account) {
+                selectedFragment = new PersonInfomationFragment();
             }
-//            } else if (itemId == R.id.nav_account) {
-//                selectedFragment = new AccountFragment();
-//            }
 
             if (selectedFragment != null) {
                 loadFragment(selectedFragment);

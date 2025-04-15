@@ -1,5 +1,6 @@
 package com.example.travel_app.UI.Fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -39,13 +40,14 @@ public class SearchCoachResultFragment extends Fragment {
     private AppCompatButton btnFilter, btnSort;
     private boolean isReturnCoach;
 
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_coach_result, container, false);
 
         rcvSearchCoachResult = view.findViewById(R.id.rcv_coach_result);
-        tvEmptyState = view.findViewById(R.id.tv_empty_state);
+        tvEmptyState = view.findViewById(R.id.tv_empty_state_coach);
         btnFilter = view.findViewById(R.id.btn_filter);
         btnSort = view.findViewById(R.id.btn_sort);
 

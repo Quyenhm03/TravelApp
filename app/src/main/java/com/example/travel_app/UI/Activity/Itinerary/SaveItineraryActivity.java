@@ -1,9 +1,8 @@
-package com.example.travel_app.UI.Activity;
+package com.example.travel_app.UI.Activity.Itinerary;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,20 +14,26 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.travel_app.Adapter.DayItemAdapter;
-import com.example.travel_app.Data.Model.Day;
-import com.example.travel_app.Data.Model.Item;
-import com.example.travel_app.Data.Model.Itinerary;
+import com.example.travel_app.Adapter.Itinerary.DayLocationAdapter;
+import com.example.travel_app.Data.Model.Itinerary.Day;
+import com.example.travel_app.Data.Model.Itinerary.Itinerary;
+import com.example.travel_app.Data.Model.Itinerary.Location;
 import com.example.travel_app.R;
-import com.example.travel_app.ViewModel.ItineraryViewModel;
+import com.example.travel_app.UI.Activity.BaseActivity;
+import com.example.travel_app.UI.Login.LoginActivity;
+import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
+import com.example.travel_app.ViewModel.Itinerary.ItineraryViewModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SaveItineraryActivity extends AppCompatActivity {
+public class SaveItineraryActivity extends BaseActivity {
     private ItineraryViewModel viewModel;
-    private RecyclerView rcvDayItem;
-    private DayItemAdapter adapter;
+    private ImageViewModel imageViewModel;
+    private RecyclerView rcvDayLocation;
+    private DayLocationAdapter adapter;
     private LinearLayout lnDaysContainer;
     private AppCompatButton btnAddItem, btnSaveItinerary, btnBack;
     private TextView txtTimeItinerary;
@@ -38,42 +43,40 @@ public class SaveItineraryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_itinerary);
-
         viewModel = new ViewModelProvider(this).get(ItineraryViewModel.class);
+        imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
 
         itinerary = (Itinerary) getIntent().getSerializableExtra("itinerary");
         if (itinerary != null) {
             viewModel.setItinerary(itinerary);
         }
 
-        rcvDayItem = findViewById(R.id.rcv_day_item);
+        rcvDayLocation = findViewById(R.id.rcv_day_item);
         lnDaysContainer = findViewById(R.id.ln_days_container);
         btnAddItem = findViewById(R.id.btn_add_item);
         btnSaveItinerary = findViewById(R.id.btn_save_itinerary);
         btnBack = findViewById(R.id.btn_back);
         txtTimeItinerary = findViewById(R.id.txt_time_itinerary);
 
-        rcvDayItem.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new DayItemAdapter(new ArrayList<>(), new DayItemAdapter.OnDeleteListener() {
+        rcvDayLocation.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new DayLocationAdapter(new ArrayList<>(), imageViewModel, new DayLocationAdapter.OnDeleteListener() {
             @Override
-            public void onDeleteClick(Item item) {
+            public void onDeleteClick(Location location) {
                 Integer dayIndex = viewModel.getSelectedDayIndex().getValue();
                 if (dayIndex != null) {
-                    viewModel.removeItemFromDay(dayIndex, item);
+                    viewModel.removeLocationFromDay(dayIndex, location);
                     Itinerary itineraryData = viewModel.getItineraryLiveData().getValue();
                     if (itineraryData != null && itineraryData.getDays() != null && dayIndex < itineraryData.getDays().size()) {
-                        adapter.updateItems(itineraryData.getDays().get(dayIndex).getItems());
-                        Toast.makeText(SaveItineraryActivity.this, "Đã xóa item", Toast.LENGTH_SHORT).show();
+                        adapter.updateLocations(itineraryData.getDays().get(dayIndex).getLocations());
+                        Toast.makeText(SaveItineraryActivity.this, "Đã xóa location", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
-        rcvDayItem.setAdapter(adapter);
+        rcvDayLocation.setAdapter(adapter);
 
         viewModel.getItineraryLiveData().observe(this, itineraryData -> {
-            Log.d("SaveItinerary", "Itinerary: " + (itineraryData != null ? "not null" : "null"));
             if (itineraryData != null && itineraryData.getDays() != null) {
-                Log.d("SaveItinerary", "Days size: " + itineraryData.getDays().size());
                 if (!itineraryData.getDays().isEmpty()) {
                     txtTimeItinerary.setText(itineraryData.getDays().get(0).getDate() + " - " +
                             itineraryData.getDays().get(itineraryData.getDays().size() - 1).getDate());
@@ -92,7 +95,7 @@ public class SaveItineraryActivity extends AppCompatActivity {
             if (dayIndex != null) {
                 Itinerary itineraryData = viewModel.getItineraryLiveData().getValue();
                 if (itineraryData != null && itineraryData.getDays() != null && dayIndex < itineraryData.getDays().size()) {
-                    adapter.updateItems(itineraryData.getDays().get(dayIndex).getItems());
+                    adapter.updateLocations(itineraryData.getDays().get(dayIndex).getLocations());
                     for (int i = 0; i < lnDaysContainer.getChildCount(); i++) {
                         CardView childCard = (CardView) lnDaysContainer.getChildAt(i);
                         AppCompatButton childButton = (AppCompatButton) childCard.getChildAt(0);
@@ -104,7 +107,7 @@ public class SaveItineraryActivity extends AppCompatActivity {
         });
 
         btnAddItem.setOnClickListener(v -> {
-            Intent intent = new Intent(this, SearchItemActivity.class);
+            Intent intent = new Intent(this, SearchLocationActivity.class);
             Integer selectedDayIndex = viewModel.getSelectedDayIndex().getValue();
             Itinerary itineraryData = viewModel.getItineraryLiveData().getValue();
             if (selectedDayIndex != null && itineraryData != null && itineraryData.getDays() != null &&
@@ -118,31 +121,61 @@ public class SaveItineraryActivity extends AppCompatActivity {
         btnSaveItinerary.setOnClickListener(v -> {
             Itinerary itinerary = viewModel.getItineraryLiveData().getValue();
             if (itinerary != null) {
-                // Sinh và gán ID ngay tại đây trước khi lưu
                 String newId = "itinerary_" + System.currentTimeMillis();
                 itinerary.setId(newId);
+                itinerary.setUserId(getUserId());
+                itinerary.setUserName("Nguyễn Thị Quyên");
 
                 viewModel.saveItinerary(new ItineraryViewModel.Callback() {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(SaveItineraryActivity.this, "Lưu lộ trình thành công", Toast.LENGTH_SHORT).show();
-                        Log.d("SaveItinerary", "Save successful, finishing activity");
                         finish();
                     }
 
                     @Override
                     public void onFailure(Exception e) {
                         Toast.makeText(SaveItineraryActivity.this, "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e("SaveItinerary", "Save failed: " + e.getMessage(), e);
                     }
                 });
             } else {
                 Toast.makeText(this, "Lộ trình không hợp lệ", Toast.LENGTH_SHORT).show();
-                Log.e("SaveItinerary", "Itinerary is null");
             }
         });
 
         btnBack.setOnClickListener(v -> finish());
+    }
+
+    private String getUserId(){
+        // Lấy userId từ FirebaseAuth
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser == null) {
+            // Người dùng chưa đăng nhập
+            Toast.makeText(this, "Bạn cần đăng nhập để thực hiện thanh toán", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        return currentUser.getUid();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            Location selectedLocation = (Location) data.getSerializableExtra("selectedLocation");
+            Integer dayIndex = viewModel.getSelectedDayIndex().getValue();
+            if (dayIndex != null && selectedLocation != null) {
+                viewModel.addLocationToDay(dayIndex, selectedLocation);
+                Itinerary itineraryData = viewModel.getItineraryLiveData().getValue();
+                if (itineraryData != null && itineraryData.getDays() != null && dayIndex < itineraryData.getDays().size()) {
+                    adapter.updateLocations(itineraryData.getDays().get(dayIndex).getLocations());
+                }
+            }
+        }
     }
 
     private void setupDayButtons(List<Day> days) {
@@ -183,22 +216,6 @@ public class SaveItineraryActivity extends AppCompatActivity {
             params.setMargins(i == 0 ? 0 : 35, 5, 2, 5);
             cardView.setLayoutParams(params);
             lnDaysContainer.addView(cardView);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
-            Item selectedItem = (Item) data.getSerializableExtra("selectedItem");
-            Integer dayIndex = viewModel.getSelectedDayIndex().getValue();
-            if (dayIndex != null && selectedItem != null) {
-                viewModel.addItemToDay(dayIndex, selectedItem);
-                Itinerary itineraryData = viewModel.getItineraryLiveData().getValue();
-                if (itineraryData != null && itineraryData.getDays() != null && dayIndex < itineraryData.getDays().size()) {
-                    adapter.updateItems(itineraryData.getDays().get(dayIndex).getItems());
-                }
-            }
         }
     }
 }

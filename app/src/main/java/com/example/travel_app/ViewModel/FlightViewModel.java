@@ -15,7 +15,7 @@ public class FlightViewModel extends ViewModel {
         flightRepository = new FlightRepository();
     }
 
-    public LiveData<List<Flight>> getFirstTenFlights() {
-        return flightRepository.getFirstTenFlights();
+    public LiveData<List<Flight>> getFlightsHome() {
+        return flightRepository.getFlightsHome();
     }
 }

@@ -1,4 +1,4 @@
-package com.example.travel_app.UI.Activity;
+package com.example.travel_app.UI.Activity.Itinerary;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,16 +15,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.travel_app.Adapter.SearchItemAdapter;
+import com.example.travel_app.Adapter.Itinerary.SearchLocationAdapter;
 import com.example.travel_app.R;
-import com.example.travel_app.ViewModel.ItineraryViewModel;
+import com.example.travel_app.UI.Activity.BaseActivity;
+import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
+import com.example.travel_app.ViewModel.Itinerary.ItineraryViewModel;
 
 import java.util.ArrayList;
 
-public class SearchItemActivity extends AppCompatActivity {
+public class SearchLocationActivity extends BaseActivity {
     private ItineraryViewModel viewModel;
-    private RecyclerView rcvSearchItemResult;
-    private SearchItemAdapter adapter;
+    private ImageViewModel imageViewModel;
+    private RecyclerView rcvSearchLocationResult;
+    private SearchLocationAdapter adapter;
     private EditText edtSearchItem;
     private AppCompatButton btnBack;
     private AppCompatImageButton btnSearchItem;
@@ -36,14 +39,14 @@ public class SearchItemActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_item);
 
         viewModel = new ViewModelProvider(this).get(ItineraryViewModel.class);
+        imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
 
-        rcvSearchItemResult = findViewById(R.id.rcv_search_item_result);
+        rcvSearchLocationResult = findViewById(R.id.rcv_search_item_result);
         edtSearchItem = findViewById(R.id.edt_search_item);
         btnBack = findViewById(R.id.btn_back);
         btnSearchItem = findViewById(R.id.btn_search_item);
         txtTimeItinerary = findViewById(R.id.txt_time_itinerary);
 
-        // Nhận ngày được chọn từ Intent
         String selectedDate = getIntent().getStringExtra("selectedDate");
         if (selectedDate != null) {
             txtTimeItinerary.setText(selectedDate);
@@ -51,21 +54,29 @@ public class SearchItemActivity extends AppCompatActivity {
             txtTimeItinerary.setText("Chưa chọn ngày");
         }
 
-        rcvSearchItemResult.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SearchItemAdapter(new ArrayList<>(), item -> {
+        rcvSearchLocationResult.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new SearchLocationAdapter(new ArrayList<>(), imageViewModel, location -> {
             Intent resultIntent = new Intent();
-            resultIntent.putExtra("selectedItem", item);
+            resultIntent.putExtra("selectedLocation", location);
             setResult(RESULT_OK, resultIntent);
             finish();
         });
-        rcvSearchItemResult.setAdapter(adapter);
+        rcvSearchLocationResult.setAdapter(adapter);
 
-        viewModel.getSearchResultsLiveData().observe(this, items -> {
-            if (items != null) {
-                adapter.updateItems(items);
+        // Quan sát kết quả tìm kiếm
+        viewModel.getSearchResultsLiveData().observe(this, locations -> {
+            if (locations != null) {
+                Log.d("SearchLocationActivity", "Cập nhật adapter với " + locations.size() + " địa điểm");
+                adapter.updateLocations(locations);
+            } else {
+                adapter.updateLocations(new ArrayList<>());
             }
         });
 
+        // Lấy tất cả Location ngay khi mở activity
+        viewModel.getAllLocations();
+
+        // Xử lý tìm kiếm khi nhập
         edtSearchItem.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -73,7 +84,10 @@ public class SearchItemActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
-                    viewModel.searchItems(s.toString());
+                    viewModel.searchLocations(s.toString());
+                } else {
+                    // Nếu ô tìm kiếm rỗng, hiển thị lại tất cả Location
+                    viewModel.getAllLocations();
                 }
             }
 
@@ -81,13 +95,17 @@ public class SearchItemActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
+        // Xử lý nút tìm kiếm
         btnSearchItem.setOnClickListener(v -> {
             String query = edtSearchItem.getText().toString().trim();
             if (!query.isEmpty()) {
-                viewModel.searchItems(query);
+                viewModel.searchLocations(query);
+            } else {
+                viewModel.getAllLocations();
             }
         });
 
+        // Xử lý nút quay lại
         btnBack.setOnClickListener(v -> finish());
     }
 }

@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="60dp">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -89,11 +89,28 @@
             android:textColor="#757272"
             android:textStyle="bold"/>
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcv_bus_station_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:scrollbars="vertical"/>
+
+        <TextView
+            android:id="@+id/txt_no_results"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:text="Không tìm thấy sân bay"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"/>
     </LinearLayout>
 </RelativeLayout>

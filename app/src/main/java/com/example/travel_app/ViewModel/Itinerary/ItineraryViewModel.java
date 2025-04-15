@@ -1,4 +1,4 @@
-package com.example.travel_app.ViewModel;
+package com.example.travel_app.ViewModel.Itinerary;
 
 import android.util.Log;
 
@@ -6,11 +6,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.travel_app.Data.Model.Day;
-import com.example.travel_app.Data.Model.Item;
-import com.example.travel_app.Data.Model.Itinerary;
-import com.example.travel_app.Data.Repository.ItineraryRepository;
-import com.example.travel_app.Data.Repository.ItemRepository;
+import com.example.travel_app.Data.Model.Itinerary.Day;
+import com.example.travel_app.Data.Model.Itinerary.Itinerary;
+import com.example.travel_app.Data.Model.Itinerary.Location;
+import com.example.travel_app.Data.Repository.Itinerary.ItineraryRepository;
+import com.example.travel_app.Data.Repository.Itinerary.LocationRepository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,14 +23,14 @@ import java.util.concurrent.TimeUnit;
 
 public class ItineraryViewModel extends ViewModel {
     private ItineraryRepository itineraryRepository;
-    private ItemRepository itemRepository;
+    private LocationRepository locationRepository;
     private MutableLiveData<Itinerary> itineraryLiveData = new MutableLiveData<>();
-    private MutableLiveData<List<Item>> searchResultsLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<Location>> searchResultsLiveData = new MutableLiveData<>();
     private MutableLiveData<Integer> selectedDayIndex = new MutableLiveData<>(0);
 
     public ItineraryViewModel() {
         itineraryRepository = new ItineraryRepository();
-        itemRepository = new ItemRepository();
+        locationRepository = new LocationRepository();
         itineraryLiveData.setValue(new Itinerary());
     }
 
@@ -38,7 +38,7 @@ public class ItineraryViewModel extends ViewModel {
         return itineraryLiveData;
     }
 
-    public LiveData<List<Item>> getSearchResultsLiveData() {
+    public LiveData<List<Location>> getSearchResultsLiveData() {
         return searchResultsLiveData;
     }
 
@@ -61,48 +61,59 @@ public class ItineraryViewModel extends ViewModel {
         List<Day> days = generateDays(startDate, endDate);
         itinerary.setDays(days);
 
-        Log.d("ItineraryViewModel", "Title: " + title + ", StartDate: " + startDate + ", EndDate: " + endDate);
-        Log.d("ItineraryViewModel", "Days generated: " + (days != null ? days.size() : "null"));
-
         itineraryLiveData.setValue(itinerary);
         return itinerary;
     }
 
-    public void searchItems(String query) {
-        itemRepository.searchItems(query, new ItemRepository.SearchCallback() {
+    public void searchLocations(String query) {
+        locationRepository.searchLocations(query, new LocationRepository.SearchCallback() {
             @Override
-            public void onSuccess(List<Item> items) {
-                searchResultsLiveData.setValue(items);
+            public void onSuccess(List<Location> locations) {
+                searchResultsLiveData.setValue(locations);
             }
 
             @Override
             public void onFailure(Exception e) {
                 searchResultsLiveData.setValue(new ArrayList<>());
+                Log.e("ItineraryViewModel", "Tìm kiếm địa điểm thất bại: " + e.getMessage());
             }
         });
     }
 
-    public void addItemToDay(int dayIndex, Item item) {
+    public void getAllLocations() {
+        locationRepository.getAllLocations(new LocationRepository.SearchCallback() {
+            @Override
+            public void onSuccess(List<Location> locations) {
+                searchResultsLiveData.setValue(locations);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                searchResultsLiveData.setValue(new ArrayList<>());
+                Log.e("ItineraryViewModel", "Lấy tất cả địa điểm thất bại: " + e.getMessage());
+            }
+        });
+    }
+
+    public void addLocationToDay(int dayIndex, Location location) {
         Itinerary itinerary = itineraryLiveData.getValue();
         if (itinerary != null && dayIndex >= 0 && dayIndex < itinerary.getDays().size()) {
-            List<Item> items = itinerary.getDays().get(dayIndex).getItems();
-            if (items == null) {
-                items = new ArrayList<>();
-                itinerary.getDays().get(dayIndex).setItems(items);
+            List<Location> locations = itinerary.getDays().get(dayIndex).getLocations();
+            if (locations == null) {
+                locations = new ArrayList<>();
+                itinerary.getDays().get(dayIndex).setLocations(locations);
             }
-            items.add(item);
+            locations.add(location);
             itineraryLiveData.setValue(itinerary);
-            Log.d("ItineraryViewModel", "Item added to day " + dayIndex);
         }
     }
 
-    public void removeItemFromDay(int dayIndex, Item item) {
+    public void removeLocationFromDay(int dayIndex, Location location) {
         Itinerary itinerary = itineraryLiveData.getValue();
         if (itinerary != null && dayIndex >= 0 && dayIndex < itinerary.getDays().size()) {
-            List<Item> items = itinerary.getDays().get(dayIndex).getItems();
-            if (items != null && items.remove(item)) {
+            List<Location> locations = itinerary.getDays().get(dayIndex).getLocations();
+            if (locations != null && locations.remove(location)) {
                 itineraryLiveData.setValue(itinerary);
-                Log.d("ItineraryViewModel", "Item removed from day " + dayIndex);
             }
         }
     }
@@ -114,23 +125,19 @@ public class ItineraryViewModel extends ViewModel {
     public void saveItinerary(Callback callback) {
         Itinerary itinerary = itineraryLiveData.getValue();
         if (itinerary != null) {
-            Log.d("ItineraryViewModel", "Saving itinerary: " + itinerary.getTitle() + ", ID: " + itinerary.getId());
             itineraryRepository.saveItinerary(itinerary, new ItineraryRepository.Callback() {
                 @Override
                 public void onSuccess() {
-                    Log.d("ItineraryViewModel", "Itinerary saved successfully with ID: " + itinerary.getId());
                     callback.onSuccess();
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-                    Log.e("ItineraryViewModel", "Failed to save itinerary: " + e.getMessage(), e);
                     callback.onFailure(e);
                 }
             });
         } else {
-            Log.e("ItineraryViewModel", "Itinerary is null, cannot save");
-            callback.onFailure(new IllegalStateException("Itinerary data is null"));
+            callback.onFailure(new IllegalStateException("Dữ liệu hành trình rỗng"));
         }
     }
 
@@ -143,19 +150,16 @@ public class ItineraryViewModel extends ViewModel {
             long diff = end.getTime() - start.getTime();
             int numDays = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) + 1;
 
-            Log.d("ItineraryViewModel", "Start: " + start + ", End: " + end + ", NumDays: " + numDays);
-
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(start);
             for (int i = 0; i < numDays; i++) {
                 Day day = new Day();
                 day.setDate(sdf.format(calendar.getTime()));
-                day.setItems(new ArrayList<>());
+                day.setLocations(new ArrayList<>());
                 days.add(day);
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
             }
         } catch (ParseException e) {
-            Log.e("ItineraryViewModel", "ParseException: " + e.getMessage());
             e.printStackTrace();
         }
         return days;

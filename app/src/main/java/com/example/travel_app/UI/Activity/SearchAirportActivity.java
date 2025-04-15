@@ -1,5 +1,6 @@
 package com.example.travel_app.UI.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,9 +9,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ProgressBar;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class SearchAirportActivity extends AppCompatActivity {
+public class SearchAirportActivity extends BaseActivity {
     private RecyclerView rcvAirportResult;
     private AirportAdapter airportAdapter;
     private SearchAirportViewModel viewModel;
@@ -36,7 +39,9 @@ public class SearchAirportActivity extends AppCompatActivity {
     private ImageButton btnSearchAirport;
     private ProgressBar progressBar;
     private String searchType;
+    private TextView txtNoResults;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +51,7 @@ public class SearchAirportActivity extends AppCompatActivity {
         btnSearchAirport = findViewById(R.id.btn_search_airport);
         rcvAirportResult = findViewById(R.id.rcv_airport_result);
         progressBar = findViewById(R.id.progress_bar);
+        txtNoResults = findViewById(R.id.txt_no_results);
 
         searchType = getIntent().getStringExtra("search_type");
 
@@ -54,6 +60,8 @@ public class SearchAirportActivity extends AppCompatActivity {
         rcvAirportResult.setAdapter(airportAdapter);
 
         viewModel = new ViewModelProvider(this).get(SearchAirportViewModel.class);
+
+        // Tải toàn bộ danh sách sân bay ban đầu
         viewModel.getAirports().observe(this, airports -> {
             progressBar.setVisibility(View.GONE);
             if (airports != null && !airports.isEmpty()) {
@@ -62,6 +70,25 @@ public class SearchAirportActivity extends AppCompatActivity {
                 airportAdapter.updateData(airportList);
             } else {
                 Toast.makeText(this, "Không tìm thấy sân bay", Toast.LENGTH_SHORT).show();
+                rcvAirportResult.setVisibility(View.GONE);
+                txtNoResults.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // Quan sát kết quả tìm kiếm
+        viewModel.getSearchResults().observe(this, searchResults -> {
+            progressBar.setVisibility(View.GONE);
+            if (searchResults != null && !searchResults.isEmpty()) {
+                airportList.clear();
+                airportList.addAll(searchResults);
+                airportAdapter.updateData(airportList);
+                rcvAirportResult.setVisibility(View.VISIBLE);
+                txtNoResults.setVisibility(View.GONE);
+            } else {
+                airportList.clear();
+                airportAdapter.updateData(airportList);
+                rcvAirportResult.setVisibility(View.GONE);
+                txtNoResults.setVisibility(View.VISIBLE);
             }
         });
 
@@ -82,17 +109,9 @@ public class SearchAirportActivity extends AppCompatActivity {
     }
 
     private void searchAirport() {
-        String query = removeDiacritics(edtSearchAirport.getText().toString().trim().toLowerCase());
-        List<Airport> filteredList = new ArrayList<>();
-        for (Airport airport : airportList) {
-            String airportName = removeDiacritics(airport.getName());
-            String airportCity = removeDiacritics(airport.getCity());
-
-            if (airportName.contains(query) || airportCity.contains(query)) {
-                filteredList.add(airport);
-            }
-        }
-        airportAdapter.updateData(filteredList);
+        String query = edtSearchAirport.getText().toString().trim();
+        progressBar.setVisibility(View.VISIBLE);
+        viewModel.searchAirports(query);
     }
 
     public static String removeDiacritics(String str) {

@@ -5,7 +5,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="150dp"
         android:orientation="horizontal"
         android:background="@color/orange">
 
@@ -13,14 +13,14 @@
             android:id="@+id/btn_back"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="55dp"
             android:background="@drawable/back"
             android:textAllCaps="false" />
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingTop="25dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
             android:layout_marginLeft="25dp"
             android:orientation="vertical">
 
@@ -47,7 +47,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="105dp"
+        android:layout_marginTop="120dp"
         android:background="@drawable/corner_top">
 
         <LinearLayout
@@ -128,7 +128,7 @@
             </HorizontalScrollView>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcv_"
+                android:id="@+id/rcv_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"

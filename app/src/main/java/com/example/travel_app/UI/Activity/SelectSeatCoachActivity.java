@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -25,7 +26,7 @@ import com.example.travel_app.ViewModel.SeatFlightViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectSeatCoachActivity extends AppCompatActivity {
+public class SelectSeatCoachActivity extends BaseActivity {
     private SearchCoachInfo searchCoachInfo;
     private BookingCoach bookingCoach;
     private List<String> selectedSeatsDeparture = new ArrayList<>();

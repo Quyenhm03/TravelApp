@@ -2,9 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -23,7 +22,31 @@
         tools:targetApi="31">
 
         <activity
-<<<<<<< .mine
+            android:name=".UI.Activity.Location.ReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UI.Activity.Location.LocationActivity"
+            android:exported="false" >
+
+        </activity>
+        <activity
+            android:name=".UI.Fragment.PersonFragment.UpdateInfoUserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UI.Register.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UI.Login.LoginActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".UI.Activity.SearchAirportActivity"
             android:exported="false"/>
         <activity
@@ -34,54 +57,21 @@
             android:exported="false"/>
         <activity
             android:name=".UI.Activity.PassengerInfoActivity"
-            android:exported="false"/>
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".UI.Activity.SelectSeatFlightActivity"
             android:exported="false"/>
         <activity
             android:name=".UI.Activity.HomeActivity"
-
-
-
-=======
-            android:name=".UI.Activity.Location.ReviewActivity"
-            android:exported="false" />
-        <activity
-            android:name=".UI.Activity.Location.LocationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".UI.Fragment.PersonFragment.UpdateInfoUserActivity"
-            android:exported="false" />
-        <activity
-            android:name=".UI.Fragment.PersonFragment.UserDetailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".UI.Register.RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".UI.Activity.home.HomeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".UI.Activity.CreateItineraryActivity"
->>>>>>> .theirs
-            android:exported="false" />
-        <activity
-            android:name=".UI.Login.LoginActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".UI.Activity.BookingFlightDetailActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".UI.Activity.BookingCoachDetailActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
-<<<<<<< .mine
             android:name=".UI.Activity.PaymentFlightActivity"
             android:exported="true"
             android:label="Merchant Demo"
@@ -95,23 +85,7 @@
             </intent-filter>
 
         </activity>
-=======
-            android:name=".UI.Activity.AddPassengerInfoActivity"
-            android:exported="false" />
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> .theirs
         <activity
-<<<<<<< .mine
             android:name=".UI.Activity.PaymentCoachActivity"
             android:exported="true"
             android:label="Merchant Demo"
@@ -125,42 +99,27 @@
             </intent-filter>
 
         </activity>
-=======
-            android:name=".UI.Activity.PassengerInfoActivity"
-            android:exported="false" />
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> .theirs
         <activity
             android:name=".UI.Activity.SearchFlightActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".UI.Activity.SearchBusStationActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".UI.Activity.SearchCoachActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
-            android:name=".UI.Activity.ItineraryDetailActivity"
-            android:exported="false" />
+            android:name=".UI.Activity.Itinerary.ItineraryDetailActivity"
+            android:exported="false"/>
         <activity
-            android:name=".UI.Activity.SetUpInfoActivity"
-            android:exported="false" />
+            android:name=".UI.Activity.Itinerary.SaveItineraryActivity"
+            android:exported="false"/>
         <activity
-            android:name=".UI.Activity.SaveItineraryActivity"
-            android:exported="false" />
+            android:name=".UI.Activity.Itinerary.SetUpInfoActivity"
+            android:exported="false"/>
         <activity
-            android:name=".UI.Activity.SearchItemActivity"
-            android:exported="false" />
+            android:name=".UI.Activity.Itinerary.SearchLocationActivity"
+            android:exported="false"/>
         <activity
             android:name=".UI.Activity.SearchCoachResultActivity"
             android:exported="false"/>
@@ -177,7 +136,6 @@
         </receiver>
         <receiver
             android:name=".Receiver.BootReceiver"
-<<<<<<< .mine
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -187,16 +145,5 @@
         <service
             android:name=".Service.ReminderService"
             android:exported="false" />
-=======
-            android:exported="true" />
-
-
-
-
-
-
-
-
->>>>>>> .theirs
     </application>
 </manifest>

@@ -81,10 +81,10 @@ public class CoachRepository {
         return coachLiveData;
     }
 
-    public LiveData<List<Coach>> getFirstTenCoaches() {
+    public LiveData<List<Coach>> getCoachesHome() {
         MutableLiveData<List<Coach>> coachLiveData = new MutableLiveData<>();
 
-        databaseReference.limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.limitToFirst(30).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Coach> coachList = new ArrayList<>();

@@ -16,9 +16,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FlightRepository {
     private DatabaseReference databaseReference;
@@ -81,10 +79,10 @@ public class FlightRepository {
         return flightLiveData;
     }
 
-    public LiveData<List<Flight>> getFirstTenFlights() {
+    public LiveData<List<Flight>> getFlightsHome() {
         MutableLiveData<List<Flight>> flightLiveData = new MutableLiveData<>();
 
-        databaseReference.limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.limitToFirst(30).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Flight> flightList = new ArrayList<>();

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -22,7 +23,7 @@ import com.example.travel_app.ViewModel.SearchFlightViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFlightResultActivity extends AppCompatActivity {
+public class SearchFlightResultActivity extends BaseActivity {
     private TextView txtSearchFlightInfo1, txtSearchFlightInfo2;
     private SearchFlightInfo searchFlightInfo;
     public boolean isReturnFlight = false;

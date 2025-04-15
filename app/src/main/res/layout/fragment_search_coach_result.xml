@@ -87,11 +87,11 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_empty_state"
+        android:id="@+id/tv_empty_state_coach"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Không tìm thấy chuyến bay"
+        android:text="Không tìm thấy chuyến xe phù hợp"
         android:textSize="16sp"
         android:textColor="@android:color/darker_gray"
         android:visibility="gone" />

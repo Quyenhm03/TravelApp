@@ -18,7 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.travel_app.R;
-import com.example.travel_app.UI.Activity.home.HomeActivity;
+import com.example.travel_app.UI.Activity.HomeActivity;
 import com.example.travel_app.UI.Register.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
 

@@ -1,5 +1,6 @@
 package com.example.travel_app.UI.Activity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -27,7 +29,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class BookingFlightDetailActivity extends AppCompatActivity {
+public class BookingFlightDetailActivity extends BaseActivity {
     private TextView txtDepartureDate, txtDepartureTime, txtDepartureCity, txtDepartureCode,
             txtArrivalTime, txtArrivalCity, txtArrivalCode, txtDepartureFlight, txtDepartureSeat,
             txtDepartureSeatType, txtReturnDate, txtReturnTime, txtReturnCity, txtReturnCode,
@@ -35,10 +37,11 @@ public class BookingFlightDetailActivity extends AppCompatActivity {
             txtReturnSeat, txtReturnSeatType, txtAmount, txtCustomerName, txtBookingDate, txtStatus;
     private ImageView imgDepartureAirline, imgReturnAirline;
     private LinearLayout lnPaymentReturn;
-    private AppCompatButton btnBack;
+    private AppCompatButton btnBack, btnBack2;
     private LinearLayout passengerContainer;
     private BookingDetailViewModel viewModel;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +76,7 @@ public class BookingFlightDetailActivity extends AppCompatActivity {
         lnPaymentReturn = findViewById(R.id.ln_payment_return);
         btnBack = findViewById(R.id.btn_back);
         passengerContainer = findViewById(R.id.passenger_container);
+        btnBack2 = findViewById(R.id.btn_back2);
 
         viewModel = new ViewModelProvider(this).get(BookingDetailViewModel.class);
 
@@ -89,6 +93,7 @@ public class BookingFlightDetailActivity extends AppCompatActivity {
         viewModel.getPassengerList().observe(this, this::displayPassengerList);
 
         btnBack.setOnClickListener(v -> finish());
+        btnBack2.setOnClickListener(v -> finish());
     }
 
     private void updateBookingDetails(BookingFlight booking) {

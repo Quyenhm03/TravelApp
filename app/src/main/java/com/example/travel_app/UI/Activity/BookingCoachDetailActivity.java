@@ -1,5 +1,6 @@
 package com.example.travel_app.UI.Activity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -24,7 +26,7 @@ import com.example.travel_app.R;
 
 import java.util.List;
 
-public class BookingCoachDetailActivity extends AppCompatActivity {
+public class BookingCoachDetailActivity extends BaseActivity {
     private BookingCoach bookingCoach;
 
     private TextView txtDepartureCoachName, txtDepartureDate, txtDepartureTime, txtDepartureCity, txtDepartureStationName,
@@ -33,8 +35,9 @@ public class BookingCoachDetailActivity extends AppCompatActivity {
             txtReturnArrivalTime, txtReturnArrivalCity, txtReturnArrivalStationName, txtReturnCoachPlate, txtReturnSeat,
             txtAmount, txtCustomerName, txtBookingDate, txtStatus;
     private LinearLayout lnPaymentReturn, passengerContainer;
-    private AppCompatButton btnBack, btnPayment;
+    private AppCompatButton btnBack, btnBack2;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +78,7 @@ public class BookingCoachDetailActivity extends AppCompatActivity {
         lnPaymentReturn = findViewById(R.id.ln_payment_return);
         passengerContainer = findViewById(R.id.passenger_container);
         btnBack = findViewById(R.id.btn_back);
-        btnPayment = findViewById(R.id.btn_payment);
+        btnBack2 = findViewById(R.id.btn_back2);
 
         displayDepartureInfo();
         displayReturnInfo();
@@ -83,7 +86,7 @@ public class BookingCoachDetailActivity extends AppCompatActivity {
         displayPassengerList(bookingCoach.getPassengerList());
 
         btnBack.setOnClickListener(v -> finish());
-        btnPayment.setOnClickListener(v -> finish());
+        btnBack2.setOnClickListener(v -> finish());
     }
 
     private void displayDepartureInfo() {

@@ -62,13 +62,13 @@ public class HomeFragment extends Fragment {
         flightViewModel = new ViewModelProvider(this).get(FlightViewModel.class);
         coachViewModel = new ViewModelProvider(this).get(CoachViewModel.class);
 
-        flightViewModel.getFirstTenFlights().observe(getViewLifecycleOwner(), flights -> {
+        flightViewModel.getFlightsHome().observe(getViewLifecycleOwner(), flights -> {
             if (flights != null) {
                 flightAdapter.setFlightList(flights);
             }
         });
 
-        coachViewModel.getFirstTenCoaches().observe(getViewLifecycleOwner(), coaches -> {
+        coachViewModel.getCoachesHome().observe(getViewLifecycleOwner(), coaches -> {
             if (coaches != null) {
                 coachAdapter.setCoachList(coaches);
             }

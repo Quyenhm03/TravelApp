@@ -131,7 +131,7 @@
                             android:id="@+id/arrival_station_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Bến xe Miền Đông"
+                            android:text="Bến xe Vinh"
                             android:layout_marginTop="5dp"
                             android:textSize="13sp"
                             android:textColor="#676767"/>
@@ -189,7 +189,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
-                            android:text="01/03/2025"
+                            android:text="16/04/2025"
                             android:textColor="@color/black"
                             android:textSize="15sp"/>
                     </LinearLayout>
@@ -240,7 +240,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
-                            android:text="03/03/2025"
+                            android:text="16/04/2025"
                             android:textColor="@color/black"
                             android:textSize="15sp"/>
                     </LinearLayout>

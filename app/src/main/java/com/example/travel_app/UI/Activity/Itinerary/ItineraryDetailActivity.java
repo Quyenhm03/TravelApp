@@ -1,4 +1,4 @@
-package com.example.travel_app.UI.Activity;
+package com.example.travel_app.UI.Activity.Itinerary;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
@@ -14,19 +14,22 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.travel_app.Adapter.ItemAdapter;
-import com.example.travel_app.Data.Model.Day;
-import com.example.travel_app.Data.Model.Itinerary;
+import com.example.travel_app.Adapter.Itinerary.LocationAdapter;
+import com.example.travel_app.Data.Model.Itinerary.Itinerary;
+import com.example.travel_app.Data.Model.Itinerary.Day;
 import com.example.travel_app.R;
-import com.example.travel_app.ViewModel.ItineraryDetailViewModel;
+import com.example.travel_app.UI.Activity.BaseActivity;
+import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
+import com.example.travel_app.ViewModel.Itinerary.ItineraryDetailViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItineraryDetailActivity extends AppCompatActivity {
+public class ItineraryDetailActivity extends BaseActivity {
     private ItineraryDetailViewModel viewModel;
-    private ItemAdapter adapter;
+    private ImageViewModel imageViewModel;
+    private LocationAdapter adapter;
     private RecyclerView rcvItems;
     private LinearLayout lnDaysContainer;
     private TextView txtTitle, txtDetail, txtUserName, txtCreateDate;
@@ -41,13 +44,14 @@ public class ItineraryDetailActivity extends AppCompatActivity {
 
         // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(ItineraryDetailViewModel.class);
+        imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
 
         // Lấy dữ liệu từ Intent
         Itinerary itinerary = (Itinerary) getIntent().getSerializableExtra("itinerary");
         viewModel.setItinerary(itinerary);
 
         // Khởi tạo các view
-        rcvItems = findViewById(R.id.rcv_);
+        rcvItems = findViewById(R.id.rcv_location);
         lnDaysContainer = findViewById(R.id.ln_days_container);
         txtTitle = findViewById(R.id.txt_title_itinerary);
         txtDetail = findViewById(R.id.txt_detail_itinerary);
@@ -57,27 +61,32 @@ public class ItineraryDetailActivity extends AppCompatActivity {
         imgUser = findViewById(R.id.img_user);
 
         // Thiết lập thông tin cơ bản
-        txtTitle.setText(itinerary.getTitle());
-        int totalLocations = itinerary.getDays().stream().mapToInt(day -> day.getItems().size()).sum();
-        int totalDays = itinerary.getDays().size();
-        txtDetail.setText(totalLocations + " địa điểm - " + totalDays + "N" + (totalDays - 1) + "D");
-        txtUserName.setText(itinerary.getUserName());
-        txtCreateDate.setText("Ngày tạo: " + itinerary.getCreateDate());
-        Picasso.get().load(itinerary.getUserImg()).into(imgUser);
+        txtTitle.setText(itinerary.getTitle() != null ? itinerary.getTitle() : "Không có tiêu đề");
+        int totalLocations = itinerary.getDays() != null ?
+                itinerary.getDays().stream().mapToInt(day -> day.getLocations() != null ? day.getLocations().size() : 0).sum() : 0;
+        int totalDays = itinerary.getDays() != null ? itinerary.getDays().size() : 0;
+        txtDetail.setText(totalLocations + " địa điểm - " + totalDays + "N" + (totalDays > 0 ? totalDays - 1 : 0) + "D");
+        txtUserName.setText(itinerary.getUserName() != null ? itinerary.getUserName() : "Không xác định");
+        txtCreateDate.setText("Ngày tạo: " + (itinerary.getCreateDate() != null ? itinerary.getCreateDate() : "Không xác định"));
+        if(itinerary.getUserImg() != null) {
+            Picasso.get().load(itinerary.getUserImg()).into(imgUser);
+        } else {
+            Picasso.get().load(R.drawable.ic_acc).into(imgUser);
+        }
 
         // Thiết lập RecyclerView
         rcvItems.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ItemAdapter(new ArrayList<>());
-        adapter.setDeleteButtonVisible(false); // Ẩn nút Delete
+        adapter = new LocationAdapter(new ArrayList<>(), imageViewModel);
+        adapter.setDeleteButtonVisible(false);
         rcvItems.setAdapter(adapter);
 
         // Thiết lập các nút ngày trong HorizontalScrollView
         setupDayButtons(itinerary.getDays());
 
         // Quan sát dữ liệu từ ViewModel
-        viewModel.getItemsLiveData().observe(this, items -> {
-            if (items != null) {
-                adapter.updateList(items);
+        viewModel.getLocationsLiveData().observe(this, locations -> {
+            if (locations != null) {
+                adapter.updateList(locations);
             }
         });
 
@@ -87,6 +96,10 @@ public class ItineraryDetailActivity extends AppCompatActivity {
 
     private void setupDayButtons(List<Day> days) {
         lnDaysContainer.removeAllViews();
+        if (days == null || days.isEmpty()) {
+            return;
+        }
+
         for (int i = 0; i < days.size(); i++) {
             Day day = days.get(i);
             CardView cardView = new CardView(this);
@@ -96,7 +109,7 @@ public class ItineraryDetailActivity extends AppCompatActivity {
             cardView.setPreventCornerOverlap(true);
 
             AppCompatButton button = new AppCompatButton(this);
-            button.setText("Ngày " + (i + 1));
+            button.setText(day.getDate() != null ? day.getDate() : "Ngày " + (i + 1));
             button.setTextSize(14);
             button.setTextColor(i == 0 ? getResources().getColor(R.color.white) : Color.parseColor("#B8B8B8"));
             button.setBackgroundColor(i == 0 ? getResources().getColor(R.color.orange) : Color.TRANSPARENT);
@@ -104,14 +117,12 @@ public class ItineraryDetailActivity extends AppCompatActivity {
 
             final int dayIndex = i;
             button.setOnClickListener(v -> {
-                // Cập nhật giao diện các nút
                 for (int j = 0; j < lnDaysContainer.getChildCount(); j++) {
                     CardView childCard = (CardView) lnDaysContainer.getChildAt(j);
                     AppCompatButton childButton = (AppCompatButton) childCard.getChildAt(0);
                     childButton.setTextColor(j == dayIndex ? getResources().getColor(R.color.white) : Color.parseColor("#B8B8B8"));
                     childButton.setBackgroundColor(j == dayIndex ? getResources().getColor(R.color.orange) : Color.TRANSPARENT);
                 }
-                // Cập nhật danh sách Item
                 viewModel.selectDay(dayIndex);
             });
 

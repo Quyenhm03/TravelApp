@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -27,7 +28,10 @@ import com.example.travel_app.Data.Model.Payment;
 import com.example.travel_app.Data.Model.SearchCoachInfo;
 import com.example.travel_app.R;
 import com.example.travel_app.Receiver.ReminderBroadcastReceiver;
+import com.example.travel_app.UI.Login.LoginActivity;
 import com.example.travel_app.ViewModel.BookingCoachViewModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONObject;
 
@@ -42,7 +46,7 @@ import vn.zalopay.sdk.ZaloPayError;
 import vn.zalopay.sdk.ZaloPaySDK;
 import vn.zalopay.sdk.listeners.PayOrderListener;
 
-public class PaymentCoachActivity extends AppCompatActivity {
+public class PaymentCoachActivity extends BaseActivity {
     private SearchCoachInfo searchCoachInfo;
     private BookingCoach bookingCoach;
     private List<String> selectedSeatsDeparture = new ArrayList<>();
@@ -171,7 +175,7 @@ public class PaymentCoachActivity extends AppCompatActivity {
                             Date departureDateTime = sdf.parse(departureDate + " " + departureTime);
                             long departureTimestamp = departureDateTime.getTime();
                             bookingCoach.setDepartureTimestamp(departureTimestamp);
-                            bookingCoach.setUserId("user123");
+                            bookingCoach.setUserId(getUserId());
 
                             // Đặt lịch thông báo cho chuyến đi
                             long departureReminderTime = departureTimestamp - 30 * 60 * 1000; // 30 phút trước
@@ -282,6 +286,22 @@ public class PaymentCoachActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         ZaloPaySDK.getInstance().onResult(intent);
+    }
+
+    private String getUserId(){
+        // Lấy userId từ FirebaseAuth
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser == null) {
+            // Người dùng chưa đăng nhập
+            Toast.makeText(this, "Bạn cần đăng nhập để thực hiện thanh toán", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        return currentUser.getUid();
     }
 
     private String generateBookingId() {

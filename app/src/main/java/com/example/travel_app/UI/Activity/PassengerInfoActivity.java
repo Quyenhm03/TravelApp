@@ -12,6 +12,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -19,7 +20,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.example.travel_app.Data.Model.Passenger;
 import com.example.travel_app.R;
 
-public class PassengerInfoActivity extends AppCompatActivity {
+public class PassengerInfoActivity extends BaseActivity {
     private EditText edtFullName, edtAddress, edtPhone, edtBirthday;
     private TextView txtNationality, txtGender;
     private Passenger passenger;

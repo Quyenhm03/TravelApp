@@ -1,5 +1,8 @@
 package com.example.travel_app.ViewModel;
 
+import android.content.Intent;
+import android.widget.Toast;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -9,6 +12,9 @@ import com.example.travel_app.Data.Model.BookingFlight;
 import com.example.travel_app.Data.Model.BookingItem;
 import com.example.travel_app.Data.Repository.BookingCoachRepository;
 import com.example.travel_app.Data.Repository.BookingFlightRepository;
+import com.example.travel_app.UI.Login.LoginActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +24,20 @@ public class HistoryBookingViewModel extends ViewModel {
     private BookingCoachRepository coachRepository;
     private MutableLiveData<List<BookingItem>> bookingListLiveData = new MutableLiveData<>();
     private MutableLiveData<List<BookingItem>> filteredBookingListLiveData = new MutableLiveData<>();
-    private String userId = "user123"; // Thay bằng userId thực tế
+    private String userId = getUserId(); // Thay bằng userId thực tế
 
     public HistoryBookingViewModel() {
         flightRepository = new BookingFlightRepository();
         coachRepository = new BookingCoachRepository();
         fetchBookingHistory();
+    }
+
+    private String getUserId(){
+        // Lấy userId từ FirebaseAuth
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        return currentUser.getUid();
     }
 
     private void fetchBookingHistory() {

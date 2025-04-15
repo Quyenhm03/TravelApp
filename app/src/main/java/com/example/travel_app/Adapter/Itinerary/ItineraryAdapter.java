@@ -1,4 +1,4 @@
-package com.example.travel_app.Adapter;
+package com.example.travel_app.Adapter.Itinerary;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,11 +10,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.travel_app.Data.Model.Day;
-import com.example.travel_app.Data.Model.Itinerary;
+import com.example.travel_app.Data.Model.Itinerary.Day;
+import com.example.travel_app.Data.Model.Itinerary.Itinerary;
+import com.example.travel_app.Data.Model.Itinerary.Location;
 import com.example.travel_app.R;
+import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -22,17 +25,17 @@ import java.util.List;
 
 public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.ItineraryViewHolder> {
     private List<Itinerary> itineraryList;
-    private OnItineraryClickListener listener;
-//    private boolean isSharedList;
+    private final OnItineraryClickListener listener;
+    private final ImageViewModel imageViewModel;
 
     public interface OnItineraryClickListener {
         void onItineraryClick(Itinerary itinerary);
         void onShareClick(Itinerary itinerary);
     }
 
-    public ItineraryAdapter(List<Itinerary> itineraryList, OnItineraryClickListener listener) {
+    public ItineraryAdapter(List<Itinerary> itineraryList, ImageViewModel imageViewModel, OnItineraryClickListener listener) {
         this.itineraryList = itineraryList != null ? itineraryList : new ArrayList<>();
-//        this.isSharedList = isSharedList;
+        this.imageViewModel = imageViewModel;
         this.listener = listener;
     }
 
@@ -54,23 +57,28 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.Itin
         if (days != null) {
             totalDays = days.size();
             totalLocations = days.stream()
-                    .mapToInt(day -> day.getItems() != null ? day.getItems().size() : 0)
+                    .mapToInt(day -> day.getLocations() != null ? day.getLocations().size() : 0)
                     .sum();
         }
         holder.txtItineraryDetail.setText(totalLocations + " địa điểm - " + totalDays + "N" + (totalDays > 0 ? totalDays - 1 : 0) + "D");
 
-        if (days != null && !days.isEmpty() && days.get(0).getItems() != null && !days.get(0).getItems().isEmpty()) {
-            String picUrl = days.get(0).getItems().get(0).getPic();
-            if (picUrl != null && !picUrl.isEmpty()) {
-                Picasso.get().load(picUrl).into(holder.imgItinerary);
-            } else {
-                holder.imgItinerary.setImageResource(R.drawable.ho_hoan_kiem); // Ảnh mặc định
-            }
+        // Tải ảnh của Location đầu tiên trong ngày đầu tiên
+        if (days != null && !days.isEmpty() && days.get(0).getLocations() != null && !days.get(0).getLocations().isEmpty()) {
+            Location firstLocation = days.get(0).getLocations().get(0);
+            int locationId = firstLocation.getLocation_id();
+            imageViewModel.loadImageForLocation(locationId);
+            imageViewModel.getImageUrlMapLiveData().observe((LifecycleOwner) holder.itemView.getContext(), imageUrlMap -> {
+                String imageUrl = imageUrlMap.get(locationId);
+//                Log.d("ItineraryAdapter", "Image for location ID: " + locationId + ", URL: " + imageUrl);
+                Picasso.get().load(imageUrl).into(holder.imgItinerary);
+
+            });
         } else {
-            holder.imgItinerary.setImageResource(R.drawable.ho_hoan_kiem); // Ảnh mặc định nếu không có dữ liệu
+            holder.imgItinerary.setImageResource(R.drawable.ho_hoan_kiem);
+            Log.w("ItineraryAdapter", "No locations found for itinerary ID: " + itinerary.getId());
         }
 
-        // Ẩn lnShare dựa trên isSharedList và trạng thái isShare của itinerary
+        // Ẩn lnShare dựa trên trạng thái isShare của itinerary
         Log.d("ItineraryAdapter", "Itinerary ID: " + itinerary.getId() + ", isShare: " + itinerary.getIsShare());
         if (itinerary.getIsShare()) {
             holder.lnShare.setVisibility(View.GONE);
@@ -90,7 +98,6 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.Itin
 
     public void updateList(List<Itinerary> newList) {
         this.itineraryList = newList != null ? newList : new ArrayList<>();
-//        this.isSharedList = isSharedList;
         notifyDataSetChanged();
     }
 

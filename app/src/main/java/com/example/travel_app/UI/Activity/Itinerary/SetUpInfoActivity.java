@@ -1,4 +1,4 @@
-package com.example.travel_app.UI.Activity;
+package com.example.travel_app.UI.Activity.Itinerary;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -10,15 +10,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.travel_app.Data.Model.Itinerary;
+import com.example.travel_app.Data.Model.Itinerary.Itinerary;
 import com.example.travel_app.R;
-import com.example.travel_app.ViewModel.ItineraryViewModel;
+import com.example.travel_app.UI.Activity.BaseActivity;
+import com.example.travel_app.ViewModel.Itinerary.ItineraryViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class SetUpInfoActivity extends AppCompatActivity {
+public class SetUpInfoActivity extends BaseActivity {
     private ItineraryViewModel viewModel;
     private EditText edtTitle, edtStartDate, edtEndDate;
     private AppCompatButton btnContinue, btnBack;
