@@ -27,15 +27,19 @@ public class Utils {
 
     // Hàm chuyển String sang Date
     public static Date stringToDate(String dateString, String pattern) {
-        if (pattern == null || pattern.isEmpty()) {
-            pattern = "dd/MM/yyyy";
+        if (dateString == null || dateString.trim().isEmpty()) {
+            return null;
         }
-        SimpleDateFormat formatter = new SimpleDateFormat(pattern, Locale.getDefault());
+        if (pattern == null || pattern.trim().isEmpty()) {
+            pattern = "dd/MM/yyyy"; // hoặc định dạng mặc định của bạn
+        }
         try {
-            return formatter.parse(dateString);
-        } catch (ParseException e) {
+            SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+            return sdf.parse(dateString);
+        } catch (Exception e) {
             e.printStackTrace();
-            return null; // Trả về null nếu chuỗi không đúng định dạng
+            return null;
         }
     }
+
 }

@@ -1,7 +1,6 @@
 package com.example.travel_app.Adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,35 +11,38 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.travel_app.Adapter.listener.OnViewMoreClickListener;
-import com.example.travel_app.Data.Model.Review;
+import com.example.travel_app.Data.Model.ReviewWithUser;
 import com.example.travel_app.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
 
-    private List<Review> reviews;
-    private boolean isLimited = true; // Biến kiểm soát hiển thị giới hạn 3 đánh giá
+    private List<ReviewWithUser> reviews;
+    private boolean isLimited = true;
     private final int maxInitialDisplay = 3;
     private final OnViewMoreClickListener onViewMoreClickListener;
 
-    // Constructor
-    public ReviewAdapter(List<Review> reviews, OnViewMoreClickListener onViewMoreClickListener) {
+    public ReviewAdapter(List<ReviewWithUser> reviews, OnViewMoreClickListener onViewMoreClickListener) {
         this.reviews = reviews;
         this.onViewMoreClickListener = onViewMoreClickListener;
     }
 
-    // ViewHolder class
     public static class ReviewViewHolder extends RecyclerView.ViewHolder {
         public TextView tvReviewerName;
         public RatingBar rbReviewRating;
         public TextView tvReviewContent;
+        public TextView tvReviewDate;
 
         public ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
             tvReviewerName = itemView.findViewById(R.id.tvReviewerName);
             rbReviewRating = itemView.findViewById(R.id.rbReviewRating);
             tvReviewContent = itemView.findViewById(R.id.tvReviewContent);
+            tvReviewDate = itemView.findViewById(R.id.tvReviewDate);
         }
     }
 
@@ -52,17 +54,25 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         return new ReviewViewHolder(view);
     }
 
-
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
-        Review review = reviews.get(position);
-        holder.tvReviewerName.setText(
-                holder.itemView.getContext().getString(R.string.userReview) + "Duong"
-        );
-
+        ReviewWithUser review = reviews.get(position);
+        holder.tvReviewerName.setText("Người dùng: " + review.getFullName());
         holder.rbReviewRating.setRating(review.getRating());
-        holder.tvReviewContent.setText(review.getContent());
+        holder.tvReviewContent.setText(review.getComment());
+
+        // Định dạng lại create_at để dễ đọc
+        String createAt = review.getCreateAt();
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            Date date = inputFormat.parse(createAt);
+            assert date != null;
+            holder.tvReviewDate.setText(outputFormat.format(date));
+        } catch (Exception e) {
+            holder.tvReviewDate.setText(createAt);
+        }
     }
 
     @Override
@@ -74,7 +84,11 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         }
     }
 
-    // Hàm để mở rộng danh sách khi nhấn "Xem thêm"
+    public void updateReviews(List<ReviewWithUser> newReviews) {
+        this.reviews = newReviews;
+        notifyDataSetChanged();
+    }
+
     public void showAllReviews() {
         isLimited = false;
         notifyDataSetChanged();

@@ -5,25 +5,23 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.travel_app.Data.Model.Review;
+import com.example.travel_app.Data.Model.ReviewWithUser;
 import com.example.travel_app.Data.Repository.ReviewRepository;
 
 import java.util.List;
 
-public class ReviewViewModel extends ViewModel{
-    private MutableLiveData<List<Review>> _reviews = new MutableLiveData<>();
-    private ReviewRepository repository;
-    private LiveData<List<Review>> reviews = _reviews;
+public class ReviewViewModel extends ViewModel {
+    private ReviewRepository reviewRepository;
 
     public ReviewViewModel() {
-        repository = new ReviewRepository();
+        reviewRepository = new ReviewRepository();
     }
 
-//    public LiveData<List<Review>> getReviews() {
-//        _reviews.setValue(repository.getReviews());
-//        return reviews;
-//    }
+    public LiveData<List<ReviewWithUser>> getReviews(int locationId) {
+        return reviewRepository.getReviewsForLocation(locationId);
+    }
 
     public void addReview(Review review) {
-        repository.addReview(review);
+        reviewRepository.addReview(review);
     }
 }
