@@ -69,7 +69,7 @@ public class ReviewRepository {
                             ", createAt=" + review.getCreateAt());
 
                     // Kiểm tra tính hợp lệ của review
-                    if (review.getReviewId() == 0 || review.getLocationId() == 0) {
+                    if (review.getLocationId() == 0) {
                         Log.e(TAG, "Dữ liệu đánh giá không hợp lệ cho snapshot: " + snapshot.getKey());
                         continue;
                     }
@@ -129,208 +129,56 @@ public class ReviewRepository {
         });
     }
 
+    public LiveData<List<ReviewWithUser>> getReviewsForLocation(int locationId) {
+        MutableLiveData<List<ReviewWithUser>> filteredReviewsLiveData = new MutableLiveData<>();
+        mReviewsRef.orderByChild("locationId").equalTo(locationId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<ReviewWithUser> reviewList = new ArrayList<>();
+                for (DataSnapshot reviewSnapshot : snapshot.getChildren()) {
+                    Review review = reviewSnapshot.getValue(Review.class);
+                    if (review != null) {
+                        ReviewWithUser reviewWithUser = new ReviewWithUser();
+                        reviewWithUser.setReviewId(review.getReviewId());
+                        reviewWithUser.setComment(review.getComment());
+                        reviewWithUser.setCreateAt(review.getCreateAt());
+                        reviewWithUser.setRating(review.getRating());
+                        reviewWithUser.setLocationId(review.getLocationId());
+                        reviewWithUser.setUserId(review.getUserId());
+
+                        String userId = review.getUserId();
+                        if (userId != null && !userId.isEmpty()) {
+                            mUsersRef.child(userId).get().addOnSuccessListener(userSnap -> {
+                                if (userSnap.exists()) {
+                                    String fullName = userSnap.child("fullName").getValue(String.class);
+                                    reviewWithUser.setFullName(fullName != null ? fullName : "Ẩn danh");
+                                } else {
+                                    reviewWithUser.setFullName("Ẩn danh");
+                                }
+                                reviewList.add(reviewWithUser);
+                                if (reviewList.size() == snapshot.getChildrenCount()) {
+                                    filteredReviewsLiveData.setValue(reviewList);
+                                }
+                            });
+                        } else {
+                            reviewWithUser.setFullName("Ẩn danh");
+                            reviewList.add(reviewWithUser);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                filteredReviewsLiveData.setValue(new ArrayList<>());
+            }
+        });
+        return filteredReviewsLiveData;
+    }
+
+
     public LiveData<List<ReviewWithUser>> getReviews() {
         return reviewsLiveData;
-    }
-
-    public LiveData<List<ReviewWithUser>> getReviewsWithUsersForLocation(int locationId) {
-        MutableLiveData<List<ReviewWithUser>> liveData = new MutableLiveData<>();
-
-        mReviewsRef.orderByChild("location_id").equalTo(locationId)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot reviewSnapshot) {
-                        List<ReviewWithUser> reviewList = new ArrayList<>();
-                        long totalReviews = reviewSnapshot.getChildrenCount();
-
-                        Log.d(TAG, "Dữ liệu JSON thô cho đánh giá với locationId " + locationId + ": " + reviewSnapshot.getValue());
-                        if (totalReviews == 0) {
-                            Log.d(TAG, "Không tìm thấy đánh giá nào cho locationId: " + locationId);
-                            liveData.setValue(reviewList);
-                            return;
-                        }
-
-                        for (DataSnapshot snapshot : reviewSnapshot.getChildren()) {
-                            Log.d(TAG, "Dữ liệu JSON thô cho đánh giá với locationId " + locationId + ": " + snapshot.getValue());
-                            if (!snapshot.exists() || snapshot.getValue() == null) {
-                                Log.w(TAG, "Snapshot không hợp lệ hoặc rỗng: " + snapshot.getKey());
-                                continue;
-                            }
-
-                            Review review = snapshot.getValue(Review.class);
-                            if (review == null) {
-                                Log.w(TAG, "Không thể phân tích đánh giá cho snapshot: " + snapshot.getKey());
-                                continue;
-                            }
-
-                            // Log chi tiết giá trị của review
-                            Log.d(TAG, "Review parsed: reviewId=" + review.getReviewId() +
-                                    ", userId=" + review.getUserId() +
-                                    ", locationId=" + review.getLocationId() +
-                                    ", comment=" + review.getComment() +
-                                    ", rating=" + review.getRating() +
-                                    ", createAt=" + review.getCreateAt());
-
-                            if (review.getReviewId() == 0 || review.getLocationId() == 0) {
-                                Log.e(TAG, "Dữ liệu đánh giá không hợp lệ cho snapshot: " + snapshot.getKey());
-                                continue;
-                            }
-
-                            ReviewWithUser reviewWithUser = new ReviewWithUser();
-                            reviewWithUser.setReviewId(review.getReviewId());
-                            reviewWithUser.setComment(review.getComment());
-                            reviewWithUser.setCreateAt(review.getCreateAt());
-                            reviewWithUser.setRating(review.getRating());
-                            reviewWithUser.setLocationId(review.getLocationId());
-                            reviewWithUser.setUserId(review.getUserId());
-
-                            String userId = review.getUserId();
-                            if (userId == null || userId.isEmpty()) {
-                                Log.w(TAG, "userId không hợp lệ (null hoặc rỗng) cho reviewId: " + review.getReviewId());
-                                reviewWithUser.setFullName("Ẩn danh");
-                                reviewList.add(reviewWithUser);
-                                if (reviewList.size() == totalReviews) {
-                                    liveData.setValue(reviewList);
-                                }
-                                continue;
-                            }
-
-                            mUsersRef.child(userId).get().addOnSuccessListener(userSnap -> {
-                                Log.d(TAG, "Dữ liệu JSON thô cho người dùng với userId " + userId + ": " + userSnap.getValue());
-                                if (userSnap.exists()) {
-                                    String fullName = userSnap.child("fullName").getValue(String.class);
-                                    reviewWithUser.setFullName(fullName != null ? fullName : "Ẩn danh");
-                                } else {
-                                    Log.w(TAG, "Không tìm thấy người dùng cho userId: " + userId + " trong reviewId: " + review.getReviewId());
-                                    reviewWithUser.setFullName("Ẩn danh");
-                                }
-                                reviewList.add(reviewWithUser);
-
-                                if (reviewList.size() == totalReviews) {
-                                    Log.d(TAG, "Đã xử lý xong tất cả đánh giá cho locationId: " + locationId + ", tổng: " + reviewList.size());
-                                    liveData.setValue(reviewList);
-                                }
-                            }).addOnFailureListener(e -> {
-                                Log.e(TAG, "Lỗi khi lấy thông tin người dùng cho userId: " + userId + " - " + e.getMessage());
-                                reviewWithUser.setFullName("Ẩn danh");
-                                reviewList.add(reviewWithUser);
-
-                                if (reviewList.size() == totalReviews) {
-                                    Log.d(TAG, "Đã xử lý xong tất cả đánh giá (có lỗi) cho locationId: " + locationId + ", tổng: " + reviewList.size());
-                                    liveData.setValue(reviewList);
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Lỗi khi lấy đánh giá cho locationId: " + locationId + " - " + error.getMessage());
-                        liveData.setValue(new ArrayList<>());
-                    }
-                });
-
-        return liveData;
-    }
-
-    public LiveData<List<ReviewWithUser>> getReviewsForLocation(int locationId) {
-        MutableLiveData<List<ReviewWithUser>> liveData = new MutableLiveData<>();
-
-        mReviewsRef.orderByChild("location_id").equalTo(locationId)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot reviewSnapshot) {
-                        List<ReviewWithUser> reviewList = new ArrayList<>();
-                        long totalReviews = reviewSnapshot.getChildrenCount();
-
-                        Log.d(TAG, "Dữ liệu JSON thô cho đánh giá với locationId " + locationId + ": " + reviewSnapshot.getValue());
-                        if (totalReviews == 0) {
-                            Log.d(TAG, "Không tìm thấy đánh giá nào cho locationId: " + locationId);
-                            liveData.setValue(reviewList);
-                            return;
-                        }
-
-                        for (DataSnapshot snapshot : reviewSnapshot.getChildren()) {
-                            Log.d(TAG, "Dữ liệu JSON thô cho đánh giá với locationId " + locationId + ": " + snapshot.getValue());
-                            if (!snapshot.exists() || snapshot.getValue() == null) {
-                                Log.w(TAG, "Snapshot không hợp lệ hoặc rỗng: " + snapshot.getKey());
-                                continue;
-                            }
-
-                            Review review = snapshot.getValue(Review.class);
-                            if (review == null) {
-                                Log.w(TAG, "Không thể phân tích đánh giá cho snapshot: " + snapshot.getKey());
-                                continue;
-                            }
-
-                            // Log chi tiết giá trị của review
-                            Log.d(TAG, "Review parsed: reviewId=" + review.getReviewId() +
-                                    ", userId=" + review.getUserId() +
-                                    ", locationId=" + review.getLocationId() +
-                                    ", comment=" + review.getComment() +
-                                    ", rating=" + review.getRating() +
-                                    ", createAt=" + review.getCreateAt());
-
-                            if (review.getReviewId() == 0 || review.getLocationId() == 0) {
-                                Log.e(TAG, "Dữ liệu đánh giá không hợp lệ cho snapshot: " + snapshot.getKey());
-                                continue;
-                            }
-
-                            ReviewWithUser reviewWithUser = new ReviewWithUser();
-                            reviewWithUser.setReviewId(review.getReviewId());
-                            reviewWithUser.setComment(review.getComment());
-                            reviewWithUser.setCreateAt(review.getCreateAt());
-                            reviewWithUser.setRating(review.getRating());
-                            reviewWithUser.setLocationId(review.getLocationId());
-                            reviewWithUser.setUserId(review.getUserId());
-
-                            String userId = review.getUserId();
-                            if (userId == null || userId.isEmpty()) {
-                                Log.w(TAG, "userId không hợp lệ (null hoặc rỗng) cho reviewId: " + review.getReviewId());
-                                reviewWithUser.setFullName("Ẩn danh");
-                                reviewList.add(reviewWithUser);
-                                if (reviewList.size() == totalReviews) {
-                                    liveData.setValue(reviewList);
-                                }
-                                continue;
-                            }
-
-                            mUsersRef.child(userId).get().addOnSuccessListener(userSnap -> {
-                                Log.d(TAG, "Dữ liệu JSON thô cho người dùng với userId " + userId + ": " + userSnap.getValue());
-                                if (userSnap.exists()) {
-                                    String fullName = userSnap.child("fullName").getValue(String.class);
-                                    reviewWithUser.setFullName(fullName != null ? fullName : "Ẩn danh");
-                                } else {
-                                    Log.w(TAG, "Không tìm thấy người dùng cho userId: " + userId + " trong reviewId: " + review.getReviewId());
-                                    reviewWithUser.setFullName("Ẩn danh");
-                                }
-                                reviewList.add(reviewWithUser);
-
-                                if (reviewList.size() == totalReviews) {
-                                    Log.d(TAG, "Đã xử lý xong tất cả đánh giá cho locationId: " + locationId + ", tổng: " + reviewList.size());
-                                    liveData.setValue(reviewList);
-                                }
-                            }).addOnFailureListener(e -> {
-                                Log.e(TAG, "Lỗi khi lấy thông tin người dùng cho userId: " + userId + " - " + e.getMessage());
-                                reviewWithUser.setFullName("Ẩn danh");
-                                reviewList.add(reviewWithUser);
-
-                                if (reviewList.size() == totalReviews) {
-                                    Log.d(TAG, "Đã xử lý xong tất cả đánh giá (có lỗi) cho locationId: " + locationId + ", tổng: " + reviewList.size());
-                                    liveData.setValue(reviewList);
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Lỗi khi lấy đánh giá cho locationId: " + locationId + " - " + error.getMessage());
-                        liveData.setValue(new ArrayList<>());
-                    }
-                });
-
-        return liveData;
     }
 
     public void addReview(Review review) {
@@ -338,21 +186,12 @@ public class ReviewRepository {
         if (currentUser != null) {
             String userId = currentUser.getUid();
             if (!userId.isEmpty()) {
-                review.setUserId(Long.valueOf(userId)); // Lưu userId trực tiếp dưới dạng chuỗi
-                String key = String.valueOf(review.getReviewId());
+                review.setUserId(userId);
+                // Dùng auto-generated ID của Firebase thay vì tính toán thủ công
+                String key = mReviewsRef.push().getKey();
                 if (key != null) {
-                    mReviewsRef.get().addOnSuccessListener(snapshot -> {
-                        int maxReviewId = 0;
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            Review r = child.getValue(Review.class);
-                            if (r != null && r.getReviewId() > maxReviewId) {
-                                maxReviewId = r.getReviewId();
-                            }
-                        }
-                        review.setReviewId(maxReviewId + 1);
-                        mReviewsRef.child(String.valueOf(review.getReviewId())).setValue(review)
-                                .addOnFailureListener(e -> Log.e(TAG, "Không thể thêm đánh giá: " + e.getMessage()));
-                    }).addOnFailureListener(e -> Log.e(TAG, "Lỗi khi lấy đánh giá để tạo ID: " + e.getMessage()));
+                    mReviewsRef.child(key).setValue(review)
+                            .addOnFailureListener(e -> Log.e(TAG, "Không thể thêm đánh giá: " + e.getMessage()));
                 }
             } else {
                 Log.e(TAG, "Không tìm thấy userId hợp lệ, không thể thêm đánh giá");

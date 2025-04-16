@@ -1,7 +1,7 @@
 package com.example.travel_app.Data.Model;
 
 public class ReviewWithUser {
-    private int reviewId;
+    private Long reviewId;
     private String userId;
     private int locationId;
     private String comment;
@@ -14,7 +14,7 @@ public class ReviewWithUser {
 
     public ReviewWithUser(Review review, String fullName) {
         this.reviewId = review.getReviewId();
-        this.userId = review.getUserId(); // Loại bỏ String.valueOf vì getUserId() đã trả về String
+        this.userId = review.getUserId();
         this.locationId = review.getLocationId();
         this.comment = review.getComment();
         this.rating = review.getRating();
@@ -22,11 +22,11 @@ public class ReviewWithUser {
         this.fullName = fullName;
     }
 
-    public int getReviewId() {
+    public Long getReviewId() {
         return reviewId;
     }
 
-    public void setReviewId(int reviewId) {
+    public void setReviewId(Long reviewId) {
         this.reviewId = reviewId;
     }
 

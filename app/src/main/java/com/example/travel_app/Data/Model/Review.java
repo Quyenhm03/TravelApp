@@ -6,7 +6,7 @@ import com.google.firebase.database.PropertyName;
 @IgnoreExtraProperties
 public class Review {
     @PropertyName("review_id")
-    private int reviewId;
+    private Long  reviewId;
 
     @PropertyName("location_id")
     private int locationId;
@@ -26,13 +26,17 @@ public class Review {
     public Review() {
     }
 
+
+
     @PropertyName("review_id")
-    public int getReviewId() {
+    public Long getReviewId() {
         return reviewId;
     }
 
+
+
     @PropertyName("review_id")
-    public void setReviewId(int reviewId) {
+    public void setReviewId(Long reviewId) {
         this.reviewId = reviewId;
     }
 
@@ -53,8 +57,8 @@ public class Review {
 
 
     @PropertyName("user_id")
-    public void setUserId(Long userId) {
-        this.userId = userId != null ? String.valueOf(userId) : null;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @PropertyName("comment")

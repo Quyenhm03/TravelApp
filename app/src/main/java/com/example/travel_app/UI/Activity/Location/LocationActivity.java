@@ -1,5 +1,7 @@
 package com.example.travel_app.UI.Activity.Location;
 
+import static android.webkit.URLUtil.isValidUrl;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.travel_app.Adapter.MediaAdapter;
 import com.example.travel_app.Adapter.ReviewAdapter;
+import com.example.travel_app.Adapter.WeatherAdapter;
 import com.example.travel_app.Data.Model.Image;
 import com.example.travel_app.Data.Model.Review;
 import com.example.travel_app.Data.Model.ReviewWithUser;
@@ -24,6 +27,7 @@ import com.example.travel_app.R;
 import com.example.travel_app.ViewModel.LocationViewModel;
 import com.example.travel_app.ViewModel.MediaViewModel;
 import com.example.travel_app.ViewModel.ReviewViewModel;
+import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +46,7 @@ public class LocationActivity extends AppCompatActivity {
     private ReviewViewModel reviewViewModel;
     private LocationViewModel locationViewModel;
     private MediaViewModel mediaViewModel;
+    private ImageViewModel imageViewModel;
     private static final int REQUEST_CODE_REVIEW = 100;
 
     private ViewPager2 viewPagerMedia;
@@ -72,6 +77,7 @@ public class LocationActivity extends AppCompatActivity {
         reviewViewModel = new ViewModelProvider(this).get(ReviewViewModel.class);
         locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
         mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
+        imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
 
         setupMediaViewPager();
         setupReviewsRecyclerView();
@@ -106,6 +112,30 @@ public class LocationActivity extends AppCompatActivity {
                 btnViewMoreReviews.setVisibility(View.GONE);
             }
         });
+
+        imageViewModel.getImageUrlMapLiveData().observe(this, imageUrlMap -> {
+            String imageUrl = imageUrlMap.get(locationId);
+            if (imageUrl != null && isValidUrl(imageUrl)) {
+                Log.d("LocationActivityIMAGE", "Ảnh cho locationId = " + locationId + " đã được load: " + imageUrl);
+                List<String> mediaUrls = new ArrayList<>();
+                mediaUrls.add(imageUrl);
+                MediaAdapter mediaAdapter = new MediaAdapter(mediaUrls);
+                viewPagerMedia.setAdapter(mediaAdapter);
+                new TabLayoutMediator(tabLayoutDots, viewPagerMedia, (tab, position) -> {}).attach();
+            } else {
+                Log.w("LocationActivityIMAGE", "Không tìm thấy ảnh hợp lệ cho locationId = " + locationId);
+                // Thay ảnh placeholder nếu URL không hợp lệ
+                List<String> mediaUrls = new ArrayList<>();
+                mediaUrls.add("https://example.com/placeholder_image.jpg");  // URL ảnh placeholder
+                MediaAdapter mediaAdapter = new MediaAdapter(mediaUrls);
+                viewPagerMedia.setAdapter(mediaAdapter);
+                new TabLayoutMediator(tabLayoutDots, viewPagerMedia, (tab, position) -> {}).attach();
+            }
+        });
+
+
+        // Load ảnh cho địa điểm
+        imageViewModel.loadImageForLocation(locationId);
     }
 
     private void initViews() {
@@ -133,23 +163,7 @@ public class LocationActivity extends AppCompatActivity {
     }
 
     private void setupMediaViewPager() {
-        mediaViewModel.getImages(String.valueOf(locationId)).observe(this, images -> {
-            List<String> mediaUrls = new ArrayList<>();
-            if (images != null && !images.isEmpty()) {
-                Log.d("LocationActivity", "Số ảnh: " + images.size());
-                for (Image image : images) {
-                    mediaUrls.add(image.getUrl());
-                }
-            } else {
-                Log.w("LocationActivity", "Không tìm thấy ảnh cho locationId: " + locationId);
-                mediaUrls.add("https://example.com/placeholder_image.jpg");
-                Toast.makeText(this, "Không tìm thấy ảnh cho địa điểm!", Toast.LENGTH_SHORT).show();
-            }
-            MediaAdapter mediaAdapter = new MediaAdapter(mediaUrls);
-            viewPagerMedia.setAdapter(mediaAdapter);
-            new TabLayoutMediator(tabLayoutDots, viewPagerMedia, (tab, position) -> {
-            }).attach();
-        });
+        // Đã chuyển sang sử dụng dữ liệu từ imageViewModel
     }
 
     private void setupReviewsRecyclerView() {
@@ -159,17 +173,25 @@ public class LocationActivity extends AppCompatActivity {
     }
 
     private void setupWeatherViewPager() {
+        // Tạo danh sách các dự báo thời tiết
         List<String> weatherList = new ArrayList<>();
         weatherList.add("Ngày 1: 25°C, Nắng");
         weatherList.add("Ngày 2: 24°C, Mưa nhẹ");
         weatherList.add("Ngày 3: 26°C, Nhiều mây");
-        MediaAdapter weatherAdapter = new MediaAdapter(weatherList);
+
+        // Tạo và thiết lập adapter cho ViewPager2 sử dụng WeatherAdapter
+        WeatherAdapter weatherAdapter = new WeatherAdapter(weatherList); // Sử dụng WeatherAdapter thay vì MediaAdapter
         viewPagerWeather.setAdapter(weatherAdapter);
+
+        // Nếu bạn muốn hiển thị các dots tương tự như phần Media
+        new TabLayoutMediator(tabLayoutDots, viewPagerWeather, (tab, position) -> {
+            // Bạn có thể tùy chỉnh cách hiển thị của TabLayout ở đây nếu cần
+        }).attach();
     }
+
 
     private void setupMapButton() {
         btnOpenMap.setOnClickListener(v -> {
-
             Toast.makeText(this, "Chức năng bản đồ chưa được triển khai!", Toast.LENGTH_SHORT).show();
         });
     }
@@ -192,7 +214,7 @@ public class LocationActivity extends AppCompatActivity {
                     newReview.setComment(comment);
                     newReview.setCreateAt(createAt);
                     newReview.setLocationId(locationId);
-                    newReview.setUserId(Long.valueOf(user.getUid()));
+                    newReview.setUserId(user.getUid());
                     newReview.setRating(rating);
 
                     reviewViewModel.addReview(newReview);
@@ -209,4 +231,5 @@ public class LocationActivity extends AppCompatActivity {
             Log.w("LocationActivity", "Nhận kết quả không hợp lệ: requestCode=" + requestCode + ", resultCode=" + resultCode);
         }
     }
+
 }

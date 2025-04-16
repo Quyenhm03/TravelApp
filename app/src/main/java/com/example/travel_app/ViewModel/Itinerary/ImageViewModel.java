@@ -1,13 +1,12 @@
 package com.example.travel_app.ViewModel.Itinerary;
 
-
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 
 import com.example.travel_app.Data.Repository.Itinerary.ImageRepository;
 
@@ -28,25 +27,31 @@ public class ImageViewModel extends AndroidViewModel {
     }
 
     public void loadImageForLocation(int locationId) {
+        Map<Integer, String> currentMap = imageUrlMapLiveData.getValue();
+        if (currentMap != null && currentMap.containsKey(locationId)) {
+            Log.d("ImageViewModel", "Image for locationId = " + locationId + " already loaded, skipping.");
+            return; // Không load lại nếu đã có
+        }
+
+        Log.d("ImageViewModel", "Đang load ảnh cho locationId = " + locationId);
+
         imageRepository.getImageUrlForLocation(locationId, new ImageRepository.ImageCallback() {
             @Override
             public void onImageLoaded(String imageUrl) {
-                Map<Integer, String> currentMap = imageUrlMapLiveData.getValue();
-                if (currentMap == null) {
-                    currentMap = new HashMap<>();
-                }
-                currentMap.put(locationId, imageUrl); // imageUrl có thể là null
-                imageUrlMapLiveData.setValue(currentMap);
+                Log.d("ImageViewModel", "Image loaded for locationId = " + locationId + ", URL = " + imageUrl);
+
+                Map<Integer, String> updatedMap = new HashMap<>(imageUrlMapLiveData.getValue());
+                updatedMap.put(locationId, imageUrl);
+                imageUrlMapLiveData.setValue(updatedMap);
             }
 
             @Override
             public void onError(String error) {
-                Map<Integer, String> currentMap = imageUrlMapLiveData.getValue();
-                if (currentMap == null) {
-                    currentMap = new HashMap<>();
-                }
-                currentMap.put(locationId, null); // Gán null khi có lỗi
-                imageUrlMapLiveData.setValue(currentMap);
+                Log.w("ImageViewModel", "Error loading image for locationId = " + locationId + ", error: " + error);
+
+                Map<Integer, String> updatedMap = new HashMap<>(imageUrlMapLiveData.getValue());
+                updatedMap.put(locationId, null);
+                imageUrlMapLiveData.setValue(updatedMap);
             }
         });
     }

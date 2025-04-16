@@ -32,7 +32,7 @@ public class ImageRepository {
     }
 
     public void getImageUrlForLocation(int locationId, ImageCallback callback) {
-        // Kiểm tra cache
+
         String cachedUrl = imageCache.get(locationId);
         if (cachedUrl != null) {
             Log.d("ImageRepository", "Using cached image for location ID: " + locationId + ", URL: " + cachedUrl);
