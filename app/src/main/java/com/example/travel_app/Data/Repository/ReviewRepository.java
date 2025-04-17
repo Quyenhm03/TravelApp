@@ -21,9 +21,9 @@ import java.util.List;
 public class ReviewRepository {
     private static final String TAG = "ReviewRepository";
 
-    private DatabaseReference mReviewsRef;
-    private DatabaseReference mUsersRef;
-    private MutableLiveData<List<ReviewWithUser>> reviewsLiveData;
+    private final DatabaseReference mReviewsRef;
+    private final DatabaseReference mUsersRef;
+    private final MutableLiveData<List<ReviewWithUser>> reviewsLiveData;
 
     public ReviewRepository() {
         mReviewsRef = FirebaseDatabase.getInstance().getReference("Review");
@@ -82,8 +82,8 @@ public class ReviewRepository {
                     reviewWithUser.setLocationId(review.getLocationId());
                     reviewWithUser.setUserId(review.getUserId());
 
-                    String userId = review.getUserId();
-                    if (userId == null || userId.isEmpty()) {
+                    int userId = review.getUserId();
+                    if (userId != 0) {
                         Log.w(TAG, "userId không hợp lệ (null hoặc rỗng) cho reviewId: " + review.getReviewId());
                         reviewWithUser.setFullName("Ẩn danh");
                         reviewList.add(reviewWithUser);
@@ -93,7 +93,7 @@ public class ReviewRepository {
                         continue;
                     }
 
-                    mUsersRef.child(userId).get().addOnSuccessListener(userSnap -> {
+                    mUsersRef.child(String.valueOf(userId)).get().addOnSuccessListener(userSnap -> {
                         Log.d(TAG, "Dữ liệu JSON thô cho người dùng với userId " + userId + ": " + userSnap.getValue());
                         if (userSnap.exists()) {
                             String fullName = userSnap.child("fullName").getValue(String.class);
@@ -184,8 +184,8 @@ public class ReviewRepository {
                             reviewWithUser.setLocationId(review.getLocationId());
                             reviewWithUser.setUserId(review.getUserId());
 
-                            String userId = review.getUserId();
-                            if (userId == null || userId.isEmpty()) {
+                            int userId = review.getUserId();
+                            if (userId != 0 ) {
                                 Log.w(TAG, "userId không hợp lệ (null hoặc rỗng) cho reviewId: " + review.getReviewId());
                                 reviewWithUser.setFullName("Ẩn danh");
                                 reviewList.add(reviewWithUser);
@@ -195,7 +195,7 @@ public class ReviewRepository {
                                 continue;
                             }
 
-                            mUsersRef.child(userId).get().addOnSuccessListener(userSnap -> {
+                            mUsersRef.child(String.valueOf(userId)).get().addOnSuccessListener(userSnap -> {
                                 Log.d(TAG, "Dữ liệu JSON thô cho người dùng với userId " + userId + ": " + userSnap.getValue());
                                 if (userSnap.exists()) {
                                     String fullName = userSnap.child("fullName").getValue(String.class);
@@ -284,8 +284,8 @@ public class ReviewRepository {
                             reviewWithUser.setLocationId(review.getLocationId());
                             reviewWithUser.setUserId(review.getUserId());
 
-                            String userId = review.getUserId();
-                            if (userId == null || userId.isEmpty()) {
+                            int userId = review.getUserId();
+                            if (userId != 0) {
                                 Log.w(TAG, "userId không hợp lệ (null hoặc rỗng) cho reviewId: " + review.getReviewId());
                                 reviewWithUser.setFullName("Ẩn danh");
                                 reviewList.add(reviewWithUser);
@@ -295,7 +295,7 @@ public class ReviewRepository {
                                 continue;
                             }
 
-                            mUsersRef.child(userId).get().addOnSuccessListener(userSnap -> {
+                            mUsersRef.child(String.valueOf(userId)).get().addOnSuccessListener(userSnap -> {
                                 Log.d(TAG, "Dữ liệu JSON thô cho người dùng với userId " + userId + ": " + userSnap.getValue());
                                 if (userSnap.exists()) {
                                     String fullName = userSnap.child("fullName").getValue(String.class);
@@ -338,22 +338,20 @@ public class ReviewRepository {
         if (currentUser != null) {
             String userId = currentUser.getUid();
             if (!userId.isEmpty()) {
-                review.setUserId(Long.valueOf(userId)); // Lưu userId trực tiếp dưới dạng chuỗi
+                review.setUserId(Integer.parseInt(userId)); // Lưu userId trực tiếp dưới dạng chuỗi
                 String key = String.valueOf(review.getReviewId());
-                if (key != null) {
-                    mReviewsRef.get().addOnSuccessListener(snapshot -> {
-                        int maxReviewId = 0;
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            Review r = child.getValue(Review.class);
-                            if (r != null && r.getReviewId() > maxReviewId) {
-                                maxReviewId = r.getReviewId();
-                            }
+                mReviewsRef.get().addOnSuccessListener(snapshot -> {
+                    int maxReviewId = 0;
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        Review r = child.getValue(Review.class);
+                        if (r != null && r.getReviewId() > maxReviewId) {
+                            maxReviewId = r.getReviewId();
                         }
-                        review.setReviewId(maxReviewId + 1);
-                        mReviewsRef.child(String.valueOf(review.getReviewId())).setValue(review)
-                                .addOnFailureListener(e -> Log.e(TAG, "Không thể thêm đánh giá: " + e.getMessage()));
-                    }).addOnFailureListener(e -> Log.e(TAG, "Lỗi khi lấy đánh giá để tạo ID: " + e.getMessage()));
-                }
+                    }
+                    review.setReviewId(maxReviewId + 1);
+                    mReviewsRef.child(String.valueOf(review.getReviewId())).setValue(review)
+                            .addOnFailureListener(e -> Log.e(TAG, "Không thể thêm đánh giá: " + e.getMessage()));
+                }).addOnFailureListener(e -> Log.e(TAG, "Lỗi khi lấy đánh giá để tạo ID: " + e.getMessage()));
             } else {
                 Log.e(TAG, "Không tìm thấy userId hợp lệ, không thể thêm đánh giá");
             }

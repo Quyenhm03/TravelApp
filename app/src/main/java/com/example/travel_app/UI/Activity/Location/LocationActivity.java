@@ -179,7 +179,7 @@ public class LocationActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_REVIEW && resultCode == RESULT_OK && data != null) {
-            float rating = data.getFloatExtra("rating", 0f);
+            int rating = data.getIntExtra("rating", 0);
             String comment = data.getStringExtra("comment");
             Log.d("LocationActivity", "Nhận đánh giá: rating=" + rating + ", comment=" + comment);
 
@@ -192,7 +192,7 @@ public class LocationActivity extends AppCompatActivity {
                     newReview.setComment(comment);
                     newReview.setCreateAt(createAt);
                     newReview.setLocationId(locationId);
-                    newReview.setUserId(Long.valueOf(user.getUid()));
+                    newReview.setUserId(Integer.parseInt(user.getUid()));
                     newReview.setRating(rating);
 
                     reviewViewModel.addReview(newReview);

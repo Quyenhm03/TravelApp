@@ -12,7 +12,7 @@ public class Review {
     private int locationId;
 
     @PropertyName("user_id")
-    private String userId;
+    private int userId;
 
     @PropertyName("comment")
     private String comment;
@@ -21,7 +21,7 @@ public class Review {
     private String createAt;
 
     @PropertyName("rating")
-    private float rating;
+    private int rating;
 
     public Review() {
     }
@@ -47,14 +47,14 @@ public class Review {
     }
 
     @PropertyName("user_id")
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
 
     @PropertyName("user_id")
-    public void setUserId(Long userId) {
-        this.userId = userId != null ? String.valueOf(userId) : null;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     @PropertyName("comment")
@@ -78,12 +78,12 @@ public class Review {
     }
 
     @PropertyName("rating")
-    public float getRating() {
+    public int getRating() {
         return rating;
     }
 
     @PropertyName("rating")
-    public void setRating(float rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 }
