@@ -28,6 +28,7 @@ import com.example.travel_app.ViewModel.LocationViewModel;
 import com.example.travel_app.ViewModel.MediaViewModel;
 import com.example.travel_app.ViewModel.ReviewViewModel;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
+import com.example.travel_app.ViewModel.UserCurrentViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +46,7 @@ public class LocationActivity extends AppCompatActivity {
     private List<ReviewWithUser> reviews;
     private ReviewViewModel reviewViewModel;
     private LocationViewModel locationViewModel;
+    private UserCurrentViewModel userCurrentViewModel;
     private MediaViewModel mediaViewModel;
     private ImageViewModel imageViewModel;
     private static final int REQUEST_CODE_REVIEW = 100;
@@ -74,6 +76,7 @@ public class LocationActivity extends AppCompatActivity {
         reviews = new ArrayList<>();
 
         initViews();
+        userCurrentViewModel = new ViewModelProvider(this).get(UserCurrentViewModel.class);
         reviewViewModel = new ViewModelProvider(this).get(ReviewViewModel.class);
         locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
         mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
@@ -150,15 +153,20 @@ public class LocationActivity extends AppCompatActivity {
 
         btnViewMoreReviews.setOnClickListener(v -> reviewAdapter.showAllReviews());
         btnAddReview.setOnClickListener(v -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                Intent intent = new Intent(LocationActivity.this, ReviewActivity.class);
-                intent.putExtra("user_id", user.getUid());
-                intent.putExtra("location_id", locationId);
-                startActivityForResult(intent, REQUEST_CODE_REVIEW);
-            } else {
-                Toast.makeText(this, "Vui lòng đăng nhập để đánh giá!", Toast.LENGTH_SHORT).show();
-            }
+
+
+            // Kiểm tra thông tin người dùng từ UserCurrentViewModel
+            userCurrentViewModel.getCurrentUser().observe(this, user -> {
+                if (user != null && user.getUserId() != null) {
+                    Intent intent = new Intent(LocationActivity.this, ReviewActivity.class);
+                    intent.putExtra("user_id", user.getUserId()); // Truyền userId từ node User
+                    intent.putExtra("location_id", locationId);
+                    startActivityForResult(intent, REQUEST_CODE_REVIEW);
+                } else {
+                    Log.w("LocationActivity", "Không tìm thấy thông tin người dùng trong node User");
+                    Toast.makeText(this, "Vui lòng cập nhật thông tin người dùng để đánh giá!", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 
@@ -202,27 +210,38 @@ public class LocationActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_REVIEW && resultCode == RESULT_OK && data != null) {
             float rating = data.getFloatExtra("rating", 0f);
+
             String comment = data.getStringExtra("comment");
             Log.d("LocationActivity", "Nhận đánh giá: rating=" + rating + ", comment=" + comment);
 
             if (comment != null && !comment.trim().isEmpty() && rating >= 0 && rating <= 5) {
                 String createAt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                         .format(new Date());
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    Review newReview = new Review();
-                    newReview.setComment(comment);
-                    newReview.setCreateAt(createAt);
-                    newReview.setLocationId(locationId);
-                    newReview.setUserId(user.getUid());
-                    newReview.setRating(rating);
-
-                    reviewViewModel.addReview(newReview);
-                    Toast.makeText(this, "Đã gửi đánh giá, đang xử lý!", Toast.LENGTH_SHORT).show();
-                } else {
+                FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (authUser == null) {
                     Log.w("LocationActivity", "Người dùng chưa đăng nhập khi thêm đánh giá");
                     Toast.makeText(this, "Vui lòng đăng nhập để đánh giá!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                // Lấy userId từ UserCurrentViewModel
+                userCurrentViewModel.getCurrentUser().observe(this, user -> {
+                    if (user != null && user.getUserId() != null) {
+                        Review newReview = new Review();
+                        newReview.setComment(comment);
+                        newReview.setCreateAt(createAt);
+                        newReview.setLocationId(locationId);
+                        newReview.setUserId(Integer.parseInt(user.getUserId()));
+                        newReview.setRating((int) rating);
+                        newReview.setReviewId(generateReviewId()); // Tạo reviewId duy nhất
+
+                        reviewViewModel.addReview(newReview, user.getUserId());
+                        Toast.makeText(this, "Đã gửi đánh giá, đang xử lý!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.w("LocationActivity", "Không tìm thấy thông tin người dùng trong node User");
+                        Toast.makeText(this, "Vui lòng cập nhật thông tin người dùng để đánh giá!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             } else {
                 Log.w("LocationActivity", "Dữ liệu đánh giá không hợp lệ: rating=" + rating + ", comment=" + comment);
                 Toast.makeText(this, "Vui lòng nhập đầy đủ và đúng thông tin đánh giá!", Toast.LENGTH_SHORT).show();
@@ -232,4 +251,9 @@ public class LocationActivity extends AppCompatActivity {
         }
     }
 
+    // Phương thức tạo reviewId duy nhất
+    private int generateReviewId() {
+        // Sử dụng timestamp để tạo ID tạm thời (có thể cải thiện bằng cách lấy ID lớn nhất từ Firebase)
+        return (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+    }
 }

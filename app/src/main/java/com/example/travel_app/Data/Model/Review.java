@@ -6,13 +6,13 @@ import com.google.firebase.database.PropertyName;
 @IgnoreExtraProperties
 public class Review {
     @PropertyName("review_id")
-    private Long  reviewId;
+    private int reviewId;
 
     @PropertyName("location_id")
     private int locationId;
 
     @PropertyName("user_id")
-    private String userId;
+    private int userId;
 
     @PropertyName("comment")
     private String comment;
@@ -21,7 +21,7 @@ public class Review {
     private String createAt;
 
     @PropertyName("rating")
-    private float rating;
+    private int rating;
 
     public Review() {
     }
@@ -29,14 +29,14 @@ public class Review {
 
 
     @PropertyName("review_id")
-    public Long getReviewId() {
+    public int getReviewId() {
         return reviewId;
     }
 
 
 
     @PropertyName("review_id")
-    public void setReviewId(Long reviewId) {
+    public void setReviewId(int reviewId) {
         this.reviewId = reviewId;
     }
 
@@ -51,13 +51,13 @@ public class Review {
     }
 
     @PropertyName("user_id")
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
 
     @PropertyName("user_id")
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -82,12 +82,12 @@ public class Review {
     }
 
     @PropertyName("rating")
-    public float getRating() {
+    public int getRating() {
         return rating;
     }
 
     @PropertyName("rating")
-    public void setRating(float rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 }

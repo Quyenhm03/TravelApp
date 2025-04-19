@@ -1,11 +1,11 @@
 package com.example.travel_app.Data.Model;
 
 public class ReviewWithUser {
-    private Long reviewId;
-    private String userId;
+    private int reviewId;
+    private int userId;
     private int locationId;
     private String comment;
-    private float rating;
+    private int rating;
     private String createAt;
     private String fullName;
 
@@ -14,7 +14,7 @@ public class ReviewWithUser {
 
     public ReviewWithUser(Review review, String fullName) {
         this.reviewId = review.getReviewId();
-        this.userId = review.getUserId();
+        this.userId = (review.getUserId());
         this.locationId = review.getLocationId();
         this.comment = review.getComment();
         this.rating = review.getRating();
@@ -22,19 +22,19 @@ public class ReviewWithUser {
         this.fullName = fullName;
     }
 
-    public Long getReviewId() {
+    public int getReviewId() {
         return reviewId;
     }
 
-    public void setReviewId(Long reviewId) {
+    public void setReviewId(int reviewId) {
         this.reviewId = reviewId;
     }
 
-    public String getUserId() { // Sửa từ Integer thành String
+    public int getUserId() { // Sửa từ Integer thành String
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -54,11 +54,11 @@ public class ReviewWithUser {
         this.comment = comment;
     }
 
-    public float getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(float rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 
