@@ -12,14 +12,13 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <!-- Phần 1: ViewPager2 cho ảnh và video -->
+
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPagerMedia"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="16dp" />
 
-        <!-- TabLayout để hiển thị chấm tròn (dots) cho ViewPager -->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayoutDots"
             android:layout_width="match_parent"
@@ -28,6 +27,47 @@
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
             app:tabMode="scrollable" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <!-- RatingBar bên trái -->
+
+            <!-- View đệm để đẩy icon sang phải -->
+            <androidx.appcompat.widget.AppCompatRatingBar
+                android:id="@+id/rbAverageRating"
+                style="@style/Widget.AppCompat.RatingBar.Indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:rating="4.5"
+                android:stepSize="0.5" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <!-- Icon yêu thích bên phải -->
+            <ImageView
+                android:id="@+id/ivFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_favorite_false"
+                android:contentDescription="Favorite"
+                android:padding="4dp"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
 
         <!-- Phần 2: Mô tả chi tiết -->
         <TextView
@@ -96,14 +136,13 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- ViewPager2 cho thời tiết 7 ngày -->
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPagerWeather"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_marginBottom="16dp" />
 
-        <!-- Phần 5: Vị trí -->
+
         <TextView
             android:id="@+id/tvLocationTitle"
             android:layout_width="match_parent"

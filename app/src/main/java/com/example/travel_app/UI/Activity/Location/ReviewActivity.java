@@ -1,6 +1,9 @@
 package com.example.travel_app.UI.Activity.Location;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +30,10 @@ public class ReviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_review);
 
         rbUserRating = findViewById(R.id.rbUserRating);
+        LayerDrawable stars = (LayerDrawable) rbUserRating.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.parseColor("#FFD700"), PorterDuff.Mode.SRC_ATOP); // full star
+        stars.getDrawable(1).setColorFilter(Color.parseColor("#FFD700"), PorterDuff.Mode.SRC_ATOP); // half star
+        stars.getDrawable(0).setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
         etUserComment = findViewById(R.id.etUserComment);
         btnSubmitReview = findViewById(R.id.btnSubmitReview);
 

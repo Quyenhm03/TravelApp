@@ -4,10 +4,15 @@ import static android.webkit.URLUtil.isValidUrl;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +55,7 @@ public class LocationActivity extends AppCompatActivity {
     private MediaViewModel mediaViewModel;
     private ImageViewModel imageViewModel;
     private static final int REQUEST_CODE_REVIEW = 100;
-
+    private RatingBar rbAverageRating;
     private ViewPager2 viewPagerMedia;
     private TabLayout tabLayoutDots;
     private TextView tvDescription;
@@ -59,7 +64,8 @@ public class LocationActivity extends AppCompatActivity {
     private Button btnAddReview;
     private ViewPager2 viewPagerWeather;
     private Button btnOpenMap;
-
+    private ImageView ivFavorite;
+    private boolean isCurrentFavorite = false;
     private int locationId;
 
     @Override
@@ -92,6 +98,29 @@ public class LocationActivity extends AppCompatActivity {
                 Log.d("LocationActivity", "Dữ liệu địa điểm: " + location.getTenDiaDiem());
                 tvDescription.setText(location.getMoTa() != null ? location.getMoTa() : "Không có mô tả.");
                 setupMapButton();
+
+                // Đặt icon yêu thích ban đầu
+                ImageView ivFavorite = findViewById(R.id.ivFavorite);
+                if (location.isFavorite()) {
+                    ivFavorite.setImageResource(R.drawable.ic_favorite_true);
+                } else {
+                    ivFavorite.setImageResource(R.drawable.ic_favorite_false);
+                }
+                // Gắn sự kiện khi nhấn icon yêu thích
+                ivFavorite.setOnClickListener(v -> {
+                    boolean newFavorite = !location.isFavorite(); // Đảo trạng thái
+
+                    // Cập nhật icon
+                    ivFavorite.setImageResource(
+                            newFavorite ? R.drawable.ic_favorite_true : R.drawable.ic_favorite_false
+                    );
+
+                    // Cập nhật trạng thái yêu thích lên Firebase
+                    location.setFavorite(newFavorite);
+                    locationViewModel.updateLocationFavorite(locationId, newFavorite);
+
+                    Toast.makeText(this, newFavorite ? "Đã thêm vào yêu thích" : "Đã bỏ yêu thích", Toast.LENGTH_SHORT).show();
+                });
             } else {
                 Log.e("LocationActivity", "Không tìm thấy dữ liệu địa điểm cho locationId: " + locationId);
                 Toast.makeText(this, "Không tìm thấy thông tin địa điểm!", Toast.LENGTH_SHORT).show();
@@ -124,7 +153,8 @@ public class LocationActivity extends AppCompatActivity {
                 mediaUrls.add(imageUrl);
                 MediaAdapter mediaAdapter = new MediaAdapter(mediaUrls);
                 viewPagerMedia.setAdapter(mediaAdapter);
-                new TabLayoutMediator(tabLayoutDots, viewPagerMedia, (tab, position) -> {}).attach();
+                new TabLayoutMediator(tabLayoutDots, viewPagerMedia, (tab, position) -> {
+                }).attach();
             } else {
                 Log.w("LocationActivityIMAGE", "Không tìm thấy ảnh hợp lệ cho locationId = " + locationId);
                 // Thay ảnh placeholder nếu URL không hợp lệ
@@ -132,7 +162,8 @@ public class LocationActivity extends AppCompatActivity {
                 mediaUrls.add("https://example.com/placeholder_image.jpg");  // URL ảnh placeholder
                 MediaAdapter mediaAdapter = new MediaAdapter(mediaUrls);
                 viewPagerMedia.setAdapter(mediaAdapter);
-                new TabLayoutMediator(tabLayoutDots, viewPagerMedia, (tab, position) -> {}).attach();
+                new TabLayoutMediator(tabLayoutDots, viewPagerMedia, (tab, position) -> {
+                }).attach();
             }
         });
 
@@ -146,14 +177,19 @@ public class LocationActivity extends AppCompatActivity {
         tabLayoutDots = findViewById(R.id.tabLayoutDots);
         tvDescription = findViewById(R.id.tvDescription);
         rvReviews = findViewById(R.id.rvReviews);
+        ivFavorite = findViewById(R.id.ivFavorite);
         btnViewMoreReviews = findViewById(R.id.btnViewMoreReviews);
         btnAddReview = findViewById(R.id.btnAddReview);
         viewPagerWeather = findViewById(R.id.viewPagerWeather);
         btnOpenMap = findViewById(R.id.btnOpenMap);
+        rbAverageRating = findViewById(R.id.rbAverageRating);
+        LayerDrawable stars = (LayerDrawable) rbAverageRating.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.parseColor("#FFD700"), PorterDuff.Mode.SRC_ATOP); // full star
+        stars.getDrawable(1).setColorFilter(Color.parseColor("#FFD700"), PorterDuff.Mode.SRC_ATOP); // half star
+        stars.getDrawable(0).setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
 
         btnViewMoreReviews.setOnClickListener(v -> reviewAdapter.showAllReviews());
         btnAddReview.setOnClickListener(v -> {
-
 
             // Kiểm tra thông tin người dùng từ UserCurrentViewModel
             userCurrentViewModel.getCurrentUser().observe(this, user -> {
