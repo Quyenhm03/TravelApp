@@ -24,7 +24,7 @@ public class HistoryBookingViewModel extends ViewModel {
     private BookingCoachRepository coachRepository;
     private MutableLiveData<List<BookingItem>> bookingListLiveData = new MutableLiveData<>();
     private MutableLiveData<List<BookingItem>> filteredBookingListLiveData = new MutableLiveData<>();
-    private String userId = getUserId(); // Thay bằng userId thực tế
+    private String userId = getUserId();
 
     public HistoryBookingViewModel() {
         flightRepository = new BookingFlightRepository();
