@@ -100,4 +100,11 @@ public class LocationRepository {
 
         return allLocationsLiveData;
     }
+
+    public void updateLocationFavorite(int locationId, boolean isFavorite) {
+        locationRef.child(String.valueOf(locationId)).child("is_favourite").setValue(isFavorite)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Cập nhật is_favourite thành công cho locationId: " + locationId))
+                .addOnFailureListener(e -> Log.e(TAG, "Lỗi khi cập nhật is_favourite cho locationId: " + locationId, e));
+    }
+
 }

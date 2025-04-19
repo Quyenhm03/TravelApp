@@ -33,7 +33,6 @@ public class SavedTravelFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view.findViewById(R.id.btnLocation).setOnClickListener(v -> {
-
             Intent intent = new Intent(getActivity(), LocationActivity.class);
             intent.putExtra("location_id", 2);
             startActivity(intent);

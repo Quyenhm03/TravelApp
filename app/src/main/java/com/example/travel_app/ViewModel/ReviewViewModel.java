@@ -21,7 +21,7 @@ public class ReviewViewModel extends ViewModel {
         return reviewRepository.getReviewsForLocation(locationId);
     }
 
-    public void addReview(Review review) {
-        reviewRepository.addReview(review);
+    public void addReview(Review review, String userId) {
+        reviewRepository.addReview(review, userId);
     }
 }
