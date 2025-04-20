@@ -14,7 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.travel_app.R;
-import com.example.travel_app.UI.Activity.PassengerInfoActivity;
+
+import com.example.travel_app.UI.Activity.FavoriteLocationActivity;
 import com.example.travel_app.UI.Login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -72,7 +73,8 @@ public class PersonInfomationFragment extends Fragment {
     }
 
     private void openFavoriteTravelFragment() {
-
+        Intent intent = new Intent(getActivity(), FavoriteLocationActivity.class);
+        startActivity(intent);
     }
 
     private void openRoomBookedFragment(){

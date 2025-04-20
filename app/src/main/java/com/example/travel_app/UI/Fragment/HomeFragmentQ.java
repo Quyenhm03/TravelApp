@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -17,6 +18,7 @@ import com.example.travel_app.Adapter.CoachHomeAdapter;
 import com.example.travel_app.Adapter.FlightHomeAdapter;
 import com.example.travel_app.Adapter.LocationHomeAdapter;
 import com.example.travel_app.R;
+import com.example.travel_app.UI.Activity.FindHotelActivity;
 import com.example.travel_app.UI.Activity.Location.LocationActivity;
 import com.example.travel_app.UI.Activity.SearchCoachActivity;
 import com.example.travel_app.UI.Activity.SearchFlightActivity;
@@ -37,6 +39,7 @@ public class HomeFragmentQ extends Fragment {
     private CoachViewModel coachViewModel;
     private LocationViewModel locationViewModel;
     private ImageViewModel imageViewModel;
+    private LinearLayout findHotel;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -45,6 +48,11 @@ public class HomeFragmentQ extends Fragment {
 
         cvFlight = view.findViewById(R.id.cv_flight);
         cvCoach = view.findViewById(R.id.cv_coach);
+        findHotel = view.findViewById(R.id.findHotel);
+        findHotel.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), FindHotelActivity.class);
+            startActivity(intent);
+        });
 
         cvFlight.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), SearchFlightActivity.class);

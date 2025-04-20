@@ -65,6 +65,7 @@ public class LocationActivity extends AppCompatActivity {
     private ViewPager2 viewPagerWeather;
     private Button btnOpenMap;
     private ImageView ivFavorite;
+    private TextView tvLocationTitle;
     private boolean isCurrentFavorite = false;
     private int locationId;
 
@@ -95,10 +96,9 @@ public class LocationActivity extends AppCompatActivity {
         // Quan sát thông tin địa điểm
         locationViewModel.getLocation(locationId).observe(this, location -> {
             if (location != null) {
-                Log.d("LocationActivity", "Dữ liệu địa điểm: " + location.getTenDiaDiem());
                 tvDescription.setText(location.getMoTa() != null ? location.getMoTa() : "Không có mô tả.");
                 setupMapButton();
-
+                tvLocationTitle.setText(location.getTenDiaDiem());
                 // Đặt icon yêu thích ban đầu
                 ImageView ivFavorite = findViewById(R.id.ivFavorite);
                 if (location.isFavorite()) {
@@ -183,7 +183,9 @@ public class LocationActivity extends AppCompatActivity {
         viewPagerWeather = findViewById(R.id.viewPagerWeather);
         btnOpenMap = findViewById(R.id.btnOpenMap);
         rbAverageRating = findViewById(R.id.rbAverageRating);
+        tvLocationTitle = findViewById(R.id.tvLocationTitle);
         LayerDrawable stars = (LayerDrawable) rbAverageRating.getProgressDrawable();
+
         stars.getDrawable(2).setColorFilter(Color.parseColor("#FFD700"), PorterDuff.Mode.SRC_ATOP); // full star
         stars.getDrawable(1).setColorFilter(Color.parseColor("#FFD700"), PorterDuff.Mode.SRC_ATOP); // half star
         stars.getDrawable(0).setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
