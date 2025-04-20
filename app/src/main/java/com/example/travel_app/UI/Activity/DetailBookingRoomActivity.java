@@ -54,6 +54,7 @@ public class DetailBookingRoomActivity extends AppCompatActivity {
     private Room selectedRoom;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     private Calendar startDate, endDate;
+    private long totalPrice = 0;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -151,6 +152,11 @@ public class DetailBookingRoomActivity extends AppCompatActivity {
             }
             Toast.makeText(this, "Xac nhan dat phong" + textHotelName.getText() + " - " + selectedRoom.getRoomType() + " cho " + numberOfNights + " ngày/đêm", Toast.LENGTH_LONG).show();
             Intent intentBooking = new Intent(this, HotelPaymentActivity.class);
+            intentBooking.putExtra("hotel_name", textHotelName.getText().toString());
+            intentBooking.putExtra("room_type", selectedRoom.getRoomType());
+            intentBooking.putExtra("total_amount", totalPrice);
+            intentBooking.putExtra("check_in_date", edtStartDate.getText().toString());
+            intentBooking.putExtra("check_out_date", edtEndDate.getText().toString());
             startActivity(intentBooking);
         });
     }
@@ -265,7 +271,7 @@ public class DetailBookingRoomActivity extends AppCompatActivity {
         if (numberOfNights <= 0) {
             textHotelPrice.setText("Giá: " + numberFormat.format(selectedRoom.getPrice()) + " VNĐ/ngày/đêm");
         } else {
-            long totalPrice = selectedRoom.getPrice() * numberOfNights;
+            totalPrice = selectedRoom.getPrice() * numberOfNights;
             textHotelPrice.setText("Tổng giá: " + numberFormat.format(totalPrice) + " VNĐ (" + numberOfNights + " Ngày/đêm)");
         }
     }

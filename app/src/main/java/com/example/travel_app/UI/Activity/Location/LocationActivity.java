@@ -38,6 +38,7 @@ import com.example.travel_app.Data.Model.ReviewWithUser;
 
 import com.example.travel_app.Data.Model.WeatherItem;
 import com.example.travel_app.Data.Repository.WeatherRepository;
+import com.example.travel_app.ForecastResponse;
 import com.example.travel_app.R;
 import com.example.travel_app.ViewModel.LocationSelectedViewModel;
 import com.example.travel_app.ViewModel.LocationViewModel;
@@ -52,11 +53,14 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -83,6 +87,7 @@ public class LocationActivity extends AppCompatActivity {
     private Button btnViewMoreReviews;
     private Button btnAddReview;
     private ViewPager2 viewPagerWeather;
+    private TextView tvWeatherDay;
     private Button btnOpenMap;
     private ImageView ivFavorite;
     private TextView tvLocationTitle;
@@ -92,6 +97,8 @@ public class LocationActivity extends AppCompatActivity {
     private WeatherRepository weatherRepository;
     private String locationName = "";
     private LocationSelectedViewModel locationSelectedViewModel;
+    private final String[] dayLabels = {"Hôm nay", "Ngày mai", "Ngày kia", "Ngày 3", "Ngày 4"};
+
 
     @SuppressLint("ObsoleteSdkInt")
     @Override
@@ -119,9 +126,8 @@ public class LocationActivity extends AppCompatActivity {
         imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
         locationSelectedViewModel.getLocation().observe(this, location -> {
             if (location != null) {
-                setupWeatherViewPager(location);
-            }
-            else {
+                setupWeatherViewPager(location.getViTri());
+            } else {
                 Toast.makeText(this, "Không tìm thấy địa điểm", Toast.LENGTH_SHORT).show();
             }
         });
@@ -154,8 +160,8 @@ public class LocationActivity extends AppCompatActivity {
 
                     Toast.makeText(this, newFavorite ? "Đã thêm vào yêu thích" : "Đã bỏ yêu thích", Toast.LENGTH_SHORT).show();
                 });
-                locationName = location.getTenDiaDiem();
-                setupWeatherViewPager(location);
+                locationName = location.getViTri();
+                setupWeatherViewPager(locationName);
                 Log.d("WeatherDebug", "locationName được cập nhật: " + locationName);
             } else {
                 Toast.makeText(this, "Không tìm thấy thông tin địa điểm!", Toast.LENGTH_SHORT).show();
@@ -210,6 +216,7 @@ public class LocationActivity extends AppCompatActivity {
     private void initViews() {
         viewPagerMedia = findViewById(R.id.viewPagerMedia);
         //tabLayoutDots = findViewById(R.id.tabLayoutDots);
+        tvWeatherDay = findViewById(R.id.tvWeatherDay);
         tvDescription = findViewById(R.id.tvDescription);
         rvReviews = findViewById(R.id.rvReviews);
         ivFavorite = findViewById(R.id.ivFavorite);
@@ -309,84 +316,175 @@ public class LocationActivity extends AppCompatActivity {
 //        }
 //    }
 
-    private void setupWeatherViewPager(Location location) {
-        Log.d("WeatherDebug", "Bắt đầu setupWeatherViewPager, locationName: " + location.getTenDiaDiem());
+    private void setupWeatherViewPager(String tenDiaDiem) {
+        if (tenDiaDiem == null || tenDiaDiem.isEmpty()) {
+            Log.e("WeatherDebug", "Tên địa điểm rỗng hoặc null");
+            Toast.makeText(this, "Không có tên địa điểm để tải thời tiết", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.d("WeatherDebug", "Bắt đầu setupWeatherViewPager, locationName: " + tenDiaDiem);
         weatherRepository = new WeatherRepository();
         weatherAdapter = new WeatherAdapter(new ArrayList<>());
         Log.d("WeatherDebug", "weatherAdapter được khởi tạo: " + true);
         viewPagerWeather.setAdapter(weatherAdapter);
         Log.d("WeatherDebug", "Đã gán weatherAdapter cho viewPagerWeather");
 
-        String tenDiaDiem = standardizeLocationName(location.getTenDiaDiem());
-        if (tenDiaDiem != null && !tenDiaDiem.isEmpty()) {
-            Log.d("WeatherDebug", "Lấy tọa độ cho tenDiaDiem: " + tenDiaDiem);
-            weatherRepository.getCoordinatesByLocationName(tenDiaDiem, new Callback<List<GeoResponse>>() {
-                @Override
-                public void onResponse(Call<List<GeoResponse>> call, Response<List<GeoResponse>> response) {
-                    if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-                        GeoResponse geoResponse = response.body().get(0);
-                        double lat = geoResponse.getLat();
-                        double lon = geoResponse.getLon();
-                        Log.d("WeatherDebug", "Tìm thấy vị trí: " + tenDiaDiem + " (lat: " + lat + ", lon: " + lon + ")");
+        Log.d("WeatherDebug", "Bắt đầu lấy thời tiết cho: " + tenDiaDiem);
+        viewPagerWeather.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                tvWeatherDay.setText(position < dayLabels.length ? dayLabels[position] : "Ngày " + (position + 1));
+            }
+        });
+        String locationName = standardizeLocationName(tenDiaDiem);
+        weatherRepository.getCoordinatesByLocationName(locationName, new Callback<List<GeoResponse>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<GeoResponse>> call, @NonNull Response<List<GeoResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    GeoResponse geoResponse = response.body().get(0);
+                    double lat = geoResponse.getLat();
+                    double lon = geoResponse.getLon();
+                    Log.d("WeatherDebug", "Tìm thấy vị trí: " + tenDiaDiem + " (lat: " + lat + ", lon: " + lon + ")");
 
-                        weatherRepository.get7DayWeather(lat, lon, new Callback<WeatherResponse>() {
-                            @Override
-                            public void onResponse(@NonNull Call<WeatherResponse> call, @NonNull Response<WeatherResponse> response) {
-                                if (response.isSuccessful() && response.body() != null) {
-                                    WeatherResponse weatherResponse = response.body();
-                                    List<WeatherResponse.Daily> dailyList = weatherResponse.getDaily();
-                                    Log.d("WeatherDebug", "Nhận được " + dailyList.size() + " ngày thời tiết");
-                                    if (dailyList.size() > 7) {
-                                        dailyList = dailyList.subList(0, 7);
-                                    }
+                    weatherRepository.get5DayWeather(lat, lon, new Callback<ForecastResponse>() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void onResponse(@NonNull Call<ForecastResponse> call, @NonNull Response<ForecastResponse> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                ForecastResponse forecastResponse = response.body();
+                                List<ForecastResponse.ForecastItem> forecastList = forecastResponse.getList();
+                                Log.d("WeatherDebug", "Nhận được " + forecastList.size() + " khoảng thời tiết");
 
-                                    List<WeatherItem> weatherItems = new ArrayList<>();
-                                    for (WeatherResponse.Daily daily : dailyList) {
-                                        String description = daily.getWeather().get(0).getDescription();
-                                        String temperature = String.valueOf(daily.getTemp().getDay());
-                                        String windSpeed = String.valueOf(daily.getWindSpeed());
-                                        WeatherItem weatherItem = new WeatherItem(description, temperature, windSpeed);
-                                        weatherItems.add(weatherItem);
-                                    }
-                                    Log.d("WeatherDebug", "Cập nhật adapter với " + weatherItems.size() + " items");
-                                    weatherAdapter.setWeatherList(weatherItems);
-                                    weatherAdapter.notifyDataSetChanged();
-                                } else {
-                                    Log.e("WeatherDebug", "Không thể tải dữ liệu thời tiết: " + response.message());
-                                    Toast.makeText(LocationActivity.this, "Không thể tải dữ liệu thời tiết!", Toast.LENGTH_SHORT).show();
+                                // Nhóm dữ liệu theo ngày
+                                List<WeatherItem> weatherItems = new ArrayList<>();
+                                Map<String, List<ForecastResponse.ForecastItem>> dailyMap = new HashMap<>();
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+                                for (ForecastResponse.ForecastItem item : forecastList) {
+                                    String date = dateFormat.format(new Date(item.getDt() * 1000));
+                                    dailyMap.computeIfAbsent(date, k -> new ArrayList<>()).add(item);
                                 }
-                            }
 
-                            @Override
-                            public void onFailure(@NonNull Call<WeatherResponse> call, @NonNull Throwable t) {
-                                Log.e("WeatherDebug", "Lỗi gọi API thời tiết: " + t.getMessage());
-                                Toast.makeText(LocationActivity.this, "Lỗi tải thời tiết: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else {
-                        Log.e("WeatherDebug", "Không tìm thấy vị trí cho địa danh: " + tenDiaDiem + ", mã trạng thái: " + response.code());
-                        Toast.makeText(LocationActivity.this, "Không tìm thấy vị trí: " + tenDiaDiem, Toast.LENGTH_SHORT).show();
-                    }
-                }
+                                // Tổng hợp dữ liệu cho mỗi ngày
+                                for (List<ForecastResponse.ForecastItem> dailyItems : dailyMap.values()) {
+                                    ForecastResponse.ForecastItem representative = null;
+                                    float tempSum = 0;
+                                    for (ForecastResponse.ForecastItem item : dailyItems) {
+                                        tempSum += item.getMain().getTemp();
+                                        String time = item.getDtTxt().substring(11, 13);
+                                        if (time.equals("12")) {
+                                            representative = item;
+                                        }
+                                    }
+                                    if (representative == null) {
+                                        representative = dailyItems.get(dailyItems.size() / 2);
+                                    }
 
-                @Override
-                public void onFailure(Call<List<GeoResponse>> call, Throwable t) {
-                    Log.e("WeatherDebug", "Lỗi lấy tọa độ: " + t.getMessage());
-                    Toast.makeText(LocationActivity.this, "Lỗi tải vị trí: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    String description = representative.getWeather().get(0).getDescription();
+                                    @SuppressLint("DefaultLocale") String temperature = String.format("%.1f", tempSum / dailyItems.size());
+                                    String windSpeed = String.valueOf(representative.getWind().getSpeed());
+                                    WeatherItem weatherItem = new WeatherItem(description, temperature, windSpeed);
+                                    weatherItems.add(weatherItem);
+                                }
+
+                                Log.d("WeatherDebug", "Cập nhật adapter với " + weatherItems.size() + " items");
+                                weatherAdapter.setWeatherList(weatherItems);
+                                weatherAdapter.notifyDataSetChanged();
+                            } else {
+                                String errorMessage = response.message();
+                                Log.e("WeatherDebug", "Không thể tải dữ liệu thời tiết: " + errorMessage + ", mã trạng thái: " + response.code() + ", URL: " + call.request().url());
+                                Toast.makeText(LocationActivity.this, "Không thể tải dữ liệu thời tiết: " + errorMessage, Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<ForecastResponse> call, @NonNull Throwable t) {
+                            Log.e("WeatherDebug", "Lỗi gọi API thời tiết: " + t.getMessage() + ", URL: " + call.request().url());
+                            Toast.makeText(LocationActivity.this, "Lỗi tải thời tiết: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    String errorMessage = response.message();
+                    Log.e("WeatherDebug", "Không tìm thấy vị trí cho địa danh: " + tenDiaDiem + ", mã trạng thái: " + response.code() + ", message: " + errorMessage + ", URL: " + call.request().url());
+                    Toast.makeText(LocationActivity.this, "Không tìm thấy vị trí: " + tenDiaDiem + " (" + errorMessage + ")", Toast.LENGTH_LONG).show();
                 }
-            });
-        } else {
-            Log.e("WeatherDebug", "tenDiaDiem rỗng hoặc null");
-            Toast.makeText(LocationActivity.this, "Tên địa điểm không hợp lệ!", Toast.LENGTH_SHORT).show();
-        }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<GeoResponse>> call, @NonNull Throwable t) {
+                Log.e("WeatherDebug", "Lỗi lấy tọa độ: " + t.getMessage() + ", URL: " + call.request().url());
+                Toast.makeText(LocationActivity.this, "Lỗi tải vị trí: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
 
     private String standardizeLocationName(String locationName) {
         if (locationName == null) return null;
         switch (locationName.toLowerCase()) {
             case "cố đô huế":
-            case "thành phố huế":
-                return "Hue";
+            case "thành phố huế", "thừa thiên huế", "huế":
+                return "Thua Thien Hue";
+            case "phố cổ hội an":
+                return "Hoi An";
+            case "đà nẵng":
+                return "Da Nang";
+            case "hà nội":
+                return "Hanoi";
+            case "thành phố hồ chí minh":
+            case "sài gòn":
+                return "Ho Chi Minh City";
+            case "hải phòng":
+                return "Hai Phong";
+            case "quảng ninh":
+                return "Quang Ninh";
+            case "quảng nam":
+                return "Quang Nam";
+            case "quảng ngãi":
+                return "Quang Ngai";
+            case "lào cai":
+                return "Lao Cai";
+            case "kiên giang":
+                return "Kien Giang";
+            case "thái bình":
+                return "Thai Binh";
+            case "ninh bình":
+                return "Ninh Binh";
+            case "phan thiết":
+                return "Phan Thiet";
+            case "phú yên":
+                return "Phu Yen";
+            case "bến tre":
+                return "Ben Tre";
+            case "long an":
+                return "Long An";
+            case "cần thơ":
+                return "Can Tho";
+            case "thái nguyên":
+                return "Thai Nguyen";
+            case "cao bằng":
+                return "Cao Bang";
+            case "bắc kạn":
+                return "Bac Kan";
+            case "khánh hoà":
+                return "Khanh Hoa";
+            case "lâm đồng":
+                return "Lam Dong";
+            case "an giang":
+                return "An Giang";
+            case "bạc liêu":
+                return "Bac Lieu";
+            case "sóc trăng":
+                return "Soc Trang";
+            case "vĩnh phúc":
+                return "Vinh Phuc";
+            case "đồng tháp":
+                return "Dong Thap";
+            case "đồng nai":
+                return "Dong Nai";
+
             default:
                 String normalized = java.text.Normalizer.normalize(locationName, java.text.Normalizer.Form.NFD);
                 return normalized.replaceAll("[\\p{M}]", "");

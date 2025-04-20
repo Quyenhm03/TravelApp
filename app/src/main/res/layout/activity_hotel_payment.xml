@@ -203,14 +203,14 @@
                 android:contentDescription="Visa"
                 android:layout_height="40dp"
                 android:layout_width="40dp"
-                android:src="@android:drawable/ic_menu_view" />
+                android:src="@drawable/ic_zalopay" />
 
             <ImageView
                 android:contentDescription="PayPal"
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_width="40dp"
-                android:src="@android:drawable/ic_menu_view" />
+                android:src="@drawable/ic_momo" />
         </LinearLayout>
     </LinearLayout>
 

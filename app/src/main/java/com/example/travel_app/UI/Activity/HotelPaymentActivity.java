@@ -23,15 +23,20 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.travel_app.Api.CreateOrder;
 import com.example.travel_app.Data.Model.Bookings;
+import com.example.travel_app.Data.Model.Hotel;
 import com.example.travel_app.Data.Model.Payment;
 import com.example.travel_app.R;
 import com.example.travel_app.Receiver.ReminderBroadcastReceiver;
 import com.example.travel_app.UI.Login.LoginActivity;
 import com.example.travel_app.ViewModel.BookingHotelViewModel;
+import com.example.travel_app.ViewModel.HotelDetailViewModel;
 import com.example.travel_app.ViewModel.RoomViewModel;
 import com.example.travel_app.ViewModel.UserCurrentViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,6 +53,7 @@ public class HotelPaymentActivity extends AppCompatActivity {
     private BookingHotelViewModel bookingHotelViewModel;
     private UserCurrentViewModel userCurrentViewModel;
     private RoomViewModel roomViewModel;
+    private HotelDetailViewModel hotelDetailViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +86,7 @@ public class HotelPaymentActivity extends AppCompatActivity {
         userCurrentViewModel = new ViewModelProvider(this).get(UserCurrentViewModel.class);
         roomViewModel = new ViewModelProvider(this).get(RoomViewModel.class);
         bookingHotelViewModel = new ViewModelProvider(this).get(BookingHotelViewModel.class);
-
+        hotelDetailViewModel = new ViewModelProvider(this).get(HotelDetailViewModel.class);
         bookingHotelViewModel.getSaveSuccess().observe(this, success -> {
             if (success) {
                 Toast.makeText(this, "Thanh toán và lưu đặt vé thành công!", Toast.LENGTH_SHORT).show();
@@ -92,6 +98,16 @@ public class HotelPaymentActivity extends AppCompatActivity {
             }
         });
 
+
+        hotelDetailViewModel.getSelectedHotel().observe(this, hotel -> {
+            if (hotel != null) {
+
+            } else {
+                Toast.makeText(this, "Hotel not found!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+        displayHotelDetails();
         bookingHotelViewModel.getErrorMessage().observe(this, error -> {
             Toast.makeText(this, "Lỗi khi lưu đặt vé: " + error, Toast.LENGTH_SHORT).show();
         });
@@ -111,6 +127,18 @@ public class HotelPaymentActivity extends AppCompatActivity {
             Toast.makeText(this, "Vui lòng điền đầy đủ thông tin thanh toán", Toast.LENGTH_SHORT).show();
             return;
         }
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void displayHotelDetails() {
+        Intent getIntent = getIntent();
+        long total_amount = getIntent.getLongExtra("total_amount", 0);
+        txtRoomType.setText(getIntent.getStringExtra("room_type"));
+        txtHotelName.setText(getIntent.getStringExtra("hotel_name"));
+        txtCheckInDate.setText(getIntent.getStringExtra("check_in_date"));
+        txtCheckOutDate.setText(getIntent.getStringExtra("check_out_date"));
+        txtTotalAmount.setText("Tổng: " + total_amount + " VNĐ");
 
     }
 
