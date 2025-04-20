@@ -39,7 +39,7 @@ public class LocationRepository {
         locationRef.child(String.valueOf(locationId)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d(TAG, "Dữ liệu JSON thô cho locationId " + locationId + ": " + dataSnapshot.getValue());
+
                 if (!dataSnapshot.exists()) {
                     Log.w(TAG, "Không tìm thấy địa điểm cho locationId: " + locationId);
                     locationLiveData.setValue(null);

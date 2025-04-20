@@ -56,4 +56,13 @@ dependencies {
 	implementation("com.squareup.okhttp3:okhttp:4.6.0")
     implementation("commons-codec:commons-codec:1.14")
     implementation("com.google.firebase:firebase-auth")
+    // Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+
+// Converter JSON -> Java object
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+// Optional: Logging (giúp debug các request)
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
 }

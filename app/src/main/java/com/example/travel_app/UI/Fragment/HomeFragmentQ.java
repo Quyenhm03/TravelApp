@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.travel_app.Adapter.CoachHomeAdapter;
 import com.example.travel_app.Adapter.FlightHomeAdapter;
 import com.example.travel_app.Adapter.LocationHomeAdapter;
+import com.example.travel_app.Data.Model.Location;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Activity.FindHotelActivity;
 import com.example.travel_app.UI.Activity.Location.LocationActivity;
@@ -26,6 +27,7 @@ import com.example.travel_app.ViewModel.CoachViewModel;
 import com.example.travel_app.ViewModel.FlightViewModel;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
 import com.example.travel_app.ViewModel.Itinerary.LocationViewModel;
+import com.example.travel_app.ViewModel.LocationSelectedViewModel;
 
 import java.util.ArrayList;
 
@@ -40,6 +42,8 @@ public class HomeFragmentQ extends Fragment {
     private LocationViewModel locationViewModel;
     private ImageViewModel imageViewModel;
     private LinearLayout findHotel;
+    private com.example.travel_app.ViewModel.LocationViewModel locationVM;
+    private LocationSelectedViewModel locationSelectedViewModel;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -49,6 +53,8 @@ public class HomeFragmentQ extends Fragment {
         cvFlight = view.findViewById(R.id.cv_flight);
         cvCoach = view.findViewById(R.id.cv_coach);
         findHotel = view.findViewById(R.id.findHotel);
+        locationVM = new ViewModelProvider(this).get(com.example.travel_app.ViewModel.LocationViewModel.class);
+        locationSelectedViewModel = new ViewModelProvider(requireActivity()).get(LocationSelectedViewModel.class);
         findHotel.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FindHotelActivity.class);
             startActivity(intent);
@@ -91,6 +97,11 @@ public class HomeFragmentQ extends Fragment {
             // Khi một item được click, chuyển sang LocationActivity
             Intent intent = new Intent(requireContext(), LocationActivity.class);
             intent.putExtra("location_id", locationId);
+            locationVM.getLocation(locationId).observe(getViewLifecycleOwner(), location -> {
+                if (location != null) {
+                    locationSelectedViewModel.setLocation(location);
+                }
+            });
             startActivity(intent);
         });
         rcvLocation.setAdapter(locationAdapter);

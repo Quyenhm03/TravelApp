@@ -1,9 +1,12 @@
 package com.example.travel_app.UI.Activity;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Window;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,7 +28,10 @@ public class FavoriteLocationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         androidx.core.view.WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_favorite_location);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.orange));
+        }
         // Khởi tạo ViewModel
         userCurrentViewModel = new ViewModelProvider(this).get(UserCurrentViewModel.class);
         locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);

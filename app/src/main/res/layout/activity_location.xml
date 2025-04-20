@@ -20,23 +20,25 @@
             android:layout_height="200dp"
             android:layout_marginBottom="8dp" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayoutDots"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            app:tabBackground="@android:color/transparent"
-            app:tabGravity="center"
-            app:tabIndicatorHeight="0dp"
-            app:tabMode="scrollable" />
+<!--        <com.google.android.material.tabs.TabLayout-->
+<!--            android:id="@+id/tabLayoutDots"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="20dp"-->
+<!--            app:tabBackground="@android:color/transparent"-->
+<!--            app:tabGravity="center"-->
+<!--            app:tabIndicatorHeight="0dp"-->
+<!--            app:tabMode="scrollable"-->
+<!--            tools:ignore="SpeakableTextPresentCheck" />-->
 
         <TextView
-            android:id="@+id/edtLocation"
+            android:id="@+id/tvLocationTitle"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:textColor="@color/orange"
-            android:textSize="16sp"/>
+            android:layout_height="wrap_content"
+            android:text="Vị trí"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -118,7 +120,7 @@
             android:nestedScrollingEnabled="false"
             android:layout_marginBottom="8dp" />
 
-        <!-- Nút "Xem thêm toàn bộ đánh giá" (hiển thị nếu có nhiều hơn 3 đánh giá) -->
+
         <Button
             android:id="@+id/btnViewMoreReviews"
             android:layout_width="wrap_content"
@@ -126,6 +128,7 @@
             android:text="Xem thêm toàn bộ đánh giá"
             android:layout_gravity="center"
             android:visibility="gone"
+            android:backgroundTint="@color/orange"
             android:layout_marginBottom="16dp" />
 
         <!-- Nút "Đánh giá của bạn" -->
@@ -155,21 +158,12 @@
             android:layout_marginBottom="16dp" />
 
 
-        <TextView
-            android:id="@+id/tvLocationTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Vị trí"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
         <Button
             android:id="@+id/btnOpenMap"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Xem vị trí trên Google Maps"
+            android:backgroundTint="@color/orange"
             android:layout_marginBottom="16dp" />
 
     </LinearLayout>

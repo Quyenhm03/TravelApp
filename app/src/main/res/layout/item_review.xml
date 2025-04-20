@@ -21,7 +21,14 @@
         android:numStars="5"
         android:stepSize="0.5"
         android:isIndicator="true"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="4dp"
+        android:layout_gravity="start"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:padding="0dp"
+        android:minHeight="0dp" />
+
+
 
     <TextView
         android:id="@+id/tvReviewContent"
