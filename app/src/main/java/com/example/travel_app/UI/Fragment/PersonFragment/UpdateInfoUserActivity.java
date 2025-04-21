@@ -9,14 +9,11 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.travel_app.R;
+import com.example.travel_app.ViewModel.UserCurrentViewModel;
 import com.example.travel_app.utils.Utils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -26,12 +23,16 @@ public class UpdateInfoUserActivity extends AppCompatActivity {
     private EditText edtFullName, edtBirthday, edtEmail, edtAddress, edtPhone;
     private ImageView imgBirthDate;
     private Button btnSave, btnBack;
+    private UserCurrentViewModel userCurrentViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_update_info_user);
+        userCurrentViewModel = new ViewModelProvider(this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(UserCurrentViewModel.class);
         initViews();
         getCurrentUser();
 
@@ -62,26 +63,45 @@ public class UpdateInfoUserActivity extends AppCompatActivity {
         String emailUpdate = edtEmail.getText().toString().trim();
         String addressUpdate = edtAddress.getText().toString().trim();
         String phoneUpdate = edtPhone.getText().toString().trim();
+
+        if (fullNameUpdate.isEmpty() || birthdayUpdate.isEmpty()
+                || emailUpdate.isEmpty() || addressUpdate.isEmpty() || phoneUpdate.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        userCurrentViewModel.updateInfoUser(fullNameUpdate, birthdayUpdate, emailUpdate, addressUpdate, phoneUpdate);
+        Toast.makeText(this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     private void getCurrentUser() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "User is null", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (user.getDisplayName() != null) {
-            edtFullName.setText(user.getDisplayName());
-        }
-        if (user.getPhoneNumber() != null) {
-            String phone = user.getPhoneNumber();
-            edtPhone.setText(phone);
-        }
-        if (user.getEmail() != null) {
-            String email = user.getEmail();
-            edtEmail.setText(email);
-        }
 
+
+        userCurrentViewModel.user.observe(this, user -> {
+            if (user == null) {
+                Toast.makeText(this, "User is null", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (user.getFullName() != null) {
+                edtFullName.setText(user.getFullName());
+            }
+            if (user.getPhone() != null) {
+                String phone = user.getPhone();
+                edtPhone.setText(phone);
+            }
+            if (user.getEmail() != null) {
+                String email = user.getEmail();
+                edtEmail.setText(email);
+            }
+            if (user.getAddress() != null) {
+                String address = user.getAddress();
+                edtAddress.setText(address);
+            }
+            if (user.getDateOfBirth() != null) {
+                String birthday = Utils.dateToString(user.getDateOfBirth(), null);
+                edtBirthday.setText(birthday);
+            }
+        });
     }
 
     private void showDatePickerDialog() {

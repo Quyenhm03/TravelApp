@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.travel_app.Data.Model.User;
+import com.example.travel_app.utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -15,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
+import java.util.HashMap;
 
 public class UserCurrentViewModel extends ViewModel {
     private static final String TAG = "UserCurrentViewModel";
@@ -107,6 +109,58 @@ public class UserCurrentViewModel extends ViewModel {
             }
         });
     }
+
+    public void updateInfoUser(String fullName, String birthday, String email, String address, String phone) {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser == null || firebaseUser.getEmail() == null) {
+            Log.w(TAG, "Không có người dùng đăng nhập để cập nhật");
+            return;
+        }
+
+        String emailKey = firebaseUser.getEmail();
+        userRef.orderByChild("email").equalTo(emailKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                        String userId = userSnapshot.child("userId").getValue(String.class);
+                        if (userId != null) {
+                            HashMap<String, Object> updates = new HashMap<>();
+                            updates.put("fullName", fullName);
+                            updates.put("email", email);
+                            updates.put("address", address);
+                            updates.put("phone", phone);
+
+                            try {
+                                Date dateOfBirth = Utils.stringToDate(birthday, "dd/MM/yyyy");
+                                updates.put("dateOfBirth", dateOfBirth != null ? dateOfBirth.getTime() : null);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Lỗi chuyển đổi ngày sinh", e);
+                            }
+
+                            userRef.child(userId).updateChildren(updates).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Cập nhật người dùng thành công");
+                                    refreshCurrentUser(); // Tải lại dữ liệu
+                                } else {
+                                    Log.e(TAG, "Lỗi khi cập nhật người dùng", task.getException());
+                                }
+                            });
+                            break;
+                        }
+                    }
+                } else {
+                    Log.w(TAG, "Không tìm thấy người dùng để cập nhật");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Lỗi Firebase khi cập nhật người dùng: " + error.getMessage());
+            }
+        });
+    }
+
 
     public void refreshCurrentUser() {
         fetchCurrentUser();
