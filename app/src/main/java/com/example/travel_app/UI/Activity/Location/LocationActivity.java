@@ -100,7 +100,7 @@ public class LocationActivity extends AppCompatActivity {
     private final String[] dayLabels = {"Hôm nay", "Ngày mai", "Ngày kia", "Ngày 3", "Ngày 4"};
 
 
-    @SuppressLint("ObsoleteSdkInt")
+    @SuppressLint({"ObsoleteSdkInt", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,42 +132,44 @@ public class LocationActivity extends AppCompatActivity {
 //            }
 //        });
         setupReviewsRecyclerView();
+        userCurrentViewModel.user.observe(this, user -> {
+            if (user != null) {
+                locationViewModel.getLocation(locationId).observe(this, location -> {
+                    if (location != null) {
+                        tvDescription.setText(location.getMoTa() != null ? location.getMoTa() : "Không có mô tả.");
+                        setupMapButton();
+                        tvLocationTitle.setText(location.getViTri());
+                        // Đặt icon yêu thích ban đầu
+                        ImageView ivFavorite = findViewById(R.id.ivFavorite);
+                        if (location.isFavorite()) {
+                            ivFavorite.setImageResource(R.drawable.ic_favorite_true);
+                        } else {
+                            ivFavorite.setImageResource(R.drawable.ic_favorite_false);
+                        }
+                        // Gắn sự kiện khi nhấn icon yêu thích
+                        ivFavorite.setOnClickListener(v -> {
+                            boolean newFavorite = !location.isFavorite(); // Đảo trạng thái
 
-        locationViewModel.getLocation(locationId).observe(this, location -> {
-            if (location != null) {
-                tvDescription.setText(location.getMoTa() != null ? location.getMoTa() : "Không có mô tả.");
-                setupMapButton();
-                tvLocationTitle.setText(location.getViTri());
-                // Đặt icon yêu thích ban đầu
-                ImageView ivFavorite = findViewById(R.id.ivFavorite);
-                if (location.isFavorite()) {
-                    ivFavorite.setImageResource(R.drawable.ic_favorite_true);
-                } else {
-                    ivFavorite.setImageResource(R.drawable.ic_favorite_false);
-                }
-                // Gắn sự kiện khi nhấn icon yêu thích
-                ivFavorite.setOnClickListener(v -> {
-                    boolean newFavorite = !location.isFavorite(); // Đảo trạng thái
+                            // Cập nhật icon
+                            ivFavorite.setImageResource(
+                                    newFavorite ? R.drawable.ic_favorite_true : R.drawable.ic_favorite_false
+                            );
 
-                    // Cập nhật icon
-                    ivFavorite.setImageResource(
-                            newFavorite ? R.drawable.ic_favorite_true : R.drawable.ic_favorite_false
-                    );
+                            // Cập nhật trạng thái yêu thích lên Firebase
+                            location.setFavorite(newFavorite);
+                            locationViewModel.updateLocationFavorite(user.getUserId(), String.valueOf(locationId), newFavorite);
 
-                    // Cập nhật trạng thái yêu thích lên Firebase
-                    location.setFavorite(newFavorite);
-                    locationViewModel.updateLocationFavorite(locationId, newFavorite);
-
-                    Toast.makeText(this, newFavorite ? "Đã thêm vào yêu thích" : "Đã bỏ yêu thích", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, newFavorite ? "Đã thêm vào yêu thích" : "Đã bỏ yêu thích", Toast.LENGTH_SHORT).show();
+                        });
+                        locationName = location.getViTri();
+                        setupWeatherViewPager(locationName);
+                        Log.d("WeatherDebug", "locationName được cập nhật: " + locationName);
+                    } else {
+                        Toast.makeText(this, "Không tìm thấy thông tin địa điểm!", Toast.LENGTH_SHORT).show();
+                        tvDescription.setText("Không có mô tả.");
+                    }
                 });
-                locationName = location.getViTri();
-                setupWeatherViewPager(locationName);
-                Log.d("WeatherDebug", "locationName được cập nhật: " + locationName);
-            } else {
-                Toast.makeText(this, "Không tìm thấy thông tin địa điểm!", Toast.LENGTH_SHORT).show();
-                tvDescription.setText("Không có mô tả.");
-            }
-        });
+            }});
 
 
         // Quan sát đánh giá

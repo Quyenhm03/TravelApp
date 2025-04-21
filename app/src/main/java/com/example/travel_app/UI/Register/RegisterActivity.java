@@ -113,7 +113,8 @@ public class RegisterActivity extends AppCompatActivity {
                             });
                         }
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
+                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "Không rõ lỗi";
+                        Toast.makeText(RegisterActivity.this, "Đăng ký thất bại: " + errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
     }

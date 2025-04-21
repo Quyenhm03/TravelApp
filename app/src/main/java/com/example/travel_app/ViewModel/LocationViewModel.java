@@ -26,8 +26,8 @@ public class LocationViewModel extends ViewModel {
     public LiveData<List<Location>> getAllLocations() {
         return locationRepository.getAllLocations();
     }
-    public void updateLocationFavorite(int locationId, boolean isFavorite) {
-        locationRepository.updateLocationFavorite(locationId, isFavorite);
+    public void updateLocationFavorite(String userId, String locationId, boolean isFavorite) {
+        locationRepository.updateLocationFavorite(userId, locationId, isFavorite);
     }
 
     public LiveData<List<Location>> getFavoriteLocationsByUserId(String userId) {
