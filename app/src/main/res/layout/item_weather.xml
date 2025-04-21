@@ -1,7 +1,38 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/textViewWeather"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:textSize="18sp"
-    android:padding="16dp"
-    android:textAlignment="center"/>
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+
+    <ImageView
+        android:id="@+id/imageWeatherIcon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="weather icon"
+        android:src="@drawable/ic_sunny" />
+
+    <TextView
+        android:id="@+id/textDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trạng thái"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="30°C"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/textWind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gió: 2 m/s"
+        android:textSize="16sp" />
+</LinearLayout>

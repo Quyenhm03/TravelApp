@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -17,16 +18,27 @@
             android:id="@+id/viewPagerMedia"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="8dp" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayoutDots"
+<!--        <com.google.android.material.tabs.TabLayout-->
+<!--            android:id="@+id/tabLayoutDots"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="20dp"-->
+<!--            app:tabBackground="@android:color/transparent"-->
+<!--            app:tabGravity="center"-->
+<!--            app:tabIndicatorHeight="0dp"-->
+<!--            app:tabMode="scrollable"-->
+<!--            tools:ignore="SpeakableTextPresentCheck" />-->
+
+        <TextView
+            android:id="@+id/tvLocationTitle"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            app:tabBackground="@android:color/transparent"
-            app:tabGravity="center"
-            app:tabIndicatorHeight="0dp"
-            app:tabMode="scrollable" />
+            android:layout_height="wrap_content"
+            android:text="Vị trí"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,9 +48,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
-            <!-- RatingBar bên trái -->
 
-            <!-- View đệm để đẩy icon sang phải -->
             <androidx.appcompat.widget.AppCompatRatingBar
                 android:id="@+id/rbAverageRating"
                 style="@style/Widget.AppCompat.RatingBar.Indicator"
@@ -55,21 +65,22 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <!-- Icon yêu thích bên phải -->
+
             <ImageView
                 android:id="@+id/ivFavorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_favorite_false"
-                android:contentDescription="Favorite"
-                android:padding="4dp"
                 android:clickable="true"
-                android:focusable="true" />
+                android:contentDescription="Favorite"
+                android:focusable="true"
+                android:padding="4dp"
+                android:src="@drawable/ic_favorite_false"
+                tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
 
 
-        <!-- Phần 2: Mô tả chi tiết -->
+
         <TextView
             android:id="@+id/tvDescriptionTitle"
             android:layout_width="match_parent"
@@ -99,7 +110,6 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- RecyclerView cho danh sách đánh giá -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvReviews"
             android:layout_width="match_parent"
@@ -107,7 +117,7 @@
             android:nestedScrollingEnabled="false"
             android:layout_marginBottom="8dp" />
 
-        <!-- Nút "Xem thêm toàn bộ đánh giá" (hiển thị nếu có nhiều hơn 3 đánh giá) -->
+
         <Button
             android:id="@+id/btnViewMoreReviews"
             android:layout_width="wrap_content"
@@ -115,17 +125,19 @@
             android:text="Xem thêm toàn bộ đánh giá"
             android:layout_gravity="center"
             android:visibility="gone"
+            android:backgroundTint="@color/orange"
             android:layout_marginBottom="16dp" />
 
-        <!-- Nút "Đánh giá của bạn" -->
+
         <Button
             android:id="@+id/btnAddReview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Đánh giá của bạn"
+            android:backgroundTint="@color/orange"
             android:layout_marginBottom="16dp" />
 
-        <!-- Phần 4: Thời tiết và điều kiện đi lại -->
+
         <TextView
             android:id="@+id/tvWeatherTitle"
             android:layout_width="match_parent"
@@ -136,28 +148,28 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp" />
 
+        <TextView
+            android:id="@+id/tvWeatherDay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hôm nay"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPagerWeather"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="200dp"
             android:layout_marginBottom="16dp" />
 
-
-        <TextView
-            android:id="@+id/tvLocationTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Vị trí"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnOpenMap"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Xem vị trí trên Google Maps"
+            android:backgroundTint="@color/orange"
             android:layout_marginBottom="16dp" />
 
     </LinearLayout>
