@@ -124,20 +124,20 @@ public class LocationActivity extends AppCompatActivity {
         locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
         mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
         imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
-        locationSelectedViewModel.getLocation().observe(this, location -> {
-            if (location != null) {
-                setupWeatherViewPager(location.getViTri());
-            } else {
-                Toast.makeText(this, "Không tìm thấy địa điểm", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        locationSelectedViewModel.getLocation().observe(this, location -> {
+//            if (location != null) {
+//                setupWeatherViewPager(location.getViTri());
+//            } else {
+//                Toast.makeText(this, "Không tìm thấy địa điểm", Toast.LENGTH_SHORT).show();
+//            }
+//        });
         setupReviewsRecyclerView();
 
         locationViewModel.getLocation(locationId).observe(this, location -> {
             if (location != null) {
                 tvDescription.setText(location.getMoTa() != null ? location.getMoTa() : "Không có mô tả.");
                 setupMapButton();
-                tvLocationTitle.setText(location.getTenDiaDiem());
+                tvLocationTitle.setText(location.getViTri());
                 // Đặt icon yêu thích ban đầu
                 ImageView ivFavorite = findViewById(R.id.ivFavorite);
                 if (location.isFavorite()) {

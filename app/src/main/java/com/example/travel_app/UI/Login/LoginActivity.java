@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Activity.HomeActivity;
 import com.example.travel_app.UI.Register.RegisterActivity;
+import com.example.travel_app.ViewModel.UserCurrentViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
@@ -27,12 +28,14 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edtEmail, edtPassword;
     private TextView tvRegister;
     private Button btnLogin;
+    private UserCurrentViewModel userCurrentViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+        userCurrentViewModel = new UserCurrentViewModel();
         mAuth = FirebaseAuth.getInstance();
         initView();
     }
@@ -65,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(this, HomeActivity.class);
+                            userCurrentViewModel.refreshCurrentUser();
                             startActivity(intent);
                             finishAffinity();
                         } else {

@@ -157,6 +157,7 @@ public class DetailBookingRoomActivity extends AppCompatActivity {
             intentBooking.putExtra("total_amount", totalPrice);
             intentBooking.putExtra("check_in_date", edtStartDate.getText().toString());
             intentBooking.putExtra("check_out_date", edtEndDate.getText().toString());
+            intentBooking.putExtra("total_amount_string", totalPrice);
             startActivity(intentBooking);
         });
     }

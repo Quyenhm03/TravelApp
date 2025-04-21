@@ -7,16 +7,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travel_app.R;
 
 import com.example.travel_app.UI.Activity.FavoriteLocationActivity;
+import com.example.travel_app.UI.Activity.HotelBookedActivity;
 import com.example.travel_app.UI.Login.LoginActivity;
+import com.example.travel_app.ViewModel.UserCurrentViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -25,6 +29,8 @@ import java.util.Objects;
 public class PersonInfomationFragment extends Fragment {
     private CardView userInformation, favoriteTravel, roomBooked, ticketsBooked, logoutAccount;
     private FirebaseAuth mAuth;
+    private TextView tvUserName;
+    private UserCurrentViewModel userCurrentViewModel;
 
     public PersonInfomationFragment() {
     }
@@ -55,6 +61,14 @@ public class PersonInfomationFragment extends Fragment {
         roomBooked = requireView().findViewById(R.id.roomBooked);
         ticketsBooked = requireView().findViewById(R.id.ticketsBooked);
         logoutAccount = requireView().findViewById(R.id.logoutAccount);
+        userCurrentViewModel = new ViewModelProvider(this).get(UserCurrentViewModel.class);
+        tvUserName = requireView().findViewById(R.id.tvUserName);
+        userCurrentViewModel.user.observe(getViewLifecycleOwner(), user -> {
+            if (user != null) {
+                tvUserName.setText(user.getFullName());
+            }
+        });
+
         initActions();
     }
 
@@ -78,7 +92,8 @@ public class PersonInfomationFragment extends Fragment {
     }
 
     private void openRoomBookedFragment(){
-
+        Intent intent = new Intent(getActivity(), HotelBookedActivity.class);
+        startActivity(intent);
     }
 
     private void openTicketsBookedFragment(){
