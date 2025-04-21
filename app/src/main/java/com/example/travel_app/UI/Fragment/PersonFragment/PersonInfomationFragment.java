@@ -78,7 +78,7 @@ public class PersonInfomationFragment extends Fragment {
     }
 
     private void openRoomBookedFragment(){
-
+        
     }
 
     private void openTicketsBookedFragment(){

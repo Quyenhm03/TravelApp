@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -27,6 +28,7 @@ import com.example.travel_app.Data.Model.Hotel;
 import com.example.travel_app.Data.Model.Payment;
 import com.example.travel_app.R;
 import com.example.travel_app.Receiver.ReminderBroadcastReceiver;
+import com.example.travel_app.SharedPreferencesUtils;
 import com.example.travel_app.UI.Login.LoginActivity;
 import com.example.travel_app.ViewModel.BookingHotelViewModel;
 import com.example.travel_app.ViewModel.HotelDetailViewModel;
@@ -127,20 +129,30 @@ public class HotelPaymentActivity extends AppCompatActivity {
             Toast.makeText(this, "Vui lòng điền đầy đủ thông tin thanh toán", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        Toast.makeText(this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        finishAffinity();
     }
 
     @SuppressLint("SetTextI18n")
     private void displayHotelDetails() {
-        Intent getIntent = getIntent();
-        long total_amount = getIntent.getLongExtra("total_amount", 0);
-        txtRoomType.setText(getIntent.getStringExtra("room_type"));
-        txtHotelName.setText(getIntent.getStringExtra("hotel_name"));
-        txtCheckInDate.setText(getIntent.getStringExtra("check_in_date"));
-        txtCheckOutDate.setText(getIntent.getStringExtra("check_out_date"));
-        txtTotalAmount.setText("Tổng: " + total_amount + " VNĐ");
+        SharedPreferences sharedPreferences = SharedPreferencesUtils.getBookingData(this);
 
+        String hotelName = sharedPreferences.getString("hotel_name", "N/A");
+        String roomType = sharedPreferences.getString("room_type", "N/A");
+        long totalAmount = sharedPreferences.getLong("total_amount", 0);
+        String checkInDate = sharedPreferences.getString("check_in_date", "N/A");
+        String checkOutDate = sharedPreferences.getString("check_out_date", "N/A");
+
+        txtBookingDate.setText(checkInDate);
+        txtHotelName.setText(hotelName);
+        txtRoomType.setText(roomType);
+        txtCheckInDate.setText(checkInDate);
+        txtCheckOutDate.setText(checkOutDate);
+        txtTotalAmount.setText("Tổng: " + totalAmount + " VNĐ");
     }
+
 
 
 
@@ -164,6 +176,16 @@ public class HotelPaymentActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         // ZaloPaySDK.getInstance().onResult(intent); // Bỏ comment nếu tích hợp ZaloPay
     }
+
+    private void loadUserDataFromSharedPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String customerName = sharedPreferences.getString("customer_name", "Khách hàng");
+        String bookingDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+
+        txtCustomerName.setText(customerName);
+        txtBookingDate.setText("Ngày đặt: " + bookingDate);
+    }
+
 
 
 }
