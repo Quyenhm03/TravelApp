@@ -14,7 +14,8 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.travel_app.Data.Model.Itinerary.Location;
+
+import com.example.travel_app.Data.Model.Location;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Activity.Location.LocationActivity;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
@@ -44,13 +45,13 @@ public class SearchLocationAdapter extends RecyclerView.Adapter<SearchLocationAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Location location = locations.get(position);
-        holder.txtName.setText(location.getTendiadiem() != null ? location.getTendiadiem() : "Không có tên");
-        holder.txtAddress.setText(location.getVitri() != null ? location.getVitri() : "Không có địa chỉ");
+        holder.txtName.setText(location.getTenDiaDiem() != null ? location.getTenDiaDiem() : "Không có tên");
+        holder.txtAddress.setText(location.getViTri() != null ? location.getViTri() : "Không có địa chỉ");
 
-        imageViewModel.loadImageForLocation(location.getLocation_id());
+        imageViewModel.loadImageForLocation(location.getLocationId());
         imageViewModel.getImageUrlMapLiveData().observe((LifecycleOwner) holder.itemView.getContext(), imageUrlMap -> {
-            String imageUrl = imageUrlMap.get(location.getLocation_id());
-            Log.d("SearchLocationAdapter", "Location ID: " + location.getLocation_id() + ", Image URL: " + imageUrl);
+            String imageUrl = imageUrlMap.get(location.getLocationId());
+            Log.d("SearchLocationAdapter", "Location ID: " + location.getLocationId() + ", Image URL: " + imageUrl);
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 Picasso.get().load(imageUrl).into(holder.imgLocation);
             }
@@ -69,7 +70,7 @@ public class SearchLocationAdapter extends RecyclerView.Adapter<SearchLocationAd
         // Xử lý click vào item (chuyển sang LocationActivity)
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(holder.itemView.getContext(), LocationActivity.class);
-            intent.putExtra("location_id", location.getLocation_id());
+            intent.putExtra("location_id", location.getLocationId());
             holder.itemView.getContext().startActivity(intent);
         });
     }

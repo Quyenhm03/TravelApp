@@ -1,5 +1,7 @@
 package com.example.travel_app.Data.Model.Itinerary;
 
+import com.example.travel_app.Data.Model.Location;
+
 import java.io.Serializable;
 import java.util.List;
 

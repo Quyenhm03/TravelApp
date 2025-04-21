@@ -3,6 +3,7 @@ package com.example.travel_app.UI.Fragment;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.example.travel_app.Adapter.CoachHomeAdapter;
 import com.example.travel_app.Adapter.FlightHomeAdapter;
 import com.example.travel_app.Adapter.LocationHomeAdapter;
 import com.example.travel_app.Data.Model.Location;
+import com.example.travel_app.Data.Repository.LocationRepository;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Activity.FindHotelActivity;
 import com.example.travel_app.UI.Activity.Location.LocationActivity;
@@ -26,8 +28,8 @@ import com.example.travel_app.UI.Activity.SearchFlightActivity;
 import com.example.travel_app.ViewModel.CoachViewModel;
 import com.example.travel_app.ViewModel.FlightViewModel;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
-import com.example.travel_app.ViewModel.Itinerary.LocationViewModel;
 import com.example.travel_app.ViewModel.LocationSelectedViewModel;
+import com.example.travel_app.ViewModel.LocationViewModel;
 
 import java.util.ArrayList;
 
@@ -42,7 +44,6 @@ public class HomeFragmentQ extends Fragment {
     private LocationViewModel locationViewModel;
     private ImageViewModel imageViewModel;
     private LinearLayout findHotel;
-    private com.example.travel_app.ViewModel.LocationViewModel locationVM;
     private LocationSelectedViewModel locationSelectedViewModel;
 
     @SuppressLint("MissingInflatedId")
@@ -53,7 +54,7 @@ public class HomeFragmentQ extends Fragment {
         cvFlight = view.findViewById(R.id.cv_flight);
         cvCoach = view.findViewById(R.id.cv_coach);
         findHotel = view.findViewById(R.id.findHotel);
-        locationVM = new ViewModelProvider(this).get(com.example.travel_app.ViewModel.LocationViewModel.class);
+        locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
         locationSelectedViewModel = new ViewModelProvider(requireActivity()).get(LocationSelectedViewModel.class);
         findHotel.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FindHotelActivity.class);
@@ -97,12 +98,25 @@ public class HomeFragmentQ extends Fragment {
 
             Intent intent = new Intent(requireContext(), LocationActivity.class);
             intent.putExtra("location_id", locationId);
-            locationVM.getLocation(locationId - 1).observe(getViewLifecycleOwner(), location -> {
+            Log.d("HomeFragmentTAG", "Location ID: " + locationId);
+//            locationViewModel.getLocation(locationId).observe(getViewLifecycleOwner(), location -> {
+//
+//                if (location != null) {
+//                    Log.d("HomeFragmentTAG", "Location: " + location.getTenDiaDiem());
+//                    locationSelectedViewModel.setLocation(location);
+//                }
+//            }
+            locationViewModel.getLocationById(locationId - 1, location -> {
                 if (location != null) {
+                    Log.d("HomeFragmentTAG", "Location: " + location.getTenDiaDiem());
                     locationSelectedViewModel.setLocation(location);
+                    startActivity(intent);
+                    // xử lý tiếp với location
+                } else {
+                    Log.e("HomeFragmentTAG", "Location is null tại dòng onCreateView");
                 }
             });
-            startActivity(intent);
+
         });
         rcvLocation.setAdapter(locationAdapter);
 
@@ -119,7 +133,7 @@ public class HomeFragmentQ extends Fragment {
             }
         });
 
-        locationViewModel.getLocationsHome().observe(getViewLifecycleOwner(), locations -> {
+        locationViewModel.getAllLocations().observe(getViewLifecycleOwner(), locations -> {
             if (locations != null) {
                 locationAdapter.setLocationList(locations);
             }

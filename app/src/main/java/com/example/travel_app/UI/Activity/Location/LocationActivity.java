@@ -100,7 +100,7 @@ public class LocationActivity extends AppCompatActivity {
     private final String[] dayLabels = {"Hôm nay", "Ngày mai", "Ngày kia", "Ngày 3", "Ngày 4"};
 
 
-    @SuppressLint({"ObsoleteSdkInt", "SetTextI18n"})
+    @SuppressLint("ObsoleteSdkInt")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,6 +169,16 @@ public class LocationActivity extends AppCompatActivity {
                         tvDescription.setText("Không có mô tả.");
                     }
                 });
+
+//                locationSelectedViewModel.getLocation().observe(this, location -> {
+//                    if (location != null) {
+//                        // Cập nhật thời tiết
+//                        setupWeatherViewPager(location.getViTri());
+//
+//                        setupMapButton();
+//                    }
+//                });
+
             }});
 
 
@@ -257,66 +267,6 @@ public class LocationActivity extends AppCompatActivity {
         rvReviews.setAdapter(reviewAdapter);
     }
 
-//    private void setupWeatherViewPager() {
-//        weatherRepository = new WeatherRepository();
-//        weatherAdapter = new WeatherAdapter(new ArrayList<>()); // Khởi tạo adapter với danh sách rỗng
-//        viewPagerWeather.setAdapter(weatherAdapter);
-//        if (locationName != null && !locationName.isEmpty()) {
-//            // Gọi API để lấy vị trí từ tên địa danh
-//            weatherRepository.getLocationByName(locationName, new Callback<List<GeoResponse>>() {
-//                @Override
-//                public void onResponse(Call<List<GeoResponse>> call, Response<List<GeoResponse>> response) {
-//                    if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
-//                        GeoResponse geoResponse = response.body().get(0); // Lấy thông tin vị trí đầu tiên
-//                        double lat = geoResponse.getLat(); // Vĩ độ
-//                        double lon = geoResponse.getLon(); // Kinh độ
-//
-//                        // Gọi API thời tiết 7 ngày với lat và lon
-//                        weatherRepository.get7DayWeather(lat, lon, new Callback<WeatherResponse>() {
-//                            @Override
-//                            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-//                                if (response.isSuccessful() && response.body() != null) {
-//                                    WeatherResponse weatherResponse = response.body();
-//                                    List<WeatherResponse.Daily> dailyList = weatherResponse.getDaily();
-//                                    if (dailyList.size() > 7) {
-//                                        dailyList = dailyList.subList(0, 7); // Lấy 7 ngày
-//                                    }
-//
-//                                    // Tạo danh sách WeatherItem để hiển thị
-//                                    List<WeatherItem> weatherItems = new ArrayList<>();
-//                                    for (WeatherResponse.Daily daily : dailyList) {
-//                                        String description = daily.getWeather().get(0).getDescription();
-//                                        String temperature = String.valueOf(daily.getTemp().getDay());
-//                                        String windSpeed = String.valueOf(daily.getWindSpeed());
-//
-//                                        WeatherItem weatherItem = new WeatherItem(description, temperature, windSpeed);
-//                                        weatherItems.add(weatherItem);
-//                                    }
-//
-//                                    // Cập nhật adapter với danh sách weatherItems
-//                                    weatherAdapter.setWeatherList(weatherItems);
-//                                } else {
-//                                    Log.e("TAG", "Không thể tải dữ liệu thời tiết");
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onFailure(@NonNull Call<WeatherResponse> call, @NonNull Throwable t) {
-//                                Log.e("TAG", "Lỗi gọi API thời tiết", t);
-//                            }
-//                        });
-//                    } else {
-//                        Log.e("TAG", "Không tìm thấy vị trí cho địa danh: " + locationName);
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(@NonNull Call<List<GeoResponse>> call, @NonNull Throwable t) {
-//                    Log.e("TAG", "Lỗi gọi API địa lý", t);
-//                }
-//            });
-//        }
-//    }
 
     private void setupWeatherViewPager(String tenDiaDiem) {
         if (tenDiaDiem == null || tenDiaDiem.isEmpty()) {
@@ -427,7 +377,7 @@ public class LocationActivity extends AppCompatActivity {
         if (locationName == null) return null;
         switch (locationName.toLowerCase()) {
             case "cố đô huế":
-            case "thành phố huế", "thừa thiên huế", "huế":
+            case "thành phố huế", "Thừa Thiên Huế", "huế":
                 return "Thua Thien Hue";
             case "phố cổ hội an":
                 return "Hoi An";

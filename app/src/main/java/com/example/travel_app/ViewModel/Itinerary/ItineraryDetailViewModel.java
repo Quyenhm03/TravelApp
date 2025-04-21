@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.travel_app.Data.Model.Itinerary.Day;
 import com.example.travel_app.Data.Model.Itinerary.Itinerary;
-import com.example.travel_app.Data.Model.Itinerary.Location;
+import com.example.travel_app.Data.Model.Location;
+
 
 import java.util.List;
 

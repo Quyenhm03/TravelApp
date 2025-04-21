@@ -15,7 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.travel_app.Data.Model.Itinerary.Location;
+
+import com.example.travel_app.Data.Model.Location;
 import com.example.travel_app.R;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
 import com.squareup.picasso.Picasso;
@@ -58,7 +59,7 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
 
         // Tải trước URL ảnh cho tất cả Location
         for (Location location : this.locationList) {
-            imageViewModel.loadImageForLocation(location.getLocation_id());
+            imageViewModel.loadImageForLocation(location.getLocationId());
         }
     }
 
@@ -75,7 +76,7 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
         SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
         // Hiển thị tên thành phố (vitri)
-        holder.txtCity.setText(location.getVitri() != null ? location.getVitri() : "Không có địa chỉ");
+        holder.txtCity.setText(location.getViTri() != null ? location.getViTri() : "Không có địa chỉ");
 
         // Hiển thị điểm đánh giá
         holder.txtVote.setText(String.format("%.1f/5.0", location.getVote()));
@@ -84,7 +85,7 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
         Map<Integer, String> urlMap = imageViewModel.getImageUrlMapLiveData().getValue();
         String imageUrl = null;
         if (urlMap != null) {
-            imageUrl = urlMap.get(location.getLocation_id());
+            imageUrl = urlMap.get(location.getLocationId());
         }
 
         // Kiểm tra imageUrl trước khi tải bằng Picasso
@@ -101,7 +102,7 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
         // Thiết lập sự kiện click cho item
         holder.itemView.setOnClickListener(v -> {
             if (onLocationClickListener != null) {
-                onLocationClickListener.onLocationClick(location.getLocation_id());
+                onLocationClickListener.onLocationClick(location.getLocationId());
             }
 
         });
@@ -116,7 +117,7 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
         this.locationList = locations != null ? new ArrayList<>(locations) : new ArrayList<>();
         // Tải trước URL ảnh cho các Location mới
         for (Location location : this.locationList) {
-            imageViewModel.loadImageForLocation(location.getLocation_id());
+            imageViewModel.loadImageForLocation(location.getLocationId());
         }
         notifyDataSetChanged();
     }

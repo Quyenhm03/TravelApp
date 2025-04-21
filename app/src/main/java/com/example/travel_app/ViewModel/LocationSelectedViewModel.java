@@ -1,5 +1,7 @@
 package com.example.travel_app.ViewModel;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -12,6 +14,7 @@ public class LocationSelectedViewModel extends ViewModel {
         mutableLiveData = new MutableLiveData<>();
     }
     public void setLocation(Location location) {
+        Log.d("HomeFragmentTAG_LocationSelectedViewModel", "setLocation: " + location.getTenDiaDiem());
         mutableLiveData.setValue(location);
     }
     public LiveData<Location> getLocation() {

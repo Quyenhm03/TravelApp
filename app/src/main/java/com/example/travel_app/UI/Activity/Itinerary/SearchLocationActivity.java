@@ -57,7 +57,7 @@ public class SearchLocationActivity extends BaseActivity {
         rcvSearchLocationResult.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SearchLocationAdapter(new ArrayList<>(), imageViewModel, location -> {
             Intent resultIntent = new Intent();
-            resultIntent.putExtra("selectedLocation", location);
+            resultIntent.putExtra("selectedLocation", location.getLocationId());
             setResult(RESULT_OK, resultIntent);
             finish();
         });

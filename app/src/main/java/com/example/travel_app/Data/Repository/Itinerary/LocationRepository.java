@@ -4,7 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.travel_app.Data.Model.Itinerary.Location;
+
+import com.example.travel_app.Data.Model.Location;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,8 +29,8 @@ public class LocationRepository {
                 List<Location> result = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Location location = snapshot.getValue(Location.class);
-                    if (location != null && (location.getTendiadiem().toLowerCase().contains(query.toLowerCase())
-                            || location.getVitri().toLowerCase().contains(query.toLowerCase()))) {
+                    if (location != null && (location.getTenDiaDiem().toLowerCase().contains(query.toLowerCase())
+                            || location.getViTri().toLowerCase().contains(query.toLowerCase()))) {
                         result.add(location);
                     }
                 }
