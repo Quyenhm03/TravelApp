@@ -2,7 +2,9 @@ package com.example.travel_app.Data.Model;
 
 import com.google.firebase.database.PropertyName;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable {
 
     @PropertyName("location_id")
     private int locationId;
