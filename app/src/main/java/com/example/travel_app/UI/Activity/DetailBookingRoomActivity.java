@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.travel_app.Data.Model.Hotel;
 import com.example.travel_app.Data.Model.Room;
 import com.example.travel_app.R;
+import com.example.travel_app.SharedPreferencesUtils;
 import com.example.travel_app.ViewModel.HotelDetailViewModel;
 import com.example.travel_app.ViewModel.RoomViewModel;
 import com.squareup.picasso.Callback;
@@ -42,7 +43,7 @@ import java.util.Locale;
 
 public class DetailBookingRoomActivity extends AppCompatActivity {
 
-    private ImageView imageHotel;
+    private ImageView imageHotel, btnBack;
     private TextView textHotelName, textHotelPrice;
     private EditText edtStartDate, edtEndDate;
     private ImageView imgStartDate, imgEndDate;
@@ -85,6 +86,11 @@ public class DetailBookingRoomActivity extends AppCompatActivity {
         radioButtonRegular = findViewById(R.id.radioButtonRegular);
         radioButtonVIP = findViewById(R.id.radioButtonVIP);
         buttonConfirmBooking = findViewById(R.id.buttonConfirmBooking);
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            onBackPressed();
+            finish();
+        });
 
         // Khởi tạo ViewModel
         hotelDetailViewModel = new ViewModelProvider(this).get(HotelDetailViewModel.class);
@@ -151,14 +157,38 @@ public class DetailBookingRoomActivity extends AppCompatActivity {
                 return;
             }
             Toast.makeText(this, "Xac nhan dat phong" + textHotelName.getText() + " - " + selectedRoom.getRoomType() + " cho " + numberOfNights + " ngày/đêm", Toast.LENGTH_LONG).show();
-            Intent intentBooking = new Intent(this, HotelPaymentActivity.class);
-            intentBooking.putExtra("hotel_name", textHotelName.getText().toString());
-            intentBooking.putExtra("room_type", selectedRoom.getRoomType());
-            intentBooking.putExtra("total_amount", totalPrice);
-            intentBooking.putExtra("check_in_date", edtStartDate.getText().toString());
-            intentBooking.putExtra("check_out_date", edtEndDate.getText().toString());
-            intentBooking.putExtra("total_amount_string", totalPrice);
-            startActivity(intentBooking);
+//<<<<<<< .mine
+//            Intent intentBooking = new Intent(this, HotelPaymentActivity.class);
+//            intentBooking.putExtra("hotel_name", textHotelName.getText().toString());
+//            intentBooking.putExtra("room_type", selectedRoom.getRoomType());
+//            intentBooking.putExtra("total_amount", totalPrice);
+//            intentBooking.putExtra("check_in_date", edtStartDate.getText().toString());
+//            intentBooking.putExtra("check_out_date", edtEndDate.getText().toString());
+//            intentBooking.putExtra("total_amount_string", totalPrice);
+//            startActivity(intentBooking);
+//
+//
+//
+//
+//
+//
+//
+//=======
+//            Intent intentBooking = new Intent(this, HotelPaymentActivity.class);
+//            intentBooking.putExtra("hotel_name", textHotelName.getText().toString());
+//            intentBooking.putExtra("room_type", selectedRoom.getRoomType());
+//            intentBooking.putExtra("total_amount", totalPrice);
+//            intentBooking.putExtra("check_in_date", edtStartDate.getText().toString());
+//            intentBooking.putExtra("check_out_date", edtEndDate.getText().toString());
+            SharedPreferencesUtils.saveBookingData(
+                    this,
+                    textHotelName.getText().toString(),
+                    selectedRoom.getRoomType(),
+                    totalPrice,
+                    edtStartDate.getText().toString(),
+                    edtEndDate.getText().toString()
+            );
+            startActivity(new Intent(this, HotelPaymentActivity.class));
         });
     }
 

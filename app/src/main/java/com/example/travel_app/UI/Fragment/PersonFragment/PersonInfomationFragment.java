@@ -92,6 +92,7 @@ public class PersonInfomationFragment extends Fragment {
     }
 
     private void openRoomBookedFragment(){
+
         Intent intent = new Intent(getActivity(), HotelBookedActivity.class);
         startActivity(intent);
     }
