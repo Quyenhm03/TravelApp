@@ -78,28 +78,8 @@ public class PersonInfomationFragment extends Fragment {
     }
 
     private void openRoomBookedFragment(){
-<<<<<<< .mine
-<<<<<<< .mine
-<<<<<<< .mine
-        Intent intent = new Intent(getActivity(), HotelBookedActivity.class);
-        startActivity(intent);
-=======
-
-
-
-
->>>>>>> .theirs
-=======
-        
-=======
-
-
-
-
-
->>>>>>> .theirs
-
->>>>>>> .theirs
+//        Intent intent = new Intent(getActivity(), HotelBookedActivity.class);
+//        startActivity(intent);
     }
 
     private void openTicketsBookedFragment(){

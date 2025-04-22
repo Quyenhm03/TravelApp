@@ -21,40 +21,6 @@
         android:theme="@style/Theme.Travel_App"
         tools:targetApi="31">
         <activity
-<<<<<<< .mine
-<<<<<<< .mine
-<<<<<<< .mine
-            android:name=".UI.Activity.HotelBookedActivity"
-            android:exported="false" />
-        <activity
-=======
-
-
-
-
-
->>>>>>> .theirs
-=======
-            android:name=".UI.Activity.PassengerInfoBookingRoomActivity"
-            android:exported="false" />
-        <activity
-=======
-
-
-
-
-
-
-
-
->>>>>>> .theirs
->>>>>>> .theirs
-            android:name=".UI.Activity.FavoriteLocationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".UI.Activity.HotelPaymentActivity"
-            android:exported="false" />
-        <activity
             android:name=".UI.Activity.BookingRoomInfoPassenger"
             android:exported="false" />
         <activity
