@@ -70,14 +70,13 @@
     </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/textHotelPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="635.000 VNĐ/đêm"
-        android:textSize="16sp"
-        android:textColor="#FF6200"
-        android:layout_marginTop="4dp" />
+<!--    <TextView-->
+<!--        android:id="@+id/textHotelPrice"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="16sp"-->
+<!--        android:textColor="#FF6200"-->
+<!--        android:layout_marginTop="4dp" />-->
 
 
     <Button

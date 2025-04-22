@@ -84,20 +84,20 @@ public class FindHotelActivity extends AppCompatActivity {
         View sheetView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_sort, null);
         bottomSheetDialog.setContentView(sheetView);
 
-        TextView sortPriceAsc = sheetView.findViewById(R.id.sort_price_asc);
-        TextView sortPriceDesc = sheetView.findViewById(R.id.sort_price_desc);
+//        TextView sortPriceAsc = sheetView.findViewById(R.id.sort_price_asc);
+//        TextView sortPriceDesc = sheetView.findViewById(R.id.sort_price_desc);
         TextView sortRatingAsc = sheetView.findViewById(R.id.sort_rating_asc);
         TextView sortRatingDesc = sheetView.findViewById(R.id.sort_rating_desc);
 
-        sortPriceAsc.setOnClickListener(v -> {
-            sortAndDisplay("price_asc");
-            bottomSheetDialog.dismiss();
-        });
-
-        sortPriceDesc.setOnClickListener(v -> {
-            sortAndDisplay("price_desc");
-            bottomSheetDialog.dismiss();
-        });
+//        sortPriceAsc.setOnClickListener(v -> {
+//            sortAndDisplay("price_asc");
+//            bottomSheetDialog.dismiss();
+//        });
+//
+//        sortPriceDesc.setOnClickListener(v -> {
+//            sortAndDisplay("price_desc");
+//            bottomSheetDialog.dismiss();
+//        });
 
         sortRatingAsc.setOnClickListener(v -> {
             sortAndDisplay("rating_asc");

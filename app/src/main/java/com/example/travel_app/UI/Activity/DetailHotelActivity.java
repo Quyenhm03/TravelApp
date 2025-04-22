@@ -29,14 +29,14 @@ import com.squareup.picasso.Picasso;
 
 public class DetailHotelActivity extends AppCompatActivity {
 
-    private ImageView imageHotel;
+    private ImageView imageHotel, btnBack;
     private TextView textHotelName, textHotelRating, textHotelLocation, textHotelWebsite, textHotelPhone;
     private TextView textCheckInTime, textCheckOutTime;
     private Button buttonConfirmBooking;
     private HotelDetailViewModel hotelDetailViewModel;
 
 
-    @SuppressLint({"SetTextI18n", "MissingInflatedId"})
+    @SuppressLint({"SetTextI18n", "MissingInflatedId", "ObsoleteSdkInt"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,10 +54,11 @@ public class DetailHotelActivity extends AppCompatActivity {
         textCheckInTime = findViewById(R.id.textCheckInTime);
         textCheckOutTime = findViewById(R.id.textCheckOutTime);
         buttonConfirmBooking = findViewById(R.id.buttonConfirmBooking);
-
-
-        buttonConfirmBooking = findViewById(R.id.buttonConfirmBooking);
-
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            onBackPressed();
+            finish();
+        });
 
         hotelDetailViewModel = new ViewModelProvider(this).get(HotelDetailViewModel.class);
 
