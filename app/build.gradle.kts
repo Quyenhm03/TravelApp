@@ -59,10 +59,10 @@ dependencies {
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
 
-// Converter JSON -> Java object
+    // Converter JSON -> Java object
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
-// Optional: Logging (giúp debug các request)
+    // Optional: Logging (giúp debug các request)
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
 }

@@ -95,20 +95,9 @@ public class HomeFragmentQ extends Fragment {
 
         // Khởi tạo LocationHomeAdapter với ImageViewModel và callback cho sự kiện click
         locationAdapter = new LocationHomeAdapter(requireContext(), getViewLifecycleOwner(), new ArrayList<>(), imageViewModel, locationId -> {
-            // Khi một item được click, chuyển sang LocationActivity
+
             Intent intent = new Intent(requireContext(), LocationActivity.class);
             intent.putExtra("location_id", locationId);
-<<<<<<< .mine
-            locationVM.getLocation(locationId).observe(getViewLifecycleOwner(), location -> {
-
-
-
-
-
-
-
-
-=======
             Log.d("HomeFragmentTAG", "Location ID: " + locationId);
 //            locationViewModel.getLocation(locationId).observe(getViewLifecycleOwner(), location -> {
 //
@@ -118,7 +107,6 @@ public class HomeFragmentQ extends Fragment {
 //                }
 //            }
             locationViewModel.getLocationById(locationId - 1, location -> {
->>>>>>> .theirs
                 if (location != null) {
                     Log.d("HomeFragmentTAG", "Location: " + location.getTenDiaDiem());
                     locationSelectedViewModel.setLocation(location);

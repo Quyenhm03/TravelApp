@@ -124,15 +124,15 @@ public class LocationActivity extends AppCompatActivity {
         locationViewModel = new ViewModelProvider(this).get(LocationViewModel.class);
         mediaViewModel = new ViewModelProvider(this).get(MediaViewModel.class);
         imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
-        locationSelectedViewModel.getLocation().observe(this, location -> {
-            if (location != null) {
-                setupWeatherViewPager(location.getViTri());
-            } else {
-                Toast.makeText(this, "Không tìm thấy địa điểm", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        locationSelectedViewModel.getLocation().observe(this, location -> {
+//            if (location != null) {
+//                setupWeatherViewPager(location.getViTri());
+//            } else {
+//                Toast.makeText(this, "Không tìm thấy địa điểm", Toast.LENGTH_SHORT).show();
+//            }
+//        });
         setupReviewsRecyclerView();
-            userCurrentViewModel.user.observe(this, user -> {
+        userCurrentViewModel.user.observe(this, user -> {
             if (user != null) {
                 locationViewModel.getLocation(locationId).observe(this, location -> {
                     if (location != null) {
@@ -150,39 +150,10 @@ public class LocationActivity extends AppCompatActivity {
                         ivFavorite.setOnClickListener(v -> {
                             boolean newFavorite = !location.isFavorite(); // Đảo trạng thái
 
-<<<<<<< .mine
-        locationViewModel.getLocation(locationId).observe(this, location -> {
-            if (location != null) {
-                tvDescription.setText(location.getMoTa() != null ? location.getMoTa() : "Không có mô tả.");
-                setupMapButton();
-                tvLocationTitle.setText(location.getTenDiaDiem());
-                // Đặt icon yêu thích ban đầu
-                ImageView ivFavorite = findViewById(R.id.ivFavorite);
-                if (location.isFavorite()) {
-                    ivFavorite.setImageResource(R.drawable.ic_favorite_true);
-                } else {
-                    ivFavorite.setImageResource(R.drawable.ic_favorite_false);
-                }
-                // Gắn sự kiện khi nhấn icon yêu thích
-                ivFavorite.setOnClickListener(v -> {
-                    boolean newFavorite = !location.isFavorite(); // Đảo trạng thái
-=======
                             // Cập nhật icon
                             ivFavorite.setImageResource(
                                     newFavorite ? R.drawable.ic_favorite_true : R.drawable.ic_favorite_false
                             );
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> .theirs
 
                             // Cập nhật trạng thái yêu thích lên Firebase
                             location.setFavorite(newFavorite);

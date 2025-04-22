@@ -39,50 +39,8 @@ public class LocationRepository {
             @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
                 locationLiveData.setValue(snapshot.getValue(Location.class));
 
-<<<<<<< .mine
-                if (!dataSnapshot.exists()) {
-                    Log.w(TAG, "Không tìm thấy địa điểm cho locationId: " + locationId);
-                    locationLiveData.setValue(null);
-                    return;
-                }
-
-                try {
-                    Location location = dataSnapshot.getValue(Location.class);
-                    if (location != null) {
-                        locationLiveData.setValue(location);
-                        Log.d(TAG, "Địa điểm được ánh xạ: tenDiaDiem=" + location.getTenDiaDiem() + ", moTa=" + location.getMoTa());
-                    } else {
-                        Log.e(TAG, "Không thể ánh xạ dữ liệu cho locationId: " + locationId);
-                        locationLiveData.setValue(null);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Lỗi ánh xạ dữ liệu cho locationId: " + locationId + " - " + e.getMessage());
-                    locationLiveData.setValue(null);
-                }
-=======
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> .theirs
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Lỗi khi lấy địa điểm cho locationId: " + locationId + " - " + databaseError.getMessage());
                 locationLiveData.setValue(null);
             }
         });
@@ -106,59 +64,16 @@ public class LocationRepository {
     // ------------------- Lấy toàn bộ địa điểm --------------------
     public LiveData<List<Location>> getAllLocations() {
         locationRef.addValueEventListener(new ValueEventListener() {
-<<<<<<< .mine
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d(TAG, "Dữ liệu JSON thô cho tất cả địa điểm: " + dataSnapshot.getValue());
-                List<Location> locations = new ArrayList<>();
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    try {
-                        Location location = snapshot.getValue(Location.class);
-                        if (location != null) {
-                            locations.add(location);
-                            Log.d(TAG, "Địa điểm: tenDiaDiem=" + location.getTenDiaDiem() + ", locationId=" + location.getLocationId());
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Lỗi ánh xạ một địa điểm: " + e.getMessage());
-                    }
-=======
             @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Location> result = new ArrayList<>();
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     Location location = snap.getValue(Location.class);
                     if (location != null) result.add(location);
-
-
-
-
-
-
-
-
-
-
->>>>>>> .theirs
                 }
-<<<<<<< .mine
-
-                if (locations.isEmpty()) {
-                    Log.w(TAG, "Không tìm thấy địa điểm nào");
-                }
-
-                allLocationsLiveData.setValue(locations);
-=======
                 allLocationsLiveData.setValue(result);
-
-
-
-
-
->>>>>>> .theirs
             }
 
             @Override public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Lỗi khi lấy tất cả địa điểm: " + databaseError.getMessage());
                 allLocationsLiveData.setValue(new ArrayList<>());
             }
         });
