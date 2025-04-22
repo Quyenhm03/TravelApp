@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.travel_app.Data.Model.Itinerary.Location;
+
+import com.example.travel_app.Data.Model.Location;
 import com.example.travel_app.Data.Repository.Itinerary.LocationRepository;
 
 import java.util.ArrayList;

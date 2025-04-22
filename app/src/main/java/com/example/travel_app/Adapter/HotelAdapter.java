@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.travel_app.Data.Model.Hotel;
 import com.example.travel_app.R;
+import com.example.travel_app.SharedPreferencesUtils;
 import com.example.travel_app.UI.Activity.DetailHotelActivity;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -56,6 +57,7 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
     @Override
     public void onBindViewHolder(@NonNull HotelViewHolder holder, int position) {
         Hotel hotel = hotelList.get(position);
+
         holder.textHotelName.setText(hotel.getName());
         holder.textHotelLocation.setText(hotel.getLocation());
         holder.textHotelRating.setText(String.valueOf(hotel.getRating()));

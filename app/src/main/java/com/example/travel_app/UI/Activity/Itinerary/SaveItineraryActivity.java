@@ -1,5 +1,6 @@
 package com.example.travel_app.UI.Activity.Itinerary;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,7 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.travel_app.Adapter.Itinerary.DayLocationAdapter;
 import com.example.travel_app.Data.Model.Itinerary.Day;
 import com.example.travel_app.Data.Model.Itinerary.Itinerary;
-import com.example.travel_app.Data.Model.Itinerary.Location;
+
+import com.example.travel_app.Data.Model.Location;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Activity.BaseActivity;
 import com.example.travel_app.UI.Activity.Location.LocationActivity;
@@ -40,6 +42,7 @@ public class SaveItineraryActivity extends BaseActivity {
     private TextView txtTimeItinerary;
     private Itinerary itinerary;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +79,7 @@ public class SaveItineraryActivity extends BaseActivity {
         }, location -> {
             // Khi click vào item, mở LocationActivity
             Intent intent = new Intent(SaveItineraryActivity.this, LocationActivity.class);
-            intent.putExtra("location_id", location.getLocation_id());
+            intent.putExtra("location_id", location.getLocationId());
             startActivity(intent);
         });
         rcvDayLocation.setAdapter(adapter);

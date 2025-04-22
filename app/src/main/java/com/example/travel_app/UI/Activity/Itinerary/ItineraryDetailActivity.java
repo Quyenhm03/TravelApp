@@ -76,7 +76,7 @@ public class ItineraryDetailActivity extends BaseActivity {
         adapter = new LocationAdapter(new ArrayList<>(), imageViewModel, location -> {
             // Khi click vào item, mở LocationActivity
             Intent intent = new Intent(ItineraryDetailActivity.this, LocationActivity.class);
-            intent.putExtra("location_id", location.getLocation_id());
+            intent.putExtra("location_id", location.getLocationId());
             startActivity(intent);
         });
         adapter.setDeleteButtonVisible(false);

@@ -12,7 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.travel_app.Data.Model.Itinerary.Location;
+
+import com.example.travel_app.Data.Model.Location;
 import com.example.travel_app.R;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
 import com.squareup.picasso.Callback;
@@ -53,13 +54,13 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
     @Override
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
         Location location = locationList.get(position);
-        holder.txtTitle.setText(location.getTendiadiem() != null ? location.getTendiadiem() : "Không có tên");
-        holder.txtAddress.setText(location.getVitri() != null ? location.getVitri() : "Không có địa chỉ");
+        holder.txtTitle.setText(location.getTenDiaDiem() != null ? location.getTenDiaDiem() : "Không có tên");
+        holder.txtAddress.setText(location.getViTri() != null ? location.getViTri() : "Không có địa chỉ");
 
-        imageViewModel.loadImageForLocation(location.getLocation_id());
+        imageViewModel.loadImageForLocation(location.getLocationId());
         imageViewModel.getImageUrlMapLiveData().observe((LifecycleOwner) holder.itemView.getContext(), imageUrlMap -> {
-            String imageUrl = imageUrlMap.get(location.getLocation_id());
-            Log.d("LocationAdapter", "Location ID: " + location.getLocation_id() + ", Image URL: " + imageUrl);
+            String imageUrl = imageUrlMap.get(location.getLocationId());
+            Log.d("LocationAdapter", "Location ID: " + location.getLocationId() + ", Image URL: " + imageUrl);
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 Picasso.get().load(imageUrl).into(holder.imgLocation);
             }

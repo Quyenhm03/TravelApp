@@ -1,5 +1,6 @@
 package com.example.travel_app.Adapter.Itinerary;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.travel_app.Data.Model.Itinerary.Day;
 import com.example.travel_app.Data.Model.Itinerary.Itinerary;
-import com.example.travel_app.Data.Model.Itinerary.Location;
+
+import com.example.travel_app.Data.Model.Location;
 import com.example.travel_app.R;
 import com.example.travel_app.ViewModel.Itinerary.ImageViewModel;
 import com.squareup.picasso.Picasso;
@@ -46,6 +48,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.Itin
         return new ItineraryViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ItineraryViewHolder holder, int position) {
         Itinerary itinerary = itineraryList.get(position);
@@ -65,7 +68,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.Itin
         // Tải ảnh của Location đầu tiên trong ngày đầu tiên
         if (days != null && !days.isEmpty() && days.get(0).getLocations() != null && !days.get(0).getLocations().isEmpty()) {
             Location firstLocation = days.get(0).getLocations().get(0);
-            int locationId = firstLocation.getLocation_id();
+            int locationId = firstLocation.getLocationId();
             imageViewModel.loadImageForLocation(locationId);
             imageViewModel.getImageUrlMapLiveData().observe((LifecycleOwner) holder.itemView.getContext(), imageUrlMap -> {
                 String imageUrl = imageUrlMap.get(locationId);
@@ -96,6 +99,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.Itin
         return itineraryList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateList(List<Itinerary> newList) {
         this.itineraryList = newList != null ? newList : new ArrayList<>();
         notifyDataSetChanged();

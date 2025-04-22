@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+
 import com.example.travel_app.Data.Model.Location;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,32 +15,31 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class LocationRepository {
     private static final String TAG = "LocationRepository";
 
     private final DatabaseReference locationRef;
-    private final DatabaseReference userFavoritesRef;
-    private final MutableLiveData<Location> locationLiveData;
-    private final MutableLiveData<List<Location>> allLocationsLiveData;
-    private final MutableLiveData<List<Location>> favoriteLocationsLiveData;
+    private final DatabaseReference favoriteRef;
+
+    private final MutableLiveData<Location> locationLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Location>> allLocationsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Location>> favoriteLocationsLiveData = new MutableLiveData<>();
+    private Location location = new Location();
 
     public LocationRepository() {
         locationRef = FirebaseDatabase.getInstance().getReference("Location");
-        userFavoritesRef = FirebaseDatabase.getInstance().getReference("UserFavorites");
-        locationLiveData = new MutableLiveData<>();
-        allLocationsLiveData = new MutableLiveData<>();
-        favoriteLocationsLiveData = new MutableLiveData<>();
+        favoriteRef = FirebaseDatabase.getInstance().getReference("FavoriteLocations");
     }
 
+    // ------------------- Lấy 1 địa điểm theo ID --------------------
     public LiveData<Location> getLocation(int locationId) {
-        locationRef.child(String.valueOf(locationId)).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        locationRef.child(String.valueOf(locationId - 1)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                locationLiveData.setValue(snapshot.getValue(Location.class));
 
+<<<<<<< .mine
                 if (!dataSnapshot.exists()) {
                     Log.w(TAG, "Không tìm thấy địa điểm cho locationId: " + locationId);
                     locationLiveData.setValue(null);
@@ -59,20 +59,54 @@ public class LocationRepository {
                     Log.e(TAG, "Lỗi ánh xạ dữ liệu cho locationId: " + locationId + " - " + e.getMessage());
                     locationLiveData.setValue(null);
                 }
-            }
+=======
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> .theirs
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, "Lỗi khi lấy địa điểm cho locationId: " + locationId + " - " + databaseError.getMessage());
                 locationLiveData.setValue(null);
             }
         });
-
         return locationLiveData;
     }
 
+    public void getLocationById(int locationId, LocationCallback callback) {
+        locationRef.child(String.valueOf(locationId)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Location location = snapshot.getValue(Location.class);
+                callback.onLocationLoaded(location);
+            }
+
+            @Override public void onCancelled(@NonNull DatabaseError error) {
+                callback.onLocationLoaded(null);
+            }
+        });
+    }
+
+
+    // ------------------- Lấy toàn bộ địa điểm --------------------
     public LiveData<List<Location>> getAllLocations() {
         locationRef.addValueEventListener(new ValueEventListener() {
+<<<<<<< .mine
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d(TAG, "Dữ liệu JSON thô cho tất cả địa điểm: " + dataSnapshot.getValue());
@@ -88,136 +122,214 @@ public class LocationRepository {
                     } catch (Exception e) {
                         Log.e(TAG, "Lỗi ánh xạ một địa điểm: " + e.getMessage());
                     }
+=======
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Location> result = new ArrayList<>();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    Location location = snap.getValue(Location.class);
+                    if (location != null) result.add(location);
+
+
+
+
+
+
+
+
+
+
+>>>>>>> .theirs
                 }
+<<<<<<< .mine
 
                 if (locations.isEmpty()) {
                     Log.w(TAG, "Không tìm thấy địa điểm nào");
                 }
 
                 allLocationsLiveData.setValue(locations);
+=======
+                allLocationsLiveData.setValue(result);
+
+
+
+
+
+>>>>>>> .theirs
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, "Lỗi khi lấy tất cả địa điểm: " + databaseError.getMessage());
                 allLocationsLiveData.setValue(new ArrayList<>());
             }
         });
-
         return allLocationsLiveData;
     }
 
-    public void updateLocationFavorite(int locationId, boolean isFavorite) {
-        locationRef.child(String.valueOf(locationId)).child("is_favourite").setValue(isFavorite)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Cập nhật is_favourite thành công cho locationId: " + locationId))
-                .addOnFailureListener(e -> Log.e(TAG, "Lỗi khi cập nhật is_favourite cho locationId: " + locationId, e));
-
+    // ------------------- Cập nhật yêu thích --------------------
+    public void updateLocationFavorite(String userId, String locationId, boolean isFavorite) {
+        DatabaseReference favRef = favoriteRef.child(userId).child(locationId);
+        if (isFavorite) {
+            favRef.setValue(true)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Yêu thích: " + locationId))
+                    .addOnFailureListener(e -> Log.e(TAG, "Lỗi yêu thích: " + locationId, e));
+        } else {
+            favRef.removeValue()
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Bỏ yêu thích: " + locationId))
+                    .addOnFailureListener(e -> Log.e(TAG, "Lỗi bỏ yêu thích: " + locationId, e));
+        }
     }
 
-
-//    public LiveData<List<Location>> getFavoriteLocationsByUserId(String userId) {
-//        userFavoritesRef.child(userId).child("locationIds").addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                List<Integer> favoriteLocationIds = new ArrayList<>();
+    // ------------------- Lấy danh sách yêu thích theo user --------------------
+//    public MutableLiveData<List<Location>> getFavoriteLocationsByUserId(String userId) {
+//        List<Location> favoriteLocations = new ArrayList<>();
+//        MutableLiveData<List<Location>> liveData = new MutableLiveData<>();
 //
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    if (snapshot.getValue(Boolean.class)) {
-//                        favoriteLocationIds.add(Integer.parseInt(snapshot.getKey()));
-//                    }
-//                }
+//        if (userId == null || userId.isEmpty()) {
+//            liveData.setValue(favoriteLocations);
+//            return liveData;
+//        }
 //
-//                if (favoriteLocationIds.isEmpty()) {
-//                    Log.w(TAG, "Không có địa điểm yêu thích nào cho userId: " + userId);
-//                    favoriteLocationsLiveData.setValue(new ArrayList<>());
+//        favoriteRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override public void onDataChange(@NonNull DataSnapshot favSnapshot) {
+//                if (!favSnapshot.exists()) {
+//                    liveData.setValue(favoriteLocations);
 //                    return;
 //                }
 //
-//                // Lấy thông tin chi tiết của các địa điểm yêu thích
-//                List<Location> favoriteLocations = new ArrayList<>();
-//                for (int locationId : favoriteLocationIds) {
-//                    locationRef.child(String.valueOf(locationId)).addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot locationSnapshot) {
-//                            try {
-//                                Location location = locationSnapshot.getValue(Location.class);
-//                                if (location != null) {
-//                                    favoriteLocations.add(location);
-//                                    Log.d(TAG, "Địa điểm yêu thích: tenDiaDiem=" + location.getTenDiaDiem() + ", locationId=" + location.getLocationId());
-//                                }
-//
-//                                // Cập nhật LiveData khi đã lấy hết tất cả địa điểm
-//                                if (favoriteLocations.size() == favoriteLocationIds.size()) {
-//                                    favoriteLocationsLiveData.setValue(favoriteLocations);
-//                                }
-//                            } catch (Exception e) {
-//                                Log.e(TAG, "Lỗi ánh xạ địa điểm yêu thích: locationId=" + locationId + " - " + e.getMessage());
+//                locationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override public void onDataChange(@NonNull DataSnapshot allSnapshot) {
+//                        for (DataSnapshot snap : allSnapshot.getChildren()) {
+//                            String locId = snap.getKey();
+//                            if (favSnapshot.hasChild(locId)) {
+//                                Location loc = snap.getValue(Location.class);
+//                                if (loc != null) favoriteLocations.add(loc);
 //                            }
 //                        }
+//                        liveData.setValue(favoriteLocations);
+//                    }
 //
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//                            Log.e(TAG, "Lỗi khi lấy địa điểm yêu thích: locationId=" + locationId + " - " + databaseError.getMessage());
-//                            // Cập nhật LiveData nếu có lỗi
-//                            if (favoriteLocations.size() == favoriteLocationIds.size()) {
-//                                favoriteLocationsLiveData.setValue(favoriteLocations);
-//                            }
-//                        }
-//                    });
-//                }
+//                    @Override public void onCancelled(@NonNull DatabaseError error) {
+//                        liveData.setValue(new ArrayList<>());
+//                    }
+//                });
 //            }
 //
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Log.e(TAG, "Lỗi khi lấy danh sách yêu thích cho userId: " + userId + " - " + databaseError.getMessage());
-//                favoriteLocationsLiveData.setValue(new ArrayList<>());
+//            @Override public void onCancelled(@NonNull DatabaseError error) {
+//                liveData.setValue(new ArrayList<>());
 //            }
 //        });
 //
-//        return favoriteLocationsLiveData;
+//        return liveData;
 //    }
 
     public MutableLiveData<List<Location>> getFavoriteLocationsByUserId(String userId) {
-        MutableLiveData<List<Location>> favoriteLocationsLiveData = new MutableLiveData<>();
+        MutableLiveData<List<Location>> liveData = new MutableLiveData<>();
         List<Location> favoriteLocations = new ArrayList<>();
 
-        // Log the userId for debugging
-        Log.d(TAG, "Lấy danh sách địa điểm yêu thích cho userId: " + userId);
+        if (userId == null || userId.isEmpty()) {
+            liveData.setValue(favoriteLocations);
+            return liveData;
+        }
 
-        // Truy vấn node Location
-        locationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference favRef = FirebaseDatabase.getInstance().getReference("Favourite_Destination");
+        DatabaseReference locRef = FirebaseDatabase.getInstance().getReference("Location");
+
+        favRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                favoriteLocations.clear();
+            public void onDataChange(@NonNull DataSnapshot favSnapshot) {
+                List<String> favIds = new ArrayList<>();
 
-                // Duyệt qua tất cả các địa điểm trong node Location
-                for (DataSnapshot locationSnapshot : dataSnapshot.getChildren()) {
-                    Location location = locationSnapshot.getValue(Location.class);
-                    if (location != null && location.isFavorite()) {
-                        // Nếu địa điểm được đánh dấu là yêu thích, thêm vào danh sách
-                        favoriteLocations.add(location);
+                for (DataSnapshot snap : favSnapshot.getChildren()) {
+                    Boolean isFav = snap.child("is_favourite").getValue(Boolean.class);
+                    if (Boolean.TRUE.equals(isFav)) {
+                        favIds.add(snap.getKey());
                     }
                 }
 
-                // Kiểm tra xem danh sách có rỗng không
-                if (favoriteLocations.isEmpty()) {
-                    Log.w(TAG, "Không tìm thấy địa điểm yêu thích nào cho userId: " + userId + ". Lưu ý: Dữ liệu hiện tại không liên kết is_favourite với userId.");
-                } else {
-                    Log.d(TAG, "Tìm thấy " + favoriteLocations.size() + " địa điểm yêu thích.");
+                if (favIds.isEmpty()) {
+                    liveData.setValue(favoriteLocations);
+                    return;
                 }
 
-                // Cập nhật LiveData
-                favoriteLocationsLiveData.setValue(favoriteLocations);
+                locRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot locSnapshot) {
+                        for (DataSnapshot snap : locSnapshot.getChildren()) {
+                            String locationId = snap.getKey();
+                            if (favIds.contains(locationId)) {
+                                Location loc = snap.getValue(Location.class);
+                                if (loc != null) favoriteLocations.add(loc);
+                            }
+                        }
+                        liveData.setValue(favoriteLocations);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        liveData.setValue(new ArrayList<>());
+                    }
+                });
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(TAG, "Lỗi khi lấy danh sách địa điểm yêu thích: " + databaseError.getMessage());
-                favoriteLocationsLiveData.setValue(new ArrayList<>());
+            public void onCancelled(@NonNull DatabaseError error) {
+                liveData.setValue(new ArrayList<>());
             }
         });
 
-        return favoriteLocationsLiveData;
+        return liveData;
+    }
+
+
+
+
+    // ------------------- Tìm kiếm (callback cho Itinerary) --------------------
+    public void searchLocations(String query, SearchCallback callback) {
+        locationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Location> result = new ArrayList<>();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    Location loc = snap.getValue(Location.class);
+                    if (loc != null && (
+                            loc.getTenDiaDiem().toLowerCase().contains(query.toLowerCase()) ||
+                                    loc.getViTri().toLowerCase().contains(query.toLowerCase()))) {
+                        result.add(loc);
+                    }
+                }
+                callback.onSuccess(result);
+            }
+
+            @Override public void onCancelled(@NonNull DatabaseError error) {
+                callback.onFailure(error.toException());
+            }
+        });
+    }
+
+    public void getAllLocations(SearchCallback callback) {
+        locationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Location> result = new ArrayList<>();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    Location loc = snap.getValue(Location.class);
+                    if (loc != null) result.add(loc);
+                }
+                callback.onSuccess(result);
+            }
+
+            @Override public void onCancelled(@NonNull DatabaseError error) {
+                callback.onFailure(error.toException());
+            }
+        });
+    }
+
+    // Interface callback cho tìm kiếm
+    public interface SearchCallback {
+        void onSuccess(List<Location> locations);
+        void onFailure(Exception e);
+    }
+
+    public interface LocationCallback {
+        void onLocationLoaded(Location location);
     }
 
 }
