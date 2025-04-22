@@ -104,6 +104,7 @@ public class DetailBookingRoomActivity extends AppCompatActivity {
         hotelDetailViewModel.fetchHotelById(hotelId);
         hotelDetailViewModel.getSelectedHotel().observe(this, hotel -> {
             if (hotel != null) {
+                SharedPreferencesUtils.setBookingId(this, hotelId);
                 displayHotelDetails(hotel);
             } else {
                 Toast.makeText(this, "Không tìm thấy khách sạn!", Toast.LENGTH_SHORT).show();

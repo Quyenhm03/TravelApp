@@ -132,7 +132,7 @@ public class LocationActivity extends AppCompatActivity {
 //            }
 //        });
         setupReviewsRecyclerView();
-        userCurrentViewModel.user.observe(this, user -> {
+            userCurrentViewModel.user.observe(this, user -> {
             if (user != null) {
                 locationViewModel.getLocation(locationId).observe(this, location -> {
                     if (location != null) {
