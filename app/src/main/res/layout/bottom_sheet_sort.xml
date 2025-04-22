@@ -14,21 +14,21 @@
         android:textStyle="bold"
         android:paddingBottom="8dp" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/sort_price_asc"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Giá tăng dần"-->
-<!--        android:textSize="16sp"-->
-<!--        android:padding="12dp" />-->
+    <TextView
+        android:id="@+id/sort_price_asc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Giá tăng dần"
+        android:textSize="16sp"
+        android:padding="12dp" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/sort_price_desc"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Giá giảm dần"-->
-<!--        android:textSize="16sp"-->
-<!--        android:padding="12dp" />-->
+    <TextView
+        android:id="@+id/sort_price_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Giá giảm dần"
+        android:textSize="16sp"
+        android:padding="12dp" />
 
     <TextView
         android:id="@+id/sort_rating_asc"

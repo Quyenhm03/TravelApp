@@ -15,6 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide; // Thêm Glide để tải ảnh
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.travel_app.Data.Model.Hotel;
 import com.example.travel_app.R;
 import com.example.travel_app.UI.Activity.DetailHotelActivity;
@@ -54,6 +59,7 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
         holder.textHotelName.setText(hotel.getName());
         holder.textHotelLocation.setText(hotel.getLocation());
         holder.textHotelRating.setText(String.valueOf(hotel.getRating()));
+        holder.textHotelPrice.setText("635.000 VNĐ/đêm");
 
         holder.buttonBook.setOnClickListener(v -> {
             Intent intent = new Intent(holder.itemView.getContext(), DetailHotelActivity.class);

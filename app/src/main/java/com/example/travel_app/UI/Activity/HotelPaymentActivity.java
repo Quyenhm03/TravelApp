@@ -5,7 +5,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -29,7 +28,6 @@ import com.example.travel_app.Data.Model.Hotel;
 import com.example.travel_app.Data.Model.Payment;
 import com.example.travel_app.R;
 import com.example.travel_app.Receiver.ReminderBroadcastReceiver;
-import com.example.travel_app.SharedPreferencesUtils;
 import com.example.travel_app.UI.Login.LoginActivity;
 
 import com.example.travel_app.ViewModel.HotelDetailViewModel;
@@ -137,6 +135,7 @@ public class HotelPaymentActivity extends AppCompatActivity {
             return;
         }
 <<<<<<< .mine
+<<<<<<< .mine
         else {
             displayHotelDetails();
             onBackPressed();
@@ -148,6 +147,20 @@ public class HotelPaymentActivity extends AppCompatActivity {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finishAffinity();
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> .theirs
 
 
 >>>>>>> .theirs
@@ -157,6 +170,7 @@ public class HotelPaymentActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private void displayHotelDetails() {
+<<<<<<< .mine
 <<<<<<< .mine
         Intent getIntent = getIntent();
         String hotelId = getIntent.getStringExtra("hotel_id");
@@ -168,7 +182,21 @@ public class HotelPaymentActivity extends AppCompatActivity {
         txtTotalAmount.setText("Tổng: " + total_amount + " VNĐ");
 =======
         SharedPreferences sharedPreferences = SharedPreferencesUtils.getBookingData(this);
+=======
+        Intent getIntent = getIntent();
+        long total_amount = getIntent.getLongExtra("total_amount", 0);
+        txtRoomType.setText(getIntent.getStringExtra("room_type"));
+        txtHotelName.setText(getIntent.getStringExtra("hotel_name"));
+        txtCheckInDate.setText(getIntent.getStringExtra("check_in_date"));
+        txtCheckOutDate.setText(getIntent.getStringExtra("check_out_date"));
+        txtTotalAmount.setText("Tổng: " + total_amount + " VNĐ");
 
+
+
+
+>>>>>>> .theirs
+
+<<<<<<< .mine
 
 
 
@@ -235,6 +263,74 @@ public class HotelPaymentActivity extends AppCompatActivity {
         txtCheckInDate.setText(checkInDate);
         txtCheckOutDate.setText(checkOutDate);
         txtTotalAmount.setText("Tổng: " + totalAmount + " VNĐ");
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> .theirs
 
 
 
@@ -276,12 +372,22 @@ public class HotelPaymentActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, bookingHotel.getId().hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
 <<<<<<< .mine
+<<<<<<< .mine
         // Đặt thông báo trước 1 ngày (24 giờ trước check-in)
         long triggerTime = bookingHotel.getCheckInTimestamp() - (24 * 60 * 60 * 1000);
         if (triggerTime < System.currentTimeMillis()) {
             triggerTime = System.currentTimeMillis() + 10 * 1000; // Nếu thời gian đã qua, đặt thông báo sau 10 giây để test
         }
 
+=======
+
+
+
+
+
+
+
+>>>>>>> .theirs
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
         } else {
@@ -328,16 +434,6 @@ public class HotelPaymentActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         // ZaloPaySDK.getInstance().onResult(intent); // Bỏ comment nếu tích hợp ZaloPay
     }
-
-    private void loadUserDataFromSharedPreferences() {
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        String customerName = sharedPreferences.getString("customer_name", "Khách hàng");
-        String bookingDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-
-        txtCustomerName.setText(customerName);
-        txtBookingDate.setText("Ngày đặt: " + bookingDate);
-    }
-
 
 
 }
