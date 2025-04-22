@@ -23,9 +23,17 @@
         <activity
 <<<<<<< .mine
 <<<<<<< .mine
+<<<<<<< .mine
             android:name=".UI.Activity.HotelBookedActivity"
             android:exported="false" />
         <activity
+=======
+
+
+
+
+
+>>>>>>> .theirs
 =======
             android:name=".UI.Activity.PassengerInfoBookingRoomActivity"
             android:exported="false" />

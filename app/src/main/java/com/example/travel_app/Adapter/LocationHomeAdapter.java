@@ -1,8 +1,6 @@
 package com.example.travel_app.Adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,17 +31,11 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
     private LifecycleOwner lifecycleOwner;
     private OnLocationClickListener onLocationClickListener; // Callback cho sự kiện click
 
-
     // Interface để xử lý sự kiện click
     public interface OnLocationClickListener {
         void onLocationClick(int locationId);
     }
 
-    public interface OnLocationClickFullNameListener {
-        void onLocationClickFullName(String fullName);
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
     public LocationHomeAdapter(Context context, LifecycleOwner lifecycleOwner, List<Location> locationList, ImageViewModel imageViewModel, OnLocationClickListener listener) {
         this.context = context;
         this.lifecycleOwner = lifecycleOwner;
@@ -72,7 +64,6 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
     @Override
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
         Location location = locationList.get(position);
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
         // Hiển thị tên thành phố (vitri)
         holder.txtCity.setText(location.getVitri() != null ? location.getVitri() : "Không có địa chỉ");
@@ -103,7 +94,6 @@ public class LocationHomeAdapter extends RecyclerView.Adapter<LocationHomeAdapte
             if (onLocationClickListener != null) {
                 onLocationClickListener.onLocationClick(location.getLocation_id());
             }
-
         });
     }
 
