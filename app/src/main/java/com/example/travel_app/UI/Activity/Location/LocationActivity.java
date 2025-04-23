@@ -103,6 +103,7 @@ public class LocationActivity extends AppCompatActivity {
 
 
 
+
     @SuppressLint("ObsoleteSdkInt")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,7 +193,6 @@ public class LocationActivity extends AppCompatActivity {
         // Quan sát đánh giá
         reviewViewModel.getReviews(locationId).observe(this, newReviews -> {
             if (newReviews != null && !newReviews.isEmpty()) {
-
                 reviews.clear();
                 reviews.addAll(newReviews);
                 reviewAdapter.updateReviews(reviews);
@@ -466,5 +466,45 @@ public class LocationActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_REVIEW && resultCode == RESULT_OK && data != null) {
+            float rating = data.getFloatExtra("rating", 0);
+            String comment = data.getStringExtra("comment");
+
+            // Lấy thông tin người dùng hiện tại từ FirebaseAuth
+
+            userCurrentViewModel.user.observe(this, user -> {
+                if (user != null && locationId != -1) {
+                    try {
+                        // Giả định userId là int, chuyển đổi UID thành int (nếu cần)
+                        int userId = Integer.parseInt(user.getUserId()); // Cảnh báo: Chỉ dùng nếu UID là số nguyên
+                        // Tạo đối tượng Review mới
+                        Review newReview = new Review();
+                        newReview.setLocationId(locationId);
+                        newReview.setUserId(userId);
+                        newReview.setRating((int) rating); // Chuyển float thành int
+                        newReview.setComment(comment);
+                        // Định dạng thời gian thành chuỗi
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                        newReview.setCreateAt(sdf.format(new Date(System.currentTimeMillis())));
+
+                        // Lưu đánh giá vào Firebase thông qua ReviewViewModel
+                        reviewViewModel.addReview(newReview, user.getUserId());
+                        Toast.makeText(this, "Đã thêm đánh giá!", Toast.LENGTH_SHORT).show();
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, "Lỗi: ID người dùng không hợp lệ!", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Lỗi chuyển đổi userId: " + e.getMessage());
+                    }
+                } else {
+                    Toast.makeText(this, "Lỗi: Thiếu thông tin người dùng hoặc địa điểm!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+    }
+
 
 }
