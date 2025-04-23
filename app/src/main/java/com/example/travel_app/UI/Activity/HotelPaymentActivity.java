@@ -146,28 +146,7 @@ public class HotelPaymentActivity extends AppCompatActivity {
             return;
         }
 
-        // Tạo bookingId và paymentId
-        String bookingId = "booking_hotel_" + System.currentTimeMillis();
-        String paymentId = "pay_" + System.currentTimeMillis();
 
-        // Tạo đối tượng Payment
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        String transactionDate = dateFormat.format(new Date());
-        Payment payment = new Payment(paymentId, bookingId, totalAmount, "Card", "success", transactionDate);
-
-        // Chuyển đổi checkInDate thành timestamp
-        long checkInTimestamp = 0;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        try {
-            Date date = sdf.parse(checkInDate);
-            if (date != null) {
-                checkInTimestamp = date.getTime();
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Lỗi khi parse checkInDate: " + e.getMessage());
-            Toast.makeText(this, "Ngày check-in không hợp lệ", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         // Lấy userId
         String userId = getUserId();
@@ -175,26 +154,56 @@ public class HotelPaymentActivity extends AppCompatActivity {
             return; // Đã xử lý chuyển hướng đến LoginActivity trong getUserId()
         }
 
-        // Tạo đối tượng BookingHotel
-        BookingHotel bookingHotel = new BookingHotel(
-                bookingId,
-                hotelId,
-                hotelName,
-                checkInDate,
-                checkOutDate,
-                roomType,
-                totalAmount,
-                userId,
-                "Đã thanh toán",
-                payment,
-                checkInTimestamp
-        );
+        userCurrentViewModel.user.observe(this, user -> {
+                    if (user != null) {
+                        // Tạo bookingId và paymentId
+                        String bookingId = "booking_hotel_" + System.currentTimeMillis();
+                        String paymentId = "pay_" + System.currentTimeMillis();
 
-        // Lưu BookingHotel và Payment vào Firebase
-        bookingHotelViewModel.saveBooking(bookingHotel, payment, hotelId, roomType);
+                        // Tạo đối tượng Payment
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                        String transactionDate = dateFormat.format(new Date());
+                        Payment payment = new Payment(paymentId, bookingId, totalAmount, "Card", "success", transactionDate);
+
+                        // Chuyển đổi checkInDate thành timestamp
+                        long checkInTimestamp = 0;
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                        try {
+                            Date date = sdf.parse(checkInDate);
+                            if (date != null) {
+                                checkInTimestamp = date.getTime();
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Lỗi khi parse checkInDate: " + e.getMessage());
+                            Toast.makeText(this, "Ngày check-in không hợp lệ", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Tạo đối tượng BookingHotel
+                        BookingHotel bookingHotel = new BookingHotel(
+                                bookingId,
+                                hotelId,
+                                hotelName,
+                                checkInDate,
+                                checkOutDate,
+                                roomType,
+                                totalAmount,
+                                user.getUserId(),
+                                "Đã thanh toán",
+                                payment,
+                                checkInTimestamp
+                        );
+
+                        // Lưu BookingHotel và Payment vào Firebase
+                        bookingHotelViewModel.saveBooking(bookingHotel, payment, hotelId, roomType);
+                        scheduleReminder(bookingHotel);
+                    }
+
+                });
+
 
         // Thiết lập thông báo nhắc nhở
-        scheduleReminder(bookingHotel);
+
     }
 
     @SuppressLint({"SetTextI18n", "ScheduleExactAlarm"})
