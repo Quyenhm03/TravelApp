@@ -68,7 +68,7 @@ public class HotelBookedActivity extends AppCompatActivity {
         userCurrentViewModel.user.observe(this, user -> {
             if (user != null) {
                 Log.d("HotelBookedActivity", "UserId hiện tại: " + user.getUserId());
-                bookingHotelViewModel.loadBookingsForUser(user.getUserId());
+                bookingHotelViewModel.loadBookingsForUser("10");
 
                 // Observe danh sách Booking sau khi tải xong
                 bookingHotelViewModel.getBookingsByUserIdLiveData().observe(this, bookings -> {

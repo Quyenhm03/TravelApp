@@ -27,7 +27,7 @@ public class BookingHotelRepository {
         paymentRef = FirebaseDatabase.getInstance().getReference("Payment");
         roomsRef = FirebaseDatabase.getInstance().getReference("Rooms");
     }
-
+    MutableLiveData<List<BookingHotel>> bookingsLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> saveSuccess = new MutableLiveData<>();
     private MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private MutableLiveData<List<BookingHotel>> bookingsByUserId = new MutableLiveData<>();
@@ -137,29 +137,96 @@ public class BookingHotelRepository {
 //        return bookingsByUserId;
 //    }
 
-    public void fetchBookingsByUserId(String userId) {
+//    public void fetchBookingsByUserId(String userId) {
+//        bookingHotelRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                List<BookingHotel> bookings = new ArrayList<>();
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    BookingHotel booking = snapshot.getValue(BookingHotel.class);
+//                    if (booking != null && booking.getPayment() != null && booking.getUserId().equals(userId)) {
+//                        bookings.add(booking);
+//                    }
+//                }
+//                bookingsByUserId.setValue(bookings);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                errorMessage.setValue(databaseError.getMessage());
+//            }
+//        });
+//    }
+
+    public MutableLiveData<List<BookingHotel>> getBookingsByUserIdLiveData() {
+        return bookingsLiveData;
+    }
+
+    public MutableLiveData<List<BookingHotel>> fetchBookingsByUserId(String userId) {
+
+
+//        bookingHotelRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                List<BookingHotel> bookings = new ArrayList<>();
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    BookingHotel booking = snapshot.getValue(BookingHotel.class);
+//                    if (booking != null && userId.equals(booking.getUserId()) && booking.getPayment() != null) {
+//                        bookings.add(booking);
+//                    }
+//                }
+//                bookingsLiveData.setValue(bookings);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                Log.e(TAG, "Lỗi khi lấy danh sách BookingHotel: " + databaseError.getMessage());
+//                bookingsLiveData.setValue(new ArrayList<>()); // hoặc null tùy bạn
+//            }
+//        });
+
         bookingHotelRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<BookingHotel> bookings = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BookingHotel booking = snapshot.getValue(BookingHotel.class);
-                    if (booking != null && booking.getPayment() != null && booking.getUserId().equals(userId)) {
+                    if (booking == null) {
+                        Log.d(TAG, "Booking null tại snapshot: " + snapshot.getKey());
+                        continue;
+                    }
+
+                    Log.d(TAG, "Booking ID: " + booking.getId());
+                    Log.d(TAG, "User ID booking: " + booking.getUserId());
+                    Log.d(TAG, "User ID đang so sánh: " + userId);
+
+                    if (userId.equals(booking.getUserId())) {
+                        Log.d(TAG, "User ID match");
+                    }
+
+                    if (booking.getPayment() == null) {
+                        Log.d(TAG, "Booking không có payment");
+                    }
+
+                    if (userId.equals(booking.getUserId()) && booking.getPayment() != null) {
                         bookings.add(booking);
+                        Log.d(TAG, "Booking được thêm: " + booking.getId());
                     }
                 }
-                bookingsByUserId.setValue(bookings);
+
+                Log.d(TAG, "Tổng số booking lấy được: " + bookings.size());
+                bookingsLiveData.setValue(bookings);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                errorMessage.setValue(databaseError.getMessage());
+                Log.e(TAG, "Lỗi khi lấy danh sách BookingHotel: " + databaseError.getMessage());
+                bookingsLiveData.setValue(new ArrayList<>());
             }
         });
-    }
 
-    public MutableLiveData<List<BookingHotel>> getBookingsByUserIdLiveData() {
-        return bookingsByUserId;
+
+        return bookingsLiveData;
     }
 
 
