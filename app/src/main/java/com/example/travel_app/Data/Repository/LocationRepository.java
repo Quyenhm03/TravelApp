@@ -94,7 +94,7 @@ public class LocationRepository {
         }
     }
 
-    // ------------------- Lấy danh sách yêu thích theo user --------------------
+     // ------------------- Lấy danh sách yêu thích theo user --------------------
 //    public MutableLiveData<List<Location>> getFavoriteLocationsByUserId(String userId) {
 //        List<Location> favoriteLocations = new ArrayList<>();
 //        MutableLiveData<List<Location>> liveData = new MutableLiveData<>();
@@ -138,26 +138,28 @@ public class LocationRepository {
 //    }
 
     public MutableLiveData<List<Location>> getFavoriteLocationsByUserId(String userId) {
+        final String TAG = "FavoriteLocations";
         MutableLiveData<List<Location>> liveData = new MutableLiveData<>();
         List<Location> favoriteLocations = new ArrayList<>();
 
         if (userId == null || userId.isEmpty()) {
+            Log.w(TAG, "userId is null or empty, returning empty list");
             liveData.setValue(favoriteLocations);
             return liveData;
         }
 
-        DatabaseReference favRef = FirebaseDatabase.getInstance().getReference("Favourite_Destination");
+        DatabaseReference favRef = FirebaseDatabase.getInstance().getReference("FavoriteLocations").child(userId);
         DatabaseReference locRef = FirebaseDatabase.getInstance().getReference("Location");
 
-        favRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        favRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot favSnapshot) {
                 List<String> favIds = new ArrayList<>();
 
                 for (DataSnapshot snap : favSnapshot.getChildren()) {
-                    Boolean isFav = snap.child("is_favourite").getValue(Boolean.class);
+                    Boolean isFav = snap.getValue(Boolean.class);
                     if (Boolean.TRUE.equals(isFav)) {
-                        favIds.add(snap.getKey());
+                        favIds.add(snap.getKey());  // locationId
                     }
                 }
 
@@ -170,8 +172,7 @@ public class LocationRepository {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot locSnapshot) {
                         for (DataSnapshot snap : locSnapshot.getChildren()) {
-                            String locationId = snap.getKey();
-                            if (favIds.contains(locationId)) {
+                            if (favIds.contains(snap.getKey())) {
                                 Location loc = snap.getValue(Location.class);
                                 if (loc != null) favoriteLocations.add(loc);
                             }
@@ -181,6 +182,7 @@ public class LocationRepository {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Location query cancelled: " + error.getMessage());
                         liveData.setValue(new ArrayList<>());
                     }
                 });
@@ -188,12 +190,40 @@ public class LocationRepository {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "FavoriteLocations query cancelled: " + error.getMessage());
                 liveData.setValue(new ArrayList<>());
             }
         });
 
         return liveData;
     }
+
+    // ------------------- Kiểm tra một địa điểm có đang được yêu thích hay không --------------------
+    public LiveData<Boolean> isLocationFavorite(String userId, String locationId) {
+        MutableLiveData<Boolean> liveData = new MutableLiveData<>();
+
+        if (userId == null || userId.isEmpty() || locationId == null || locationId.isEmpty()) {
+            liveData.setValue(false);
+            return liveData;
+        }
+
+        favoriteRef.child(userId).child(locationId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        liveData.setValue(snapshot.exists());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "isLocationFavorite cancelled: " + error.getMessage());
+                        liveData.setValue(false);
+                    }
+                });
+
+        return liveData;
+    }
+
 
 
 

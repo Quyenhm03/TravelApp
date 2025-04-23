@@ -48,6 +48,11 @@ public class LocationViewModel extends ViewModel {
         return locationRepository.getFavoriteLocationsByUserId(userId);
     }
 
+    public LiveData<Boolean> isLocationFavorite(String userId, String locationId) {
+        return locationRepository.isLocationFavorite(userId, locationId);
+    }
+
+
 
     public LiveData<List<Location>> getSearchResults() {
         return searchResultsLiveData;
